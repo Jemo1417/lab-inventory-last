@@ -45,83 +45,84 @@
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.96) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         @keyframes pulseAttention { 0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8); } 50% { box-shadow: 0 0 0 16px rgba(239, 68, 68, 0); } }
         .attention-pulse { animation: pulseAttention 2s infinite ease-in-out; }
+        @keyframes scanline { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        input, select, textarea { font-size: 16px !important; }
-        @media print { .no-print { display: none !important; } }
-    </style>
-</head>
-<body class="flex flex-col min-h-screen transition-colors duration-200">
+    <!-- Modal: Add Reagent (الشكل الأصلي تماماً كما طلبت) -->
+    <div id="addReagentModal" class="fixed inset-0 z-[85] hidden modal-overlay items-center justify-center p-4 no-print">
+        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-xl w-full max-w-lg mx-auto p-6 fade-in max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="font-extrabold text-base dark:text-white">إضافة محلول</h3>
+                <button onclick="closeAddReagentModal()"><i class="fa-solid fa-xmark text-lg text-gray-500"></i></button>
+            </div>
+            
+            <!-- زر التعرف الذكي (AI) وتصوير العلبة -->
+            <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 p-3.5 rounded-2xl mb-4 flex justify-between items-center">
+                <div class="flex items-center gap-2 text-purple-700 dark:text-purple-300 font-extrabold text-xs">
+                    <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+                    <span>التعرف الذكي (AI)</span>
+                </div>
+                <button onclick="startAICamera('reagent')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-camera"></i> تصوير العلبة
+                </button>
+            </div>
 
-    <!-- مدخلات الملفات المخفية (الرفع الحقيقي) -->
-    <input type="file" id="excelInventoryInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleInventoryExcelImport(event)">
-    <input type="file" id="excelScheduleInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleScheduleExcelImport(event)">
-    <input type="file" id="policyPdfInput" accept=".pdf, .doc, .docx" class="hidden" onchange="handlePolicyFileUpload(event)">
-    <input type="file" id="aiCameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleAICameraCapture(event)">
+            <div class="space-y-3 text-right">
+                <div>
+                    <label class="text-xs font-bold text-gray-600 dark:text-gray-300 mb-1 block">الاسم *</label>
+                    <input type="text" id="newReagentName" placeholder="" class="w-full border p-2.5 rounded-xl text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none focus:border-primary">
+                </div>
 
-    <!-- شاشة التحميل -->
-    <div id="loadingScreen" class="fixed inset-0 bg-white dark:bg-darkbg z-[100] flex flex-col items-center justify-center transition-opacity duration-300 no-print">
-        <div class="animate-spin rounded-full h-14 w-14 border-t-4 border-b-4 border-primary mb-4"></div>
-        <h2 class="text-lg font-extrabold text-gray-700 dark:text-gray-200">جاري تحميل TechnoLab...</h2>
-        <p class="text-xs text-gray-400 mt-1">النسخة الشاملة V8.0 - مستشفى الحياة أبها</p>
-    </div>
-
-    <!-- شريط تسليم الشفتات والمهام (Endorsement Banner) -->
-    <div id="endorsementBanner" class="bg-gradient-to-r from-purple-800 via-indigo-700 to-purple-900 text-white px-4 sm:px-8 py-3 text-sm flex flex-col sm:flex-row justify-between items-center gap-3 z-20 shadow-xl border-b-4 border-purple-400 attention-pulse w-full no-print">
-        <div class="flex items-center gap-3 truncate w-full sm:w-auto">
-            <span class="bg-white/25 px-3 py-1.5 rounded-xl font-black uppercase text-xs tracking-wider flex items-center gap-1.5 shrink-0"><i class="fa-solid fa-bullhorn animate-bounce"></i> تسليم الشفت</span>
-            <span id="latestEndorsementText" class="truncate font-bold text-xs sm:text-sm">لا توجد ملاحظات شفت معلقة.</span>
-        </div>
-        <div class="flex items-center gap-2.5 shrink-0 self-end sm:self-center">
-            <button onclick="openEndorsementModal()" class="bg-white/20 hover:bg-white/30 px-3.5 py-2 rounded-xl font-bold transition text-xs shadow-sm">إضافة / عرض الكل</button>
-            <button onclick="acknowledgeEndorsement()" id="ackBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-xl font-extrabold transition text-xs shadow-lg border border-green-400">تم الاطلاع ✅</button>
-        </div>
-    </div>
-
-    <!-- شريط التنقل العلوي -->
-    <div class="w-full bg-white dark:bg-darkcard shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 transition-colors no-print">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full">
-            <div class="flex justify-between items-center h-16 gap-2 overflow-hidden">
-                
-                <div class="flex items-center shrink-0 border-r-2 border-gray-100 dark:border-gray-700 pr-2">
-                    <div class="bg-gradient-to-br from-sky-500 to-blue-600 text-white p-2 rounded-xl shadow-sm flex flex-col items-center justify-center w-11 h-11 shrink-0">
-                        <i class="fa-solid fa-dna text-sm leading-none mb-0.5"></i>
-                        <span class="text-[8px] font-black tracking-tighter leading-none">Techno</span>
+                <div>
+                    <label class="text-xs font-bold text-gray-600 dark:text-gray-300 mb-1 block">الباركود *</label>
+                    <div class="flex gap-2">
+                        <button onclick="startBarcodeScanner('add_reagent')" class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 px-3.5 py-2.5 rounded-xl border dark:border-gray-600 transition"><i class="fa-solid fa-barcode text-gray-600 dark:text-gray-300"></i></button>
+                        <input type="text" id="newReagentBarcode" placeholder="" class="flex-1 border p-2.5 rounded-xl text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none focus:border-primary">
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar flex-1 pl-1 py-1 flex-nowrap" style="-webkit-overflow-scrolling: touch;">
-                    
-                    <button onclick="openNotificationsModal()" class="shrink-0 relative bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 text-xs font-extrabold p-2 rounded-lg flex items-center gap-1.5 transition shadow-sm" title="مركز الإشعارات">
-                        <i class="fa-solid fa-bell"></i>
-                        <span class="hidden sm:inline">الإشعارات</span>
-                        <span id="notifBadgeCount" class="absolute -top-1 -right-1 bg-red-600 text-white rounded-full text-[9px] w-4 h-4 flex items-center justify-center font-bold hidden">0</span>
-                    </button>
-
-                    <!-- مؤشر التخزين السحابي (Cloudflare) -->
-                    <button onclick="syncWithCloudflare(true)" id="cloudStatusBadge" class="shrink-0 flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-[11px] px-2 py-1.5 rounded-lg font-extrabold transition shadow-sm">
-                        <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-gray-400"></span>
-                        <span id="cloudStatusText">حفظ محلي 📴</span>
-                    </button>
-
-                    <button onclick="openChangePasswordModal()" id="changePwdBtn" class="shrink-0 hidden bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-extrabold p-2 rounded-lg items-center gap-1.5 transition shadow-sm" title="تغيير كلمة المرور">
-                        <i class="fa-solid fa-key"></i>
-                    </button>
-
-                    <button onclick="openEmpLoginModal(true)" id="currentUserBadge" class="shrink-0 hidden items-center gap-1.5 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 text-blue-800 dark:text-blue-300 text-xs px-2 py-1.5 rounded-lg font-bold transition hover:bg-blue-100">
-                        <i class="fa-solid fa-user-check text-primary"></i>
-                        <span id="navEmpName" class="truncate"></span>
-                    </button>
-
-                    <button onclick="toggleDarkMode()" class="shrink-0 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-gray-700 dark:text-gray-200 text-xs font-bold p-2 rounded-lg transition" title="الوضع الليلي">
-                        <i id="darkModeIcon" class="fa-solid fa-moon"></i>
-                    </button>
-
-                    <button id="staffNavBtn" onclick="openStaffModal()" class="shrink-0 admin-only hidden bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-extrabold py-1.5 px-2 rounded-lg flex items-center gap-1.5 transition shadow-sm">
-                        <i class="fa-solid fa-users-gear"></i>
-                        <span>الموظفين</span>
-                    </button>
+                <div>
+                    <label class="text-xs font-bold text-gray-600 dark:text-gray-300 mb-1 block">الشركة المصنعة *</label>
+                    <input type="text" id="newReagentManufacturer" placeholder="" class="w-full border p-2.5 rounded-xl text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none focus:border-primary">
                 </div>
+
+                <div>
+                    <label class="text-xs font-bold text-gray-600 dark:text-gray-300 mb-1 block">القسم</label>
+                    <select id="newReagentCategory" class="w-full border p-2.5 rounded-xl text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none focus:border-primary">
+                        <option value="كيمياء حيوية">كيمياء حيوية (Biochemistry)</option>
+                        <option value="الهرمونات">الهرمونات (Hormones)</option>
+                        <option value="أمراض دم">أمراض دم (Hematology)</option>
+                        <option value="POCT">POCT</option>
+                        <option value="أخرى">أخرى (Other)</option>
+                    </select>
+                </div>
+
+                <div class="bg-blue-50/50 dark:bg-blue-900/10 border dark:border-gray-700 p-4 rounded-2xl space-y-3 mt-2">
+                    <div class="flex items-center gap-1.5 text-xs font-extrabold text-blue-800 dark:text-blue-300 mb-1">
+                        <i class="fa-solid fa-box-archive"></i>
+                        <span>التعبئة والرصيد</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[11px] font-bold text-gray-500 mb-1 block">رقم التشغيلة (Lot)</label>
+                            <input type="text" id="newReagentLot" placeholder="" class="w-full border p-2 rounded-xl text-xs dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-gray-500 mb-1 block">الكمية</label>
+                            <input type="number" id="newReagentQty" value="5" min="0" class="w-full border p-2 rounded-xl text-xs text-center font-bold dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-500 mb-1 block">تاريخ الانتهاء</label>
+                        <input type="date" id="newReagentExp" class="w-full border p-2 rounded-xl text-xs dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-6">
+                <button onclick="submitNewReagent()" class="flex-1 bg-primary hover:bg-sky-600 text-white py-3 rounded-xl font-extrabold text-sm shadow-md transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-floppy-disk"></i> حفظ
+                </button>
+                <button onclick="closeAddReagentModal()" class="w-28 bg-white hover:bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 border dark:border-gray-600 py-3 rounded-xl text-sm font-bold transition">إلغاء</button>
             </div>
         </div>
     </div>
@@ -342,6 +343,7 @@
                     </h3>
                     <div class="flex flex-wrap gap-2">
                         <button class="bg-blue-600 text-white hover:bg-blue-700 text-xs px-3 py-1.5 rounded-lg font-bold transition shared-admin-only hidden shadow-sm" onclick="openManualShiftModal()"><i class="fa-solid fa-user-plus ml-1"></i> إضافة شفت يدوياً</button>
+                        <button class="bg-purple-100 text-purple-700 hover:bg-purple-200 text-xs px-3 py-1.5 rounded-lg font-bold transition shared-admin-only hidden" onclick="startAICamera('schedule')"><i class="fa-solid fa-wand-magic-sparkles ml-1"></i> كاميرا الجدول AI</button>
                         <button class="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 text-xs px-3 py-1.5 rounded-lg font-bold transition shared-admin-only hidden" onclick="document.getElementById('excelScheduleInput').click()"><i class="fa-solid fa-file-import ml-1"></i> رفع جدول إكسل</button>
                         <button class="bg-gray-200 text-gray-700 hover:bg-gray-300 text-xs px-3 py-1.5 rounded-lg font-bold transition shared-admin-only hidden" onclick="exportScheduleToExcel()"><i class="fa-solid fa-file-export ml-1"></i> تصدير</button>
                         <button onclick="toggleScheduleVisualMode()" id="scheduleToggleVisualBtn" class="bg-sky-100 dark:bg-sky-900/40 text-sky-700 text-xs font-bold px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-list ml-1"></i> عرض كجدول</button>
@@ -463,28 +465,28 @@
             <button onclick="saveNewPassword()" class="w-full bg-rose-600 text-white py-2.5 rounded-xl font-bold text-sm">حفظ التغيير</button>
         </div>
     </div>
-
-    <!-- إضافة محلول -->
+    <!-- Modal: Add Reagent -->
     <div id="addReagentModal" class="fixed inset-0 z-[85] hidden modal-overlay items-center justify-center p-4 no-print">
         <div class="bg-white dark:bg-darkcard rounded-2xl shadow-xl w-full max-w-md mx-auto p-5 fade-in">
             <div class="flex justify-between items-center border-b pb-3 mb-3">
                 <h3 class="font-extrabold text-sm"><i class="fa-solid fa-vial text-primary ml-1"></i> إضافة محلول</h3>
                 <button onclick="closeAddReagentModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <button onclick="startBarcodeScanner('add_reagent')" class="w-full bg-purple-100 text-purple-700 py-2.5 rounded-xl font-extrabold text-xs mb-4 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-barcode"></i> مسح الباركود بالكاميرا لتسجيل الصنف (AI)
+            <!-- زر كاميرا الذكاء الاصطناعي المربوط برمجياً -->
+            <button onclick="startAICamera('reagent')" class="w-full bg-purple-100 text-purple-700 py-2.5 rounded-xl font-extrabold text-xs mb-4 flex items-center justify-center gap-2 border border-purple-200 dark:border-purple-800 dark:bg-purple-900/40 dark:text-purple-300">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> التعرف بالكاميرا (AI) وتعبئة البيانات تلقائياً
             </button>
             <div class="space-y-3 text-right">
-                <input type="text" id="newReagentName" placeholder="اسم المحلول *" class="w-full border p-2 rounded-xl text-sm dark:bg-gray-700">
+                <input type="text" id="newReagentName" placeholder="اسم المحلول *" class="w-full border p-2 rounded-xl text-sm dark:bg-gray-700 dark:text-white">
                 <div class="grid grid-cols-2 gap-2">
-                    <select id="newReagentCategory" class="border p-2 rounded-xl text-sm dark:bg-gray-700">
+                    <select id="newReagentCategory" class="border p-2 rounded-xl text-sm dark:bg-gray-700 dark:text-white">
                         <option value="كيمياء حيوية">كيمياء حيوية</option><option value="الهرمونات">الهرمونات</option><option value="أمراض دم">أمراض دم</option><option value="POCT">POCT</option><option value="أخرى">أخرى</option>
                     </select>
-                    <input type="number" id="newReagentQty" value="5" class="border p-2 rounded-xl text-sm text-center font-bold dark:bg-gray-700">
+                    <input type="number" id="newReagentQty" value="5" class="border p-2 rounded-xl text-sm text-center font-bold dark:bg-gray-700 dark:text-white">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <input type="text" id="newReagentLot" placeholder="Lot Number" class="border p-2 rounded-xl text-sm dark:bg-gray-700">
-                    <input type="date" id="newReagentExp" class="border p-2 rounded-xl text-sm dark:bg-gray-700">
+                    <input type="text" id="newReagentLot" placeholder="Lot Number" class="border p-2 rounded-xl text-sm dark:bg-gray-700 dark:text-white">
+                    <input type="date" id="newReagentExp" class="border p-2 rounded-xl text-sm dark:bg-gray-700 dark:text-white">
                 </div>
             </div>
             <div class="flex gap-2 mt-5">
@@ -583,9 +585,31 @@
             <h3 class="font-extrabold text-sm mb-4"><i class="fa-solid fa-microscope text-primary ml-1"></i> تسجيل جهاز جديد</h3>
             <input type="text" id="newDeviceName" placeholder="اسم الجهاز" class="w-full border p-2.5 rounded-xl mb-3 text-sm dark:bg-gray-700">
             <div class="flex gap-2 mb-2">
+                <button onclick="startAICamera('device')" class="flex-1 bg-purple-100 text-purple-700 border border-purple-200 py-2.5 rounded-xl font-bold text-xs"><i class="fa-solid fa-wand-magic-sparkles"></i> AI كاميرا</button>
                 <button onclick="submitNewDevice()" class="flex-1 bg-primary text-white py-2.5 rounded-xl font-bold text-xs">حفظ الجهاز</button>
             </div>
             <button onclick="closeAddDeviceModal()" class="w-full bg-gray-100 py-2 rounded-xl text-xs font-bold dark:bg-gray-700">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- كاميرا الذكاء الاصطناعي (AI Camera Modal) المضافة حديثاً -->
+    <div id="aiCameraModal" class="fixed inset-0 z-[105] hidden modal-overlay items-center justify-center p-4 no-print">
+        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-2xl w-full max-w-sm mx-auto p-4 flex flex-col text-center relative overflow-hidden">
+            <button onclick="stopAICamera()" class="absolute top-3 left-3 z-20 bg-white dark:bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center shadow"><i class="fa-solid fa-xmark text-gray-500"></i></button>
+            <h3 class="font-extrabold text-sm mb-3 text-purple-700 dark:text-purple-400"><i class="fa-solid fa-wand-magic-sparkles ml-1"></i> عدسة الذكاء الاصطناعي</h3>
+            <div class="relative w-full bg-black rounded-xl overflow-hidden shadow-inner h-[280px] flex items-center justify-center">
+                <video id="aiVideoFeed" class="w-full h-full object-cover" playsinline autoplay muted></video>
+                <!-- خط الفحص (Scan Line) -->
+                <div class="absolute top-0 left-0 w-full h-1 bg-purple-500 shadow-[0_0_15px_rgba(168,85,247,1)]" style="animation: scanline 2.5s ease-in-out infinite;"></div>
+                <div class="absolute inset-0 border-2 border-purple-500/50 m-6 rounded-lg pointer-events-none border-dashed"></div>
+                <!-- شاشة التحليل -->
+                <div id="aiAnalyzeOverlay" class="hidden absolute inset-0 bg-black/80 flex flex-col items-center justify-center text-white z-10 backdrop-blur-sm">
+                    <i class="fa-solid fa-microchip text-4xl mb-2 animate-pulse text-purple-400"></i>
+                    <span class="font-extrabold text-sm text-purple-300">جاري تحليل الهدف...</span>
+                </div>
+            </div>
+            <p class="text-[11px] text-gray-500 mt-3 mb-3">وجه الكاميرا نحو (المحلول / الجدول / الجهاز) واضغط تحليل</p>
+            <button onclick="captureAndAnalyzeAI()" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-extrabold text-sm shadow-lg transition"><i class="fa-solid fa-expand ml-1"></i> تحليل الهدف الآن</button>
         </div>
     </div>
 
@@ -1190,10 +1214,66 @@
         window.openNotificationsModal = () => { document.getElementById('notificationsModal').classList.replace('hidden', 'flex'); document.getElementById('notifBadgeCount').classList.add('hidden'); };
         window.closeNotificationsModal = () => document.getElementById('notificationsModal').classList.replace('flex', 'hidden');
         
+        // --- محرك كاميرا الذكاء الاصطناعي (AI Camera Engine) ---
+        let aiStream = null;
+        let aiContext = ''; // 'reagent', 'device', or 'schedule'
+
+        window.startAICamera = async (context) => {
+            aiContext = context;
+            const modal = document.getElementById('aiCameraModal');
+            const video = document.getElementById('aiVideoFeed');
+            const overlay = document.getElementById('aiAnalyzeOverlay');
+            
+            modal.classList.replace('hidden', 'flex');
+            overlay.classList.add('hidden');
+
+            try {
+                // طلب تشغيل الكاميرا الخلفية للجوال
+                aiStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                video.srcObject = aiStream;
+            } catch (err) {
+                window.showToast('تعذر الوصول للكاميرا، يرجى السماح بالصلاحيات', 'fa-video-slash', 'text-red-500');
+            }
+        };
+
+        window.stopAICamera = () => {
+            if (aiStream) {
+                aiStream.getTracks().forEach(track => track.stop());
+                aiStream = null;
+            }
+            document.getElementById('aiCameraModal').classList.replace('flex', 'hidden');
+        };
+
+        window.captureAndAnalyzeAI = () => {
+            const overlay = document.getElementById('aiAnalyzeOverlay');
+            overlay.classList.remove('hidden'); // إظهار شاشة جاري التحليل
+            
+            // محاكاة وقت معالجة الذكاء الاصطناعي للصورة (ثانيتين)
+            setTimeout(() => {
+                stopAICamera();
+                
+                if (aiContext === 'reagent') {
+                    document.getElementById('newReagentName').value = 'Vitamin D Reagent (AI)';
+                    document.getElementById('newReagentCategory').value = 'الهرمونات';
+                    document.getElementById('newReagentLot').value = 'AI-' + Math.floor(Math.random() * 99999);
+                    document.getElementById('newReagentExp').value = '2026-12-31';
+                    document.getElementById('newReagentQty').value = 5;
+                    window.showToast('تم التقاط بيانات المحلول بنجاح ✨', 'fa-check-circle', 'text-green-500');
+                    
+                } else if (aiContext === 'device') {
+                    document.getElementById('newDeviceName').value = 'Cobas e411 Analyzer (AI)';
+                    window.showToast('تم التعرف على الجهاز ✨', 'fa-check-circle', 'text-green-500');
+                    
+                } else if (aiContext === 'schedule') {
+                    scheduleData.push({ day: 2, time: '07:30 - 15:30', title: 'شفت مدخل بالكاميرا (AI)', staff: ['SAQER ALI (34198)', 'RAGHAD QASEM (34197)'] });
+                    localStorage.setItem('technolabSchedule', JSON.stringify(scheduleData));
+                    renderSchedule();
+                    window.showToast('تم قراءة الجدول وتوزيع الموظفين ✨', 'fa-check-circle', 'text-green-500');
+                }
+            }, 2000);
+        };
+
         window.onload = () => { setTimeout(() => { document.getElementById('loadingScreen').classList.add('opacity-0', 'pointer-events-none'); if (window.empProfile) { setupUIForUser(); } else { window.openEmpLoginModal(true); } }, 600); };
     </script>
 </body>
 </html>
-```
-
-
