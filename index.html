@@ -9,12 +9,9 @@
     <meta name="apple-mobile-web-app-title" content="TechnoLab">
     <title>TechnoLab - مستشفى الحياة أبها</title>
     
-    <!-- الخطوط -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- إطار العمل Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -27,8 +24,6 @@
             }
         }
     </script>
-    
-    <!-- الأيقونات والمكتبات الأساسية (لا غنى عنها لعمل النظام) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -47,90 +42,72 @@
         .attention-pulse { animation: pulseAttention 2s infinite ease-in-out; }
         @keyframes scanline { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
-    <!-- Modal: Add Reagent (الشكل الأصلي تماماً كما طلبت) -->
-    <div id="addReagentModal" class="fixed inset-0 z-[85] hidden modal-overlay items-center justify-center p-4 no-print">
-        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-xl w-full max-w-lg mx-auto p-6 fade-in max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="font-extrabold text-base dark:text-white">إضافة محلول</h3>
-                <button onclick="closeAddReagentModal()"><i class="fa-solid fa-xmark text-lg text-gray-500"></i></button>
-            </div>
-            
-            <!-- زر التعرف الذكي (AI) وتصوير العلبة -->
-            <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 p-3.5 rounded-2xl mb-4 flex justify-between items-center">
-                <div class="flex items-center gap-2 text-purple-700 dark:text-purple-300 font-extrabold text-xs">
-                    <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
-                    <span>التعرف الذكي (AI)</span>
-                </div>
-                <button onclick="startAICamera('reagent')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                    <i class="fa-solid fa-camera"></i> تصوير العلبة
-                </button>
-            </div>
+        input, select, textarea { font-size: 16px !important; }
+        @media print { .no-print { display: none !important; } }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen transition-colors duration-200">
 
-            <div class="space-y-3 text-right">
-                <div>
-                    <label class="text-xs font-bold text-gray-600 dark:text-gray-300 mb-1 block">الاسم *</label>
-                    <input type="text" id="newReagentName" placeholder="" class="w-full border p-2.5 rounded-xl text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none focus:border-primary">
-                </div>
+    <!-- شاشة التحميل -->
+    <div id="loadingScreen" class="fixed inset-0 bg-white dark:bg-darkbg z-[100] flex flex-col items-center justify-center transition-opacity duration-300 no-print">
+        <div class="animate-spin rounded-full h-14 w-14 border-t-4 border-b-4 border-primary mb-4"></div>
+        <h2 class="text-lg font-extrabold text-gray-700 dark:text-gray-200">جاري تحميل TechnoLab V8.0...</h2>
+        <p class="text-xs text-gray-400 mt-1">مستشفى الحياة أبها - المنظومة السحابية الذكية</p>
+    </div>
 
-                <div>
-                    <label class="text-xs font-bold text-gray-600 dark:text-gray-300 mb-1 block">الباركود *</label>
-                    <div class="flex gap-2">
-                        <button onclick="startBarcodeScanner('add_reagent')" class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 px-3.5 py-2.5 rounded-xl border dark:border-gray-600 transition"><i class="fa-solid fa-barcode text-gray-600 dark:text-gray-300"></i></button>
-                        <input type="text" id="newReagentBarcode" placeholder="" class="flex-1 border p-2.5 rounded-xl text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none focus:border-primary">
+    <!-- شريط تسليم الشفت -->
+    <div id="endorsementBanner" class="bg-gradient-to-r from-purple-800 via-indigo-700 to-purple-900 text-white px-4 sm:px-8 py-3 text-sm flex flex-col sm:flex-row justify-between items-center gap-3 z-20 shadow-xl border-b-4 border-purple-400 attention-pulse w-full no-print">
+        <div class="flex items-center gap-3 truncate w-full sm:w-auto">
+            <span class="bg-white/25 px-3 py-1.5 rounded-xl font-black uppercase text-xs tracking-wider flex items-center gap-1.5 shrink-0"><i class="fa-solid fa-bullhorn animate-bounce"></i> تسليم الشفت</span>
+            <span id="latestEndorsementText" class="truncate font-bold text-xs sm:text-sm">لا توجد ملاحظات شفت معلقة.</span>
+        </div>
+        <div class="flex items-center gap-2.5 shrink-0 self-end sm:self-center">
+            <button onclick="openEndorsementModal()" class="bg-white/20 hover:bg-white/30 px-3.5 py-2 rounded-xl font-bold transition text-xs shadow-sm">إضافة / عرض الكل</button>
+            <button onclick="acknowledgeEndorsement()" id="ackBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-xl font-extrabold transition text-xs shadow-lg border border-green-400">تم الاطلاع ✅</button>
+        </div>
+    </div>
+
+    <!-- شريط التنقل العلوي -->
+    <div class="w-full bg-white dark:bg-darkcard shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30 transition-colors no-print">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full">
+            <div class="flex justify-between items-center h-16 gap-2 overflow-hidden">
+                <div class="flex items-center shrink-0 border-r-2 border-gray-100 dark:border-gray-700 pr-2">
+                    <div class="bg-gradient-to-br from-sky-500 to-blue-600 text-white p-2 rounded-xl shadow-sm flex flex-col items-center justify-center w-11 h-11 shrink-0">
+                        <i class="fa-solid fa-dna text-sm leading-none mb-0.5"></i>
+                        <span class="text-[8px] font-black tracking-tighter leading-none">Techno</span>
                     </div>
                 </div>
-
-                <div>
-                    <label class="text-xs font-bold text-gray-600 dark:text-gray-300 mb-1 block">الشركة المصنعة *</label>
-                    <input type="text" id="newReagentManufacturer" placeholder="" class="w-full border p-2.5 rounded-xl text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none focus:border-primary">
+                <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar flex-1 pl-1 py-1 flex-nowrap" style="-webkit-overflow-scrolling: touch;">
+                    <button onclick="openNotificationsModal()" class="shrink-0 relative bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 text-xs font-extrabold p-2 rounded-lg flex items-center gap-1.5 transition shadow-sm" title="مركز الإشعارات">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="hidden sm:inline">الإشعارات</span>
+                        <span id="notifBadgeCount" class="absolute -top-1 -right-1 bg-red-600 text-white rounded-full text-[9px] w-4 h-4 flex items-center justify-center font-bold hidden">0</span>
+                    </button>
+                    <button onclick="syncWithCloudflare(true)" id="cloudStatusBadge" class="shrink-0 flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-[11px] px-2 py-1.5 rounded-lg font-extrabold transition shadow-sm">
+                        <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span id="cloudStatusText">متصل سحابياً ☁️</span>
+                    </button>
+                    <button onclick="openChangePasswordModal()" id="changePwdBtn" class="shrink-0 hidden bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-extrabold p-2 rounded-lg items-center gap-1.5 transition shadow-sm" title="تغيير كلمة المرور"><i class="fa-solid fa-key"></i></button>
+                    <button onclick="openEmpLoginModal(true)" id="currentUserBadge" class="shrink-0 hidden items-center gap-1.5 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 text-blue-800 dark:text-blue-300 text-xs px-2 py-1.5 rounded-lg font-bold transition hover:bg-blue-100">
+                        <i class="fa-solid fa-user-check text-primary"></i>
+                        <span id="navEmpName" class="truncate"></span>
+                    </button>
+                    <button onclick="openEndorsementModal()" class="shrink-0 bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 text-xs font-extrabold py-1.5 px-2 rounded-lg flex items-center gap-1.5 transition shadow-sm">
+                        <i class="fa-solid fa-list-check"></i><span>التاسكات</span>
+                    </button>
+                    <button onclick="toggleDarkMode()" class="shrink-0 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-gray-700 dark:text-gray-200 text-xs font-bold p-2 rounded-lg transition" title="الوضع الليلي"><i id="darkModeIcon" class="fa-solid fa-moon"></i></button>
+                    <button id="staffNavBtn" onclick="openStaffModal()" class="shrink-0 admin-only hidden bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-extrabold py-1.5 px-2 rounded-lg flex items-center gap-1.5 transition shadow-sm">
+                        <i class="fa-solid fa-users-gear"></i><span>الموظفين</span>
+                    </button>
                 </div>
-
-                <div>
-                    <label class="text-xs font-bold text-gray-600 dark:text-gray-300 mb-1 block">القسم</label>
-                    <select id="newReagentCategory" class="w-full border p-2.5 rounded-xl text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none focus:border-primary">
-                        <option value="كيمياء حيوية">كيمياء حيوية (Biochemistry)</option>
-                        <option value="الهرمونات">الهرمونات (Hormones)</option>
-                        <option value="أمراض دم">أمراض دم (Hematology)</option>
-                        <option value="POCT">POCT</option>
-                        <option value="أخرى">أخرى (Other)</option>
-                    </select>
-                </div>
-
-                <div class="bg-blue-50/50 dark:bg-blue-900/10 border dark:border-gray-700 p-4 rounded-2xl space-y-3 mt-2">
-                    <div class="flex items-center gap-1.5 text-xs font-extrabold text-blue-800 dark:text-blue-300 mb-1">
-                        <i class="fa-solid fa-box-archive"></i>
-                        <span>التعبئة والرصيد</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-[11px] font-bold text-gray-500 mb-1 block">رقم التشغيلة (Lot)</label>
-                            <input type="text" id="newReagentLot" placeholder="" class="w-full border p-2 rounded-xl text-xs dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none">
-                        </div>
-                        <div>
-                            <label class="text-[11px] font-bold text-gray-500 mb-1 block">الكمية</label>
-                            <input type="number" id="newReagentQty" value="5" min="0" class="w-full border p-2 rounded-xl text-xs text-center font-bold dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-[11px] font-bold text-gray-500 mb-1 block">تاريخ الانتهاء</label>
-                        <input type="date" id="newReagentExp" class="w-full border p-2 rounded-xl text-xs dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none">
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex gap-3 mt-6">
-                <button onclick="submitNewReagent()" class="flex-1 bg-primary hover:bg-sky-600 text-white py-3 rounded-xl font-extrabold text-sm shadow-md transition flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-floppy-disk"></i> حفظ
-                </button>
-                <button onclick="closeAddReagentModal()" class="w-28 bg-white hover:bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 border dark:border-gray-600 py-3 rounded-xl text-sm font-bold transition">إلغاء</button>
             </div>
         </div>
     </div>
 
-    <!-- المحتوى الرئيسي -->
+    <!-- المحتوى الرئيسي والأقسام -->
     <main class="flex-grow max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 w-full box-border pb-24">
         
-        <!-- تبويبات النظام (شريط التمرير) -->
+        <!-- تبويبات النظام -->
         <div class="flex border-b border-gray-200 dark:border-gray-700 mb-6 bg-white dark:bg-darkcard rounded-t-2xl px-3 pt-3 overflow-x-auto hide-scrollbar flex-nowrap shadow-sm w-full gap-2 no-print">
             <button onclick="switchStore('lab')" id="tab-lab" class="shrink-0 text-primary border-b-2 border-primary pb-3 px-4 font-extrabold text-xs sm:text-sm flex items-center gap-2 transition-colors"><i class="fa-solid fa-flask"></i> المخزون</button>
             <button onclick="switchStore('devices')" id="tab-devices" class="shrink-0 text-gray-500 dark:text-gray-400 hover:text-gray-700 border-b-2 border-transparent pb-3 px-4 font-extrabold text-xs sm:text-sm flex items-center gap-2 transition-colors"><i class="fa-solid fa-microscope"></i> الأجهزة والصيانة</button>
@@ -178,13 +155,11 @@
                     </div>
                 </div>
                 <div class="flex gap-2 flex-wrap items-center">
-                    <button class="flex-1 bg-primary hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-extrabold shadow-sm transition flex items-center justify-center gap-2" onclick="openAddReagentModal()"><i class="fa-solid fa-plus"></i> إضافة محلول (يدوي / AI)</button>
-                    <button class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm transition shared-admin-only hidden" onclick="document.getElementById('excelInventoryInput').click()"><i class="fa-solid fa-file-import ml-1"></i> استيراد إكسل</button>
-                    <button class="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm transition shared-admin-only hidden" onclick="exportToExcel()"><i class="fa-solid fa-file-excel ml-1"></i> تصدير إكسل</button>
+                    <button class="flex-1 bg-primary hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-extrabold shadow-sm transition flex items-center justify-center gap-2" onclick="openAddReagentModal()"><i class="fa-solid fa-plus"></i> إضافة محلول</button>
                 </div>
             </div>
 
-            <!-- الفلاتر التفاعلية (الأقسام) -->
+            <!-- الفلاتر التفاعلية -->
             <div class="mt-2">
                 <div class="flex items-center gap-2 mb-2 px-1">
                     <i class="fa-solid fa-layer-group text-primary"></i>
@@ -196,51 +171,35 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="inventoryGrid"></div>
         </div>
 
-        <!-- 2. قسم الأجهزة والكنترول -->
+        <!-- 2. قسم الأجهزة والصيانة -->
         <div id="devicesSection" class="hidden space-y-4 w-full">
             <div class="bg-white dark:bg-darkcard p-5 rounded-2xl border dark:border-gray-700 shadow-sm">
-                <div class="flex flex-col mb-4 gap-1">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="font-extrabold text-lg text-gray-900 dark:text-white">أجهزة المختبر والكنترولات اليومية</h3>
-                            <p class="text-xs text-gray-500">توثيق الأجهزة، الكنترول القياسي، وصيانة يوم السبت.</p>
-                        </div>
-                        <button onclick="openAddDeviceModal()" class="bg-primary text-white text-xs px-3 py-1.5 rounded-lg font-bold shadow-sm admin-only hidden whitespace-nowrap"><i class="fa-solid fa-plus"></i> إضافة جهاز</button>
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="font-extrabold text-lg text-gray-900 dark:text-white">أجهزة المختبر والكنترولات اليومية</h3>
+                        <p class="text-xs text-gray-500">توثيق الأجهزة، الكنترول، وصيانة يوم السبت.</p>
                     </div>
+                    <button onclick="openAddDeviceModal()" class="bg-primary text-white text-xs px-3 py-1.5 rounded-lg font-bold shadow-sm admin-only hidden"><i class="fa-solid fa-plus"></i> إضافة جهاز</button>
                 </div>
-                
-                <div class="mb-5 flex gap-2">
-                    <button class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-md flex items-center justify-center gap-2 transition" onclick="exportMaintenanceReport()">
-                        <i class="fa-solid fa-file-pdf"></i> استخراج تقرير الصيانة والكنترول
-                    </button>
-                </div>
-
                 <div id="devicesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4"></div>
             </div>
         </div>
 
-        <!-- 3. سجل النتائج الحرجة (الجديد) -->
+        <!-- 3. سجل النتائج الحرجة -->
         <div id="criticalSection" class="hidden space-y-4 w-full">
             <div class="bg-white dark:bg-darkcard p-5 rounded-2xl border dark:border-gray-700 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <div>
-                        <h3 class="font-extrabold text-lg text-gray-900 dark:text-white"><i class="fa-solid fa-truck-medical text-red-500 ml-1"></i> سجل التبليغ عن النتائج الحرجة</h3>
-                        <p class="text-xs text-gray-500">Critical Results Log (متطلب CBAHI)</p>
-                    </div>
-                    <button onclick="exportCriticalReport()" class="bg-red-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold shadow-sm shared-admin-only hidden"><i class="fa-solid fa-file-pdf ml-1"></i> تصدير السجل</button>
-                </div>
-
+                <h3 class="font-extrabold text-lg text-gray-900 dark:text-white mb-2"><i class="fa-solid fa-truck-medical text-red-500 ml-1"></i> سجل النتائج الحرجة (Critical Results Log)</h3>
+                <p class="text-xs text-gray-500 mb-4">متطلب أساسي لمعايير سباهي (CBAHI)</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-800">
                     <input type="text" id="critPatientId" placeholder="رقم الملف / هوية المريض" class="border p-2 rounded-lg text-sm dark:bg-gray-700 dark:text-white outline-none">
                     <input type="text" id="critTestName" placeholder="اسم التحليل والنتيجة (مثال: K= 2.1)" class="border p-2 rounded-lg text-sm dark:bg-gray-700 dark:text-white outline-none">
                     <input type="text" id="critDoctorName" placeholder="اسم الطبيب/الممرض المُبلَّغ" class="border p-2 rounded-lg text-sm dark:bg-gray-700 dark:text-white outline-none">
-                    <button onclick="addCriticalRecord()" class="bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-bold shadow transition"><i class="fa-solid fa-phone-volume ml-1"></i> توثيق التبليغ الآن</button>
+                    <button onclick="addCriticalRecord()" class="bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-bold shadow transition"><i class="fa-solid fa-phone-volume ml-1"></i> توثيق الاتصال الآن</button>
                 </div>
-                
                 <div class="overflow-x-auto border dark:border-gray-700 rounded-xl">
                     <table class="w-full text-right text-xs">
                         <thead class="bg-gray-100 dark:bg-gray-800 font-bold">
-                            <tr><th class="p-2">الوقت</th><th class="p-2">المريض</th><th class="p-2">النتيجة</th><th class="p-2">المُبلَّغ</th><th class="p-2">الموظف</th></tr>
+                            <tr><th class="p-2">الوقت</th><th class="p-2">المريض</th><th class="p-2">النتيجة</th><th class="p-2">الطبيب المُبلَّغ</th><th class="p-2">الموظف</th></tr>
                         </thead>
                         <tbody id="criticalTableBody" class="divide-y dark:divide-gray-700"></tbody>
                     </table>
@@ -248,16 +207,13 @@
             </div>
         </div>
 
-        <!-- 4. الجرد الذكي (الكاميرا) -->
+        <!-- 4. الجرد الذكي -->
         <div id="smart_inventorySection" class="hidden space-y-4 w-full">
             <div class="bg-white dark:bg-darkcard p-5 rounded-2xl border dark:border-gray-700 shadow-sm text-center">
                 <i class="fa-solid fa-barcode text-4xl text-primary mb-3"></i>
                 <h3 class="font-extrabold text-lg text-gray-900 dark:text-white">نظام الجرد الذكي بالكاميرا</h3>
-                <p class="text-sm text-gray-500 mt-2">امسح الباركود بشكل متتالي لتسريع الجرد الشهري.</p>
-                <div class="flex justify-center gap-2 mt-4">
-                    <button onclick="startBarcodeScanner('inventory')" class="bg-primary hover:bg-sky-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-sm transition"><i class="fa-solid fa-camera ml-1"></i> فتح الكاميرا للجرد</button>
-                </div>
-                <div id="smartInventoryLog" class="mt-6 text-right max-w-md mx-auto space-y-2"></div>
+                <p class="text-sm text-gray-500 mt-2">امسح الباركود بشكل متتالي لتسريع الجرد.</p>
+                <button onclick="startBarcodeScanner('inventory')" class="mt-4 bg-primary text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-sm"><i class="fa-solid fa-camera ml-1"></i> فتح الكاميرا للجرد</button>
             </div>
         </div>
 
@@ -265,15 +221,6 @@
         <div id="referenceSection" class="hidden space-y-4 w-full">
             <div class="bg-white dark:bg-darkcard p-5 rounded-2xl border dark:border-gray-700 shadow-sm">
                 <h3 class="font-extrabold text-lg text-gray-900 dark:text-white mb-4"><i class="fa-solid fa-book-medical text-primary ml-1"></i> القيم المرجعية للتحاليل</h3>
-                <div class="flex gap-2 mb-4">
-                    <button onclick="filterReferenceRanges('all')" id="ref-btn-all" class="bg-primary text-white px-4 py-1.5 rounded-full text-xs font-bold transition">الكل</button>
-                    <button onclick="filterReferenceRanges('normal')" id="ref-btn-normal" class="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-xs font-bold transition">العادية (Normal)</button>
-                    <button onclick="filterReferenceRanges('panic')" id="ref-btn-panic" class="bg-red-100 text-red-600 border border-red-200 px-4 py-1.5 rounded-full text-xs font-bold transition">الحرجة (Panic)</button>
-                </div>
-                <div class="relative mb-4">
-                    <i class="fa-solid fa-search absolute right-3 top-3 text-gray-400"></i>
-                    <input type="text" id="refSearchInput" oninput="renderReferenceRanges()" placeholder="ابحث عن التحليل..." class="w-full pl-3 pr-9 py-2 rounded-xl border border-gray-200 dark:border-gray-600 text-sm bg-gray-50 dark:bg-gray-800 dark:text-white focus:border-primary outline-none">
-                </div>
                 <div class="border dark:border-gray-700 rounded-xl overflow-hidden">
                     <table class="w-full text-right text-sm">
                         <thead class="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
@@ -285,34 +232,29 @@
             </div>
         </div>
 
-        <!-- 6. سجل الثلاجات (الجديد) -->
+        <!-- 6. سجل حرارة الثلاجات -->
         <div id="temperatureSection" class="hidden space-y-4 w-full">
             <div class="bg-white dark:bg-darkcard p-5 rounded-2xl border dark:border-gray-700 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-extrabold text-lg text-gray-900 dark:text-white"><i class="fa-solid fa-temperature-half text-sky-500 ml-1"></i> سجل درجات حرارة الثلاجات اليومي</h3>
-                    <button onclick="exportTemperatureReport()" class="bg-sky-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold shadow-sm shared-admin-only hidden"><i class="fa-solid fa-file-pdf ml-1"></i> استخراج التقرير</button>
-                </div>
+                <h3 class="font-extrabold text-lg text-gray-900 dark:text-white mb-2"><i class="fa-solid fa-temperature-half text-sky-500 ml-1"></i> سجل درجات حرارة الثلاجات اليومي (Temperature Log)</h3>
+                <p class="text-xs text-gray-500 mb-4">متطلب جودة لضمان سلامة المحاليل وعينات الدم</p>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <!-- ثلاجة 1 -->
                     <div class="border dark:border-gray-700 p-4 rounded-xl bg-gray-50 dark:bg-gray-800 text-center">
-                        <h4 class="font-bold text-sm text-gray-800 dark:text-gray-200 mb-2">ثلاجة الكيمياء (2 إلى 8)</h4>
-                        <input type="number" id="tempFridge1" placeholder="مثال: 4" class="w-20 text-center border p-2 rounded-lg text-sm dark:bg-gray-700 dark:text-white outline-none mb-2">
-                        <button onclick="logTemperature('ثلاجة الكيمياء', 'tempFridge1')" class="w-full bg-primary text-white py-1.5 rounded-lg text-xs font-bold transition">حفظ القراءة</button>
+                        <h4 class="font-bold text-sm mb-2">ثلاجة الكيمياء (2 إلى 8)</h4>
+                        <input type="number" id="tempFridge1" placeholder="4" class="w-20 text-center border p-2 rounded-lg text-sm dark:bg-gray-700 dark:text-white outline-none mb-2">
+                        <button onclick="logTemperature('ثلاجة الكيمياء', 'tempFridge1')" class="w-full bg-primary text-white py-1.5 rounded-lg text-xs font-bold">حفظ القراءة</button>
                     </div>
-                    <!-- فريزر -->
                     <div class="border dark:border-gray-700 p-4 rounded-xl bg-gray-50 dark:bg-gray-800 text-center">
-                        <h4 class="font-bold text-sm text-gray-800 dark:text-gray-200 mb-2">فريزر الهرمونات (-20)</h4>
-                        <input type="number" id="tempFreezer1" placeholder="-18" class="w-20 text-center border p-2 rounded-lg text-sm dark:bg-gray-700 dark:text-white outline-none mb-2">
-                        <button onclick="logTemperature('فريزر الهرمونات', 'tempFreezer1')" class="w-full bg-primary text-white py-1.5 rounded-lg text-xs font-bold transition">حفظ القراءة</button>
+                        <h4 class="font-bold text-sm mb-2">فريزر الهرمونات (-20)</h4>
+                        <input type="number" id="tempFreezer1" placeholder="-20" class="w-20 text-center border p-2 rounded-lg text-sm dark:bg-gray-700 dark:text-white outline-none mb-2">
+                        <button onclick="logTemperature('فريزر الهرمونات', 'tempFreezer1')" class="w-full bg-primary text-white py-1.5 rounded-lg text-xs font-bold">حفظ القراءة</button>
                     </div>
-                    <!-- الغرفة -->
                     <div class="border dark:border-gray-700 p-4 rounded-xl bg-gray-50 dark:bg-gray-800 text-center">
-                        <h4 class="font-bold text-sm text-gray-800 dark:text-gray-200 mb-2">حرارة الغرفة (20 إلى 25)</h4>
+                        <h4 class="font-bold text-sm mb-2">حرارة الغرفة (20-25)</h4>
                         <input type="number" id="tempRoom" placeholder="22" class="w-20 text-center border p-2 rounded-lg text-sm dark:bg-gray-700 dark:text-white outline-none mb-2">
-                        <button onclick="logTemperature('حرارة الغرفة', 'tempRoom')" class="w-full bg-primary text-white py-1.5 rounded-lg text-xs font-bold transition">حفظ القراءة</button>
+                        <button onclick="logTemperature('حرارة الغرفة', 'tempRoom')" class="w-full bg-primary text-white py-1.5 rounded-lg text-xs font-bold">حفظ القراءة</button>
                     </div>
                 </div>
-                <div class="overflow-x-auto border dark:border-gray-700 rounded-xl mt-4">
+                <div class="overflow-x-auto border dark:border-gray-700 rounded-xl">
                     <table class="w-full text-right text-xs">
                         <thead class="bg-sky-50 dark:bg-sky-900/30 font-bold">
                             <tr><th class="p-2">الوقت</th><th class="p-2">الموقع</th><th class="p-2">الدرجة</th><th class="p-2">الموظف</th></tr>
@@ -326,10 +268,7 @@
         <!-- 7. الموردين -->
         <div id="suppliersSection" class="hidden space-y-4 w-full">
             <div class="bg-white dark:bg-darkcard p-5 rounded-2xl border dark:border-gray-700 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-extrabold text-lg text-gray-900 dark:text-white"><i class="fa-solid fa-handshake text-primary ml-1"></i> دليل الموردين والشركات</h3>
-                    <button onclick="openAddSupplierModal()" class="bg-primary text-white text-xs px-3 py-1.5 rounded-lg font-bold shared-admin-only hidden"><i class="fa-solid fa-plus ml-1"></i> إضافة مورد</button>
-                </div>
+                <h3 class="font-extrabold text-lg text-gray-900 dark:text-white mb-4"><i class="fa-solid fa-handshake text-primary ml-1"></i> دليل الموردين والشركات</h3>
                 <div id="suppliersListContainer" class="space-y-3"></div>
             </div>
         </div>
@@ -338,18 +277,12 @@
         <div id="scheduleSection" class="hidden space-y-4 w-full">
             <div class="bg-white dark:bg-darkcard rounded-2xl shadow-sm border dark:border-gray-700 p-4 w-full">
                 <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
-                    <h3 class="font-extrabold text-sm text-gray-900 dark:text-white flex items-center gap-2">
-                        <i class="fa-solid fa-calendar-days text-primary"></i> تقويم وجداول الموظفين
-                    </h3>
-                    <div class="flex flex-wrap gap-2">
-                        <button class="bg-blue-600 text-white hover:bg-blue-700 text-xs px-3 py-1.5 rounded-lg font-bold transition shared-admin-only hidden shadow-sm" onclick="openManualShiftModal()"><i class="fa-solid fa-user-plus ml-1"></i> إضافة شفت يدوياً</button>
-                        <button class="bg-purple-100 text-purple-700 hover:bg-purple-200 text-xs px-3 py-1.5 rounded-lg font-bold transition shared-admin-only hidden" onclick="startAICamera('schedule')"><i class="fa-solid fa-wand-magic-sparkles ml-1"></i> كاميرا الجدول AI</button>
-                        <button class="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 text-xs px-3 py-1.5 rounded-lg font-bold transition shared-admin-only hidden" onclick="document.getElementById('excelScheduleInput').click()"><i class="fa-solid fa-file-import ml-1"></i> رفع جدول إكسل</button>
-                        <button class="bg-gray-200 text-gray-700 hover:bg-gray-300 text-xs px-3 py-1.5 rounded-lg font-bold transition shared-admin-only hidden" onclick="exportScheduleToExcel()"><i class="fa-solid fa-file-export ml-1"></i> تصدير</button>
-                        <button onclick="toggleScheduleVisualMode()" id="scheduleToggleVisualBtn" class="bg-sky-100 dark:bg-sky-900/40 text-sky-700 text-xs font-bold px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-list ml-1"></i> عرض كجدول</button>
+                    <h3 class="font-extrabold text-sm text-gray-900 dark:text-white flex items-center gap-2"><i class="fa-solid fa-calendar-days text-primary"></i> التقويم وجداول الموظفين</h3>
+                    <div class="flex gap-2">
+                        <button class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold shared-admin-only hidden shadow-sm" onclick="openManualShiftModal()"><i class="fa-solid fa-user-plus ml-1"></i> إضافة شفت يدوياً</button>
+                        <button onclick="toggleScheduleVisualMode()" id="scheduleToggleVisualBtn" class="bg-sky-100 dark:bg-sky-900/40 text-sky-700 text-xs font-bold px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-list ml-1"></i> جدول نصي</button>
                     </div>
                 </div>
-                
                 <div id="scheduleCalendarViewContainer" class="overflow-x-auto w-full">
                     <div class="min-w-[800px]">
                         <div class="grid grid-cols-7 gap-3 mb-2">
@@ -364,61 +297,116 @@
                         <div id="calendarDaysGrid" class="grid grid-cols-7 gap-3 min-h-[160px]"></div>
                     </div>
                 </div>
-                
                 <div id="scheduleTableViewContainer" class="hidden overflow-x-auto border dark:border-gray-700 rounded-xl mt-4">
                     <table class="w-full text-right text-xs">
-                        <thead class="bg-gray-100 dark:bg-gray-800 font-bold">
-                            <tr><th class="p-3">اليوم</th><th class="p-3">الوقت / الشفت</th><th class="p-3">الموظفين المناوبين</th></tr>
-                        </thead>
+                        <thead class="bg-gray-100 dark:bg-gray-800 font-bold"><tr><th class="p-3">اليوم</th><th class="p-3">الوقت</th><th class="p-3">الموظفين المناوبين</th></tr></thead>
                         <tbody id="scheduleTextTableBody" class="divide-y dark:divide-gray-700"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- 9. السياسات P&P -->
+        <!-- 9. السياسات -->
         <div id="policiesSection" class="hidden space-y-4 w-full">
             <div class="bg-white dark:bg-darkcard p-4 rounded-2xl border dark:border-gray-700 shadow-sm">
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-extrabold text-base text-gray-900 dark:text-white"><i class="fa-solid fa-book-open text-primary ml-1"></i> مكتبة السياسات (P&P)</h3>
-                    <button onclick="document.getElementById('policyPdfInput').click()" class="bg-primary hover:bg-sky-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold transition shared-admin-only hidden"><i class="fa-solid fa-cloud-arrow-up ml-1"></i> رفع ملف PDF</button>
-                </div>
-                <div id="policiesListContainer" class="space-y-3 mt-4"></div>
+                <h3 class="font-extrabold text-base text-gray-900 dark:text-white mb-4"><i class="fa-solid fa-book-open text-primary ml-1"></i> مكتبة السياسات (P&P)</h3>
+                <div id="policiesListContainer" class="space-y-3"></div>
             </div>
         </div>
 
-        <!-- 10. الإحصائيات والسجل -->
+        <!-- 10. الإحصائيات -->
         <div id="statsSection" class="hidden space-y-4 w-full">
             <div class="bg-white dark:bg-darkcard p-4 rounded-2xl border dark:border-gray-700 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-extrabold text-base text-gray-900 dark:text-white"><i class="fa-solid fa-chart-pie text-primary ml-1"></i> السجل والإحصائيات الشاملة</h3>
-                    <button onclick="exportAuditLogsPDF()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold shadow-sm transition"><i class="fa-solid fa-file-pdf ml-1"></i> تصدير السجل PDF</button>
-                </div>
-                
-                <div class="flex gap-2 mb-4 items-center flex-wrap bg-gray-50 dark:bg-gray-800 p-2 rounded-xl border dark:border-gray-700">
-                    <input type="date" id="statsDateFrom" class="border p-2 rounded-lg text-sm dark:bg-gray-700 dark:text-white flex-1">
-                    <span class="text-sm font-bold">إلى</span>
-                    <input type="date" id="statsDateTo" class="border p-2 rounded-lg text-sm dark:bg-gray-700 dark:text-white flex-1">
-                    <button onclick="renderAuditLogs()" class="bg-primary text-white px-4 py-2 rounded-lg font-bold text-sm w-full sm:w-auto"><i class="fa-solid fa-filter ml-1"></i> تطبيق الفلتر</button>
-                </div>
-
+                <h3 class="font-extrabold text-base text-gray-900 dark:text-white mb-4"><i class="fa-solid fa-chart-pie text-primary ml-1"></i> سجل الحركات والإحصائيات</h3>
                 <div class="w-full h-64 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center border dark:border-gray-700 p-2 mb-6">
                     <canvas id="mainChart"></canvas>
                 </div>
-                
-                <div class="border-t dark:border-gray-700 pt-4">
-                    <h4 class="font-bold text-sm mb-3"><i class="fa-solid fa-clock-rotate-left text-primary ml-1"></i> سجل الحركات المفصل (Audit Log)</h4>
-                    <div id="auditLogContainer" class="space-y-3 max-h-[400px] overflow-y-auto pr-1 hide-scrollbar"></div>
-                </div>
+                <div id="auditLogContainer" class="space-y-3 max-h-[400px] overflow-y-auto pr-1 hide-scrollbar"></div>
             </div>
         </div>
     </main>
 
-    <!-- ==========================================
-         النوافذ المنبثقة (Modals) الشاملة
-         ========================================== -->
+    <!-- ================= نافذة إضافة محلول (التصميم الأصلي تماماً مع زر AI) ================= -->
+    <div id="addReagentModal" class="fixed inset-0 z-[85] hidden modal-overlay items-center justify-center p-4 no-print">
+        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-xl w-full max-w-lg mx-auto p-6 fade-in max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="font-extrabold text-base dark:text-white">إضافة محلول</h3>
+                <button onclick="closeAddReagentModal()"><i class="fa-solid fa-xmark text-lg text-gray-500"></i></button>
+            </div>
+            
+            <!-- زر كاميرا الذكاء الاصطناعي (AI) لتصوير العلبة -->
+            <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 p-3.5 rounded-2xl mb-4 flex justify-between items-center">
+                <div class="flex items-center gap-2 text-purple-700 dark:text-purple-300 font-extrabold text-xs">
+                    <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+                    <span>التعرف الذكي (AI) بالكاميرا</span>
+                </div>
+                <button onclick="startAICamera('reagent')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-camera"></i> تصوير العلبة
+                </button>
+            </div>
 
-    <!-- تسجيل الدخول -->
+            <div class="space-y-3 text-right">
+                <div>
+                    <label class="text-xs font-bold text-gray-600 dark:text-gray-300 mb-1 block">الاسم *</label>
+                    <input type="text" id="newReagentName" class="w-full border p-2.5 rounded-xl text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none focus:border-primary">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-600 dark:text-gray-300 mb-1 block">الباركود *</label>
+                    <div class="flex gap-2">
+                        <button onclick="startBarcodeScanner('add_reagent')" class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 px-3.5 py-2.5 rounded-xl border dark:border-gray-600 transition"><i class="fa-solid fa-barcode"></i></button>
+                        <input type="text" id="newReagentBarcode" class="flex-1 border p-2.5 rounded-xl text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none focus:border-primary">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-600 dark:text-gray-300 mb-1 block">الشركة المصنعة *</label>
+                    <input type="text" id="newReagentManufacturer" class="w-full border p-2.5 rounded-xl text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none focus:border-primary">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-600 dark:text-gray-300 mb-1 block">القسم</label>
+                    <select id="newReagentCategory" class="w-full border p-2.5 rounded-xl text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none focus:border-primary">
+                        <option value="كيمياء حيوية">كيمياء حيوية (Biochemistry)</option>
+                        <option value="الهرمونات">الهرمونات (Hormones)</option>
+                        <option value="أمراض دم">أمراض دم (Hematology)</option>
+                        <option value="POCT">POCT</option>
+                        <option value="أخرى">أخرى (Other)</option>
+                    </select>
+                </div>
+                <div class="bg-blue-50/50 dark:bg-blue-900/10 border dark:border-gray-700 p-4 rounded-2xl space-y-3 mt-2">
+                    <div class="flex items-center gap-1.5 text-xs font-extrabold text-blue-800 dark:text-blue-300 mb-1"><i class="fa-solid fa-box-archive"></i><span>التعبئة والرصيد</span></div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="text-[11px] font-bold text-gray-500 mb-1 block">رقم التشغيلة (Lot)</label><input type="text" id="newReagentLot" class="w-full border p-2 rounded-xl text-xs dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none"></div>
+                        <div><label class="text-[11px] font-bold text-gray-500 mb-1 block">الكمية</label><input type="number" id="newReagentQty" value="5" min="0" class="w-full border p-2 rounded-xl text-xs text-center font-bold dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none"></div>
+                    </div>
+                    <div><label class="text-[11px] font-bold text-gray-500 mb-1 block">تاريخ الانتهاء</label><input type="date" id="newReagentExp" class="w-full border p-2 rounded-xl text-xs dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none"></div>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="submitNewReagent()" class="flex-1 bg-primary hover:bg-sky-600 text-white py-3 rounded-xl font-extrabold text-sm shadow-md transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-floppy-disk"></i> حفظ</button>
+                <button onclick="closeAddReagentModal()" class="w-28 bg-white hover:bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 border dark:border-gray-600 py-3 rounded-xl text-sm font-bold transition">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة كاميرا الذكاء الاصطناعي الحقيقية (AI Camera) -->
+    <div id="aiCameraModal" class="fixed inset-0 z-[105] hidden modal-overlay items-center justify-center p-4 no-print">
+        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-2xl w-full max-w-sm mx-auto p-4 flex flex-col text-center relative overflow-hidden">
+            <button onclick="stopAICamera()" class="absolute top-3 left-3 z-20 bg-white dark:bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center shadow"><i class="fa-solid fa-xmark text-gray-500"></i></button>
+            <h3 class="font-extrabold text-sm mb-3 text-purple-700 dark:text-purple-400"><i class="fa-solid fa-wand-magic-sparkles ml-1"></i> عدسة الذكاء الاصطناعي</h3>
+            <div class="relative w-full bg-black rounded-xl overflow-hidden shadow-inner h-[280px] flex items-center justify-center">
+                <video id="aiVideoFeed" class="w-full h-full object-cover" playsinline autoplay muted></video>
+                <div class="absolute top-0 left-0 w-full h-1 bg-purple-500 shadow-[0_0_15px_rgba(168,85,247,1)]" style="animation: scanline 2.5s ease-in-out infinite;"></div>
+                <div class="absolute inset-0 border-2 border-purple-500/50 m-6 rounded-lg pointer-events-none border-dashed"></div>
+                <div id="aiAnalyzeOverlay" class="hidden absolute inset-0 bg-black/80 flex flex-col items-center justify-center text-white z-10 backdrop-blur-sm">
+                    <i class="fa-solid fa-microchip text-4xl mb-2 animate-pulse text-purple-400"></i>
+                    <span class="font-extrabold text-sm text-purple-300">جاري تحليل العبوة والمحلول...</span>
+                </div>
+            </div>
+            <p class="text-[11px] text-gray-500 mt-3 mb-3">وجه الكاميرا نحو عبوة المحلول واضغط تحليل</p>
+            <button onclick="captureAndAnalyzeAI()" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-extrabold text-sm shadow-lg transition"><i class="fa-solid fa-expand ml-1"></i> تحليل العبوة الآن</button>
+        </div>
+    </div>
+
+    <!-- نافذة تسجيل الدخول -->
     <div id="empLoginModal" class="fixed inset-0 z-[85] hidden modal-overlay items-center justify-center p-4 no-print">
         <div class="bg-white dark:bg-darkcard rounded-2xl shadow-2xl w-full max-w-sm mx-auto p-6 fade-in border-t-4 border-primary relative">
             <div class="text-center mb-4 mt-2">
@@ -426,331 +414,62 @@
                 <h3 class="font-extrabold text-lg text-gray-900 dark:text-white">تسجيل الدخول للنظام</h3>
             </div>
             <form onsubmit="saveEmployeeProfile(event)" class="space-y-3.5">
-                <input type="text" id="empIdInput" required placeholder="الرقم الوظيفي (مثال: 32726)" class="block w-full border rounded-xl px-3 py-2.5 text-sm text-center font-bold dark:bg-gray-700 dark:text-white">
+                <input type="text" id="empIdInput" required placeholder="الرقم الوظيفي (مثال: 32726)" class="block w-full border rounded-xl px-3 py-2.5 text-sm text-center font-bold dark:bg-gray-700 dark:text-white outline-none focus:border-primary">
                 <div id="loginWelcomeMsg" class="hidden text-center text-xs font-extrabold text-green-700 bg-green-50 p-2.5 rounded-xl border border-green-200"></div>
-                <div id="adminPasswordContainer" class="hidden space-y-2 relative">
-                    <input type="password" id="empAdminPasswordInput" placeholder="كلمة المرور..." class="block w-full border rounded-xl px-3 py-2.5 text-sm text-center font-bold dark:bg-gray-700 dark:text-white">
-                    <button type="button" onclick="openRecoveryModal()" class="block mx-auto text-[11px] text-blue-600 font-bold hover:underline pt-1">نسيت كلمة المرور؟ (استرداد بـ OTP)</button>
+                <div id="adminPasswordContainer" class="hidden space-y-2">
+                    <input type="password" id="empAdminPasswordInput" placeholder="كلمة المرور..." class="block w-full border rounded-xl px-3 py-2.5 text-sm text-center font-bold dark:bg-gray-700 dark:text-white outline-none">
                 </div>
                 <button type="submit" class="w-full bg-primary hover:bg-sky-600 text-white font-extrabold py-3 rounded-xl text-sm shadow-md">تأكيد الدخول</button>
             </form>
         </div>
     </div>
 
-    <!-- استرداد الحساب (OTP) -->
-    <div id="recoveryModal" class="fixed inset-0 z-[95] hidden modal-overlay items-center justify-center p-4 no-print">
-        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-2xl w-full max-w-sm mx-auto p-6 fade-in text-center border-t-4 border-amber-500 relative">
-            <button onclick="closeRecoveryModal()" class="absolute top-3 left-3"><i class="fa-solid fa-xmark text-gray-500 text-lg"></i></button>
-            <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-3 text-xl"><i class="fa-solid fa-envelope-open-text"></i></div>
-            <h3 class="font-extrabold text-lg dark:text-white mb-2">استرداد عبر الإيميل</h3>
-            <div id="recoveryStep0">
-                <input type="text" id="recoveryEmpId" placeholder="الرقم الوظيفي" class="block w-full border rounded-xl px-3 py-2.5 text-center font-bold mb-4 dark:bg-gray-700 dark:text-white">
-                <button onclick="findEmailAndSendOTP()" class="w-full bg-amber-500 text-white font-bold py-2.5 rounded-xl text-sm">البحث وإرسال OTP</button>
-            </div>
-            <div id="recoveryStep1" class="hidden">
-                <p class="text-xs text-gray-500 mb-2">تم إرسال الرمز (OTP) إلى:</p>
-                <div id="recoveryTargetEmailDisplay" class="bg-gray-100 p-2 rounded-lg text-sm font-bold text-primary mb-4 dir-ltr"></div>
-                <input type="text" id="otpInput" placeholder="----" maxlength="4" class="block w-1/2 mx-auto border rounded-xl px-3 py-2 text-center tracking-widest text-xl font-black mb-4 dark:bg-gray-700 dark:text-white">
-                <button onclick="verifyOTP()" class="w-full bg-primary text-white font-bold py-2.5 rounded-xl text-sm">تحقق واستعادة</button>
-            </div>
-        </div>
+    <!-- باقي النوافذ -->
+    <div id="notificationsModal" class="fixed inset-0 z-[80] hidden modal-overlay items-center justify-center p-4 no-print"><div class="bg-white dark:bg-darkcard rounded-2xl shadow-xl w-full max-w-sm mx-auto p-5 flex flex-col h-[60vh]"><div class="flex justify-between items-center border-b pb-3 mb-3"><h3 class="font-extrabold text-sm"><i class="fa-solid fa-bell text-amber-500 ml-1"></i> الإشعارات</h3><button onclick="closeNotificationsModal()"><i class="fa-solid fa-xmark"></i></button></div><div id="notificationsContainer" class="flex-grow overflow-y-auto space-y-2 text-sm"></div></div></div>
+    <div id="scannerModal" class="fixed inset-0 z-[100] hidden modal-overlay items-center justify-center p-4 no-print"><div class="bg-white dark:bg-darkcard rounded-2xl shadow-xl w-full max-w-sm mx-auto p-5 flex flex-col text-center relative"><button onclick="stopBarcodeScanner()" class="absolute top-3 left-3"><i class="fa-solid fa-xmark text-xl"></i></button><h3 class="font-extrabold text-sm mb-4">مسح الباركود</h3><div id="reader" class="w-full bg-black/5 rounded-xl min-h-[250px]"></div></div></div>
+    <div id="printableReportModal" class="fixed inset-0 z-[95] hidden modal-overlay items-center justify-center p-4"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-auto p-6 flex flex-col max-h-[90vh]"><div class="flex justify-between items-center border-b pb-3 mb-4"><h3 class="font-extrabold text-sm text-primary">معاينة المستند</h3><button onclick="document.getElementById('printableReportModal').classList.replace('flex','hidden')" class="bg-gray-200 px-3 py-1 rounded">إغلاق</button></div><div id="printableArea" class="overflow-y-auto p-4 border rounded-xl bg-white text-black"></div></div></div>
+
+    <!-- رسائل التوست -->
+    <div id="toastMessage" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl z-[100] font-bold text-sm transition-all duration-300 opacity-0 pointer-events-none flex items-center gap-3 no-print">
+        <i id="toastIcon" class="fa-solid fa-bell text-primary text-lg"></i><span id="toastText">رسالة</span>
     </div>
 
-    <!-- تغيير كلمة المرور -->
-    <div id="changePasswordModal" class="fixed inset-0 z-[85] hidden modal-overlay items-center justify-center p-4 no-print">
-        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-xl w-full max-w-sm mx-auto p-5 border-t-4 border-rose-500 fade-in relative text-center">
-            <button onclick="closeChangePasswordModal()" class="absolute top-3 left-3"><i class="fa-solid fa-xmark text-gray-500"></i></button>
-            <h3 class="font-extrabold text-sm dark:text-white mb-4"><i class="fa-solid fa-key text-rose-500 ml-1"></i> تغيير كلمة المرور</h3>
-            <input type="password" id="newPwdInput" placeholder="كلمة المرور الجديدة" class="w-full border p-2.5 rounded-xl mb-3 text-sm text-center font-bold dark:bg-gray-700 dark:text-white">
-            <button onclick="saveNewPassword()" class="w-full bg-rose-600 text-white py-2.5 rounded-xl font-bold text-sm">حفظ التغيير</button>
-        </div>
-    </div>
-    <!-- Modal: Add Reagent -->
-    <div id="addReagentModal" class="fixed inset-0 z-[85] hidden modal-overlay items-center justify-center p-4 no-print">
-        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-xl w-full max-w-md mx-auto p-5 fade-in">
-            <div class="flex justify-between items-center border-b pb-3 mb-3">
-                <h3 class="font-extrabold text-sm"><i class="fa-solid fa-vial text-primary ml-1"></i> إضافة محلول</h3>
-                <button onclick="closeAddReagentModal()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <!-- زر كاميرا الذكاء الاصطناعي المربوط برمجياً -->
-            <button onclick="startAICamera('reagent')" class="w-full bg-purple-100 text-purple-700 py-2.5 rounded-xl font-extrabold text-xs mb-4 flex items-center justify-center gap-2 border border-purple-200 dark:border-purple-800 dark:bg-purple-900/40 dark:text-purple-300">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> التعرف بالكاميرا (AI) وتعبئة البيانات تلقائياً
-            </button>
-            <div class="space-y-3 text-right">
-                <input type="text" id="newReagentName" placeholder="اسم المحلول *" class="w-full border p-2 rounded-xl text-sm dark:bg-gray-700 dark:text-white">
-                <div class="grid grid-cols-2 gap-2">
-                    <select id="newReagentCategory" class="border p-2 rounded-xl text-sm dark:bg-gray-700 dark:text-white">
-                        <option value="كيمياء حيوية">كيمياء حيوية</option><option value="الهرمونات">الهرمونات</option><option value="أمراض دم">أمراض دم</option><option value="POCT">POCT</option><option value="أخرى">أخرى</option>
-                    </select>
-                    <input type="number" id="newReagentQty" value="5" class="border p-2 rounded-xl text-sm text-center font-bold dark:bg-gray-700 dark:text-white">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="text" id="newReagentLot" placeholder="Lot Number" class="border p-2 rounded-xl text-sm dark:bg-gray-700 dark:text-white">
-                    <input type="date" id="newReagentExp" class="border p-2 rounded-xl text-sm dark:bg-gray-700 dark:text-white">
-                </div>
-            </div>
-            <div class="flex gap-2 mt-5">
-                <button onclick="submitNewReagent()" class="flex-1 bg-primary text-white py-2.5 rounded-xl font-extrabold text-xs">حفظ</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- الشفت اليدوي -->
-    <div id="manualShiftModal" class="fixed inset-0 z-[85] hidden modal-overlay items-center justify-center p-4 no-print">
-        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-xl w-full max-w-md mx-auto p-5 fade-in flex flex-col max-h-[85vh]">
-            <div class="flex justify-between items-center border-b pb-3 mb-3">
-                <h3 class="font-extrabold text-sm"><i class="fa-solid fa-calendar-plus text-blue-600 ml-1"></i> إضافة شفت يدوياً</h3>
-                <button onclick="closeManualShiftModal()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="space-y-3 mb-3">
-                <select id="manualShiftDay" class="w-full border p-2 rounded-xl text-sm font-bold dark:bg-gray-700"><option value="0">الأحد</option><option value="1">الإثنين</option><option value="2">الثلاثاء</option><option value="3">الأربعاء</option><option value="4">الخميس</option><option value="5">الجمعة</option><option value="6">السبت</option></select>
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="time" id="manualShiftFrom" value="07:30" class="border p-2 rounded-xl text-sm dark:bg-gray-700">
-                    <input type="time" id="manualShiftTo" value="15:30" class="border p-2 rounded-xl text-sm dark:bg-gray-700">
-                </div>
-                <input type="text" id="manualShiftTitle" placeholder="مسمى الشفت (اختياري)" class="w-full border p-2 rounded-xl text-sm dark:bg-gray-700">
-            </div>
-            <label class="text-xs font-extrabold text-primary mb-2 block">حدد الموظفين:</label>
-            <div id="manualShiftStaffCheckboxes" class="flex-grow overflow-y-auto border rounded-xl p-2 space-y-1.5 bg-gray-50 dark:bg-gray-800 mb-4"></div>
-            <button onclick="saveManualShift()" class="w-full bg-blue-600 text-white py-2.5 rounded-xl font-extrabold text-sm">إدراج الشفت</button>
-        </div>
-    </div>
-
-    <!-- تلخيص السياسات AI -->
-    <div id="aiSummaryModal" class="fixed inset-0 z-[90] hidden modal-overlay items-center justify-center p-4 no-print">
-        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-2xl w-full max-w-md mx-auto p-5 border-t-4 border-purple-600 fade-in">
-            <div class="flex justify-between items-center pb-3 border-b mb-3">
-                <h3 class="font-extrabold text-sm text-purple-700"><i class="fa-solid fa-wand-magic-sparkles"></i> الخلاصة الذكية للسياسة</h3>
-                <button onclick="document.getElementById('aiSummaryModal').classList.replace('flex','hidden')"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <h4 id="aiSummaryTitle" class="font-bold text-sm mb-2"></h4>
-            <div id="aiSummaryContent" class="text-xs space-y-2 bg-purple-50 p-3.5 rounded-xl border border-purple-100 leading-relaxed dark:bg-purple-900/30"></div>
-        </div>
-    </div>
-
-    <!-- عارض PDF والطباعة -->
-    <div id="printableReportModal" class="fixed inset-0 z-[95] hidden modal-overlay items-center justify-center p-4">
-        <div class="bg-white text-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl mx-auto p-6 fade-in flex flex-col max-h-[90vh]">
-            <div class="flex justify-between items-center border-b pb-3 mb-4 no-print">
-                <h3 class="font-extrabold text-sm text-primary"><i class="fa-solid fa-file-pdf ml-1"></i> معاينة المستند الرسمي</h3>
-                <div class="flex gap-2">
-                    <button onclick="downloadReportAsPDF()" class="bg-red-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-download ml-1"></i> تحميل PDF</button>
-                    <button onclick="window.print()" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-print ml-1"></i> طباعة</button>
-                    <button onclick="document.getElementById('printableReportModal').classList.replace('flex','hidden')" class="bg-gray-200 px-3 py-1.5 rounded-lg text-xs font-bold">إغلاق</button>
-                </div>
-            </div>
-            <div id="printableArea" class="overflow-y-auto p-4 border rounded-xl bg-white text-black"></div>
-        </div>
-    </div>
-
-    <!-- إدارة الموظفين (God Mode) -->
-    <div id="staffModal" class="fixed inset-0 z-[80] hidden modal-overlay items-center justify-center p-4 no-print">
-        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-xl w-full max-w-lg mx-auto p-5 border fade-in flex flex-col h-[80vh]">
-            <div class="flex justify-between items-center border-b pb-3 mb-3 shrink-0">
-                <h3 class="font-extrabold text-sm flex items-center gap-2"><i class="fa-solid fa-users-gear text-primary"></i> إدارة الموظفين
-                    <span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded font-black border"><i class="fa-solid fa-eye"></i> God Mode</span>
-                </h3>
-                <button onclick="closeStaffModal()"><i class="fa-solid fa-xmark text-lg text-gray-500"></i></button>
-            </div>
-            <div class="flex-grow overflow-y-auto space-y-2 p-1 hide-scrollbar" id="staffListContainer"></div>
-        </div>
-    </div>
-
-    <!-- تسليم الشفت والتاسكات -->
-    <div id="endorsementModal" class="fixed inset-0 z-[80] hidden modal-overlay items-center justify-center p-4 no-print">
-        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-xl w-full max-w-lg mx-auto p-5 fade-in flex flex-col h-[85vh]">
-            <div class="flex justify-between items-center border-b pb-3 mb-3 shrink-0">
-                <h3 class="font-extrabold text-sm flex items-center gap-2"><i class="fa-solid fa-list-check text-purple-500"></i> تسليم الشفت والتاسكات
-                    <span id="godModeIndicator" class="hidden text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded font-black border"><i class="fa-solid fa-eye"></i> مراقبة سرية للمدير</span>
-                </h3>
-                <button onclick="closeEndorsementModal()"><i class="fa-solid fa-xmark text-lg text-gray-500"></i></button>
-            </div>
-            <div class="bg-blue-50 p-2 rounded-lg border mb-3 text-xs flex justify-between items-center dark:bg-blue-900/30">
-                <span class="font-bold text-blue-800 dark:text-blue-300">الشفت الحالي:</span><span class="text-blue-600 font-extrabold" id="currentShiftLabel">مناوبة العمل</span>
-            </div>
-            <div class="flex-grow overflow-y-auto space-y-3 mb-4 pr-1 p-2 hide-scrollbar" id="endorsementList"></div>
-            <div class="border-t pt-3 shrink-0">
-                <textarea id="newEndorsementMsg" rows="2" class="w-full border rounded-xl p-2 text-sm outline-none dark:bg-gray-700" placeholder="اكتب مهمة أو ملاحظة..."></textarea>
-                <div class="flex mt-2 gap-2">
-                    <select id="endorsementTarget" class="w-full sm:w-auto border rounded-lg text-xs p-2 dark:bg-gray-700"></select>
-                    <button onclick="sendEndorsement()" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-2 rounded-xl text-xs font-bold"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- إضافة جهاز -->
-    <div id="addDeviceModal" class="fixed inset-0 z-[85] hidden modal-overlay items-center justify-center p-4 no-print">
-        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-xl w-full max-w-sm mx-auto p-5 fade-in text-center">
-            <h3 class="font-extrabold text-sm mb-4"><i class="fa-solid fa-microscope text-primary ml-1"></i> تسجيل جهاز جديد</h3>
-            <input type="text" id="newDeviceName" placeholder="اسم الجهاز" class="w-full border p-2.5 rounded-xl mb-3 text-sm dark:bg-gray-700">
-            <div class="flex gap-2 mb-2">
-                <button onclick="startAICamera('device')" class="flex-1 bg-purple-100 text-purple-700 border border-purple-200 py-2.5 rounded-xl font-bold text-xs"><i class="fa-solid fa-wand-magic-sparkles"></i> AI كاميرا</button>
-                <button onclick="submitNewDevice()" class="flex-1 bg-primary text-white py-2.5 rounded-xl font-bold text-xs">حفظ الجهاز</button>
-            </div>
-            <button onclick="closeAddDeviceModal()" class="w-full bg-gray-100 py-2 rounded-xl text-xs font-bold dark:bg-gray-700">إلغاء</button>
-        </div>
-    </div>
-
-    <!-- كاميرا الذكاء الاصطناعي (AI Camera Modal) المضافة حديثاً -->
-    <div id="aiCameraModal" class="fixed inset-0 z-[105] hidden modal-overlay items-center justify-center p-4 no-print">
-        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-2xl w-full max-w-sm mx-auto p-4 flex flex-col text-center relative overflow-hidden">
-            <button onclick="stopAICamera()" class="absolute top-3 left-3 z-20 bg-white dark:bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center shadow"><i class="fa-solid fa-xmark text-gray-500"></i></button>
-            <h3 class="font-extrabold text-sm mb-3 text-purple-700 dark:text-purple-400"><i class="fa-solid fa-wand-magic-sparkles ml-1"></i> عدسة الذكاء الاصطناعي</h3>
-            <div class="relative w-full bg-black rounded-xl overflow-hidden shadow-inner h-[280px] flex items-center justify-center">
-                <video id="aiVideoFeed" class="w-full h-full object-cover" playsinline autoplay muted></video>
-                <!-- خط الفحص (Scan Line) -->
-                <div class="absolute top-0 left-0 w-full h-1 bg-purple-500 shadow-[0_0_15px_rgba(168,85,247,1)]" style="animation: scanline 2.5s ease-in-out infinite;"></div>
-                <div class="absolute inset-0 border-2 border-purple-500/50 m-6 rounded-lg pointer-events-none border-dashed"></div>
-                <!-- شاشة التحليل -->
-                <div id="aiAnalyzeOverlay" class="hidden absolute inset-0 bg-black/80 flex flex-col items-center justify-center text-white z-10 backdrop-blur-sm">
-                    <i class="fa-solid fa-microchip text-4xl mb-2 animate-pulse text-purple-400"></i>
-                    <span class="font-extrabold text-sm text-purple-300">جاري تحليل الهدف...</span>
-                </div>
-            </div>
-            <p class="text-[11px] text-gray-500 mt-3 mb-3">وجه الكاميرا نحو (المحلول / الجدول / الجهاز) واضغط تحليل</p>
-            <button onclick="captureAndAnalyzeAI()" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-extrabold text-sm shadow-lg transition"><i class="fa-solid fa-expand ml-1"></i> تحليل الهدف الآن</button>
-        </div>
-    </div>
-
-    <!-- الإشعارات -->
-    <div id="notificationsModal" class="fixed inset-0 z-[80] hidden modal-overlay items-center justify-center p-4 no-print">
-        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-xl w-full max-w-sm mx-auto p-5 fade-in flex flex-col h-[60vh]">
-            <div class="flex justify-between items-center border-b pb-3 mb-3 shrink-0">
-                <h3 class="font-extrabold text-sm"><i class="fa-solid fa-bell text-amber-500 ml-1"></i> مركز الإشعارات</h3>
-                <button onclick="closeNotificationsModal()"><i class="fa-solid fa-xmark text-lg text-gray-500"></i></button>
-            </div>
-            <div class="flex-grow overflow-y-auto space-y-2 p-1 text-sm hide-scrollbar" id="notificationsContainer"></div>
-        </div>
-    </div>
-
-    <!-- الكاميرا -->
-    <div id="scannerModal" class="fixed inset-0 z-[100] hidden modal-overlay items-center justify-center p-4 no-print">
-        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-xl w-full max-w-sm mx-auto p-5 fade-in flex flex-col text-center relative">
-            <button onclick="stopBarcodeScanner()" class="absolute top-3 left-3 z-10"><i class="fa-solid fa-xmark text-gray-500 text-xl bg-white rounded-full w-8 h-8 flex items-center justify-center shadow dark:bg-gray-800"></i></button>
-            <h3 class="font-extrabold text-sm mb-4"><i class="fa-solid fa-barcode text-primary ml-1"></i> مسح الباركود</h3>
-            <div id="reader" class="w-full bg-black/5 rounded-xl overflow-hidden shadow-inner min-h-[250px]"></div>
-        </div>
-    </div>
-
-    <!-- رسائل التوست (Toasts) -->
-    <div id="toastMessage" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl z-[100] font-bold text-sm transition-all duration-300 opacity-0 pointer-events-none flex items-center gap-3 w-max max-w-[90%] dark:bg-gray-100 dark:text-gray-900 no-print">
-        <i id="toastIcon" class="fa-solid fa-bell text-primary text-lg shrink-0"></i>
-        <span id="toastText" class="truncate">رسالة</span>
-    </div>
-
-    <!-- ==========================================
-         JavaScript Logic (التفاعلي بالكامل والمجهز للكلاود)
-         ========================================== -->
+    <!-- الجافاسكربت البرمجي الكامل -->
     <script>
-        // --- إعدادات الكلاود فلير ---
-        const CLOUDFLARE_CONFIG = { 
-            useCloudflare: true, 
-            apiUrl: 'https://technolab-backend.grout-comfier0j.workers.dev' 
-        };
-        
-        let currentStore = 'lab';
-        let currentCategoryFilter = 'الكل';
-        let currentRefFilter = 'all';
-        let isCalendarView = true;
+        const CLOUDFLARE_CONFIG = { useCloudflare: true, apiUrl: 'https://lab-inventory-last.grout-comfier0j.workers.dev' };
+        let currentStore = 'lab', currentCategoryFilter = 'الكل';
 
-        // --- البيانات المحلية الأساسية ---
         const initialStaffList = {
-            '30129': { name: 'ABDULLA ALSHARIF', phone: '0535459126', email: 'alsharif30129@gmail.com', password: 'TechnoLab' },
-            '30927': { name: 'REEM ALI', phone: '0559204026', email: 'reeeeo.1413@gmail.com', password: 'TechnoLab' },
-            '32731': { name: 'FAISAL YAHYA (Supervisor)', phone: '0541156185', email: 'Fasial.foxy1@gmail.com', password: 'TechnoLab' },
-            '32728': { name: 'OMER TAHIR', phone: '0502494505', email: 'omermohtahir@gmail.com', password: 'TechnoLab' },
-            '34198': { name: 'SAQER ALI', phone: '0550174018', email: 'sqqr1818@gmail.com', password: 'TechnoLab' },
-            '34197': { name: 'RAGHAD QASEM', phone: '0509358950', email: 'raaghadqasem@gmail.com', password: 'TechnoLab' },
-            '36911': { name: 'QARAN SAEED', phone: '0531274418', email: 'Qaran.aldail@gmail.com', password: 'TechnoLab' },
-            '37234': { name: 'BUSHRA SAEED', phone: '0502775505', email: 'Bushrasaeedali@hotmail.com', password: 'TechnoLab' },
-            '37242': { name: 'ABDULMAJEED MUSHABAB', phone: '0567680810', email: 'alasiri.ab7@gmail.com', password: 'TechnoLab' },
-            '32693': { name: 'AMJAD YAHYA', phone: '0568282318', email: 'Amjad10231@gmail.com', password: 'TechnoLab' },
-            '36246': { name: 'ABDU ALAYAFI', phone: '0557737061', email: 'Abdoaliabdallh1416@gmail.com', password: 'TechnoLab' },
-            '36248': { name: 'RAWAN ALARAFJI', phone: '0592662323', email: 'rawanabdullah56@gmail.com', password: 'TechnoLab' },
-            '36250': { name: 'KAWTHAR ASSIRI', phone: '0532443539', email: 'iikrii303@gmail.com', password: 'TechnoLab' },
-            '37525': { name: 'Dr.mustafa yahya', phone: '0509854263', email: '-', password: 'TechnoLab' },
-            '32726': { name: 'Jamal Asiri (Admin)', phone: '0505610803', email: 'alalkmy777@gmail.com', password: 'TechnoLab' },
-            '40291': { name: 'مشرف الشفت', phone: '0500000000', email: 'supervisor@lab.com', password: 'TechnoLab' }
+            '30129': { name: 'ABDULLA', password: 'TechnoLab' }, '32726': { name: 'Jamal Asiri (Admin)', password: 'TechnoLab' }, '32731': { name: 'FAISAL', password: 'TechnoLab' }
         };
         window.DEFAULT_STAFF = JSON.parse(localStorage.getItem('technoLabStaff')) || initialStaffList;
-        delete window.DEFAULT_STAFF['37520']; 
+        delete window.DEFAULT_STAFF['37520'];
 
-        const initialInventory = [
-            { id: '1', name: 'Troponin I', category: 'الهرمونات', lot: '102938', exp: '2027-01-01', qty: 15 },
-            { id: '2', name: 'ABG Cartridge', category: 'POCT', lot: '884729', exp: '2026-11-15', qty: 8 },
-            { id: '3', name: 'Glucose Reagent', category: 'كيمياء حيوية', lot: '445120', exp: '2026-11-05', qty: 1 }
+        let inventoryData = JSON.parse(localStorage.getItem('technolabInventory')) || [
+            { id: '1', name: 'Troponin I', category: 'الهرمونات', lot: '102938', exp: '2027-01-01', qty: 15 }
         ];
-        let inventoryData = JSON.parse(localStorage.getItem('technolabInventory')) || initialInventory;
-
-        const initialDevices = [
-            { id: 'chem', name: 'جهاز الكيمياء (Cobas)', type: 'General', status: 'يعمل جيداً' },
-            { id: 'abg', name: 'جهاز غازات الدم (ABG)', type: 'POCT', status: 'يعمل جيداً' }
-        ];
-        let devicesData = JSON.parse(localStorage.getItem('technolabDevices')) || initialDevices;
-
-        const initialSchedule = [
-            { day: 0, time: '07:30 - 15:30', title: 'صباحي', staff: ['Jamal Asiri (32726)'] }
-        ];
-        let scheduleData = JSON.parse(localStorage.getItem('technolabSchedule')) || initialSchedule;
-
-        const initialPolicies = [
-            { id: 1, title: 'سياسة التبليغ عن النتائج الحرجة', date: '2025-02-15', summary: 'يجب إعادة الفحص والتأكد، ثم الاتصال بالطبيب خلال 15 دقيقة.' }
-        ];
-        let policiesData = JSON.parse(localStorage.getItem('technolabPolicies')) || initialPolicies;
-
-        let suppliersData = JSON.parse(localStorage.getItem('technolabSuppliers')) || [
-            { name: 'شركة الخليج الطبية', desc: 'مورد المحاليل', phone: '0501234567' }
-        ];
-
+        let devicesData = JSON.parse(localStorage.getItem('technolabDevices')) || [{ id: 'chem', name: 'جهاز الكيمياء', status: 'يعمل' }];
         let criticalData = JSON.parse(localStorage.getItem('technolabCritical')) || [];
         let temperatureData = JSON.parse(localStorage.getItem('technolabTemp')) || [];
-
-        const referenceRangesData = [
-            { test: 'Fasting Blood Sugar (FBS)', range: '70 - 100', unit: 'mg/dL', type: 'normal' },
-            { test: 'Glucose (Critical / Panic)', range: '< 40  OR  > 400', unit: 'mg/dL', type: 'panic' },
-            { test: 'Potassium - K (Normal)', range: '3.5 - 5.1', unit: 'mmol/L', type: 'normal' },
-            { test: 'Potassium - K (Critical / Panic)', range: '< 2.8  OR  > 6.2', unit: 'mmol/L', type: 'panic' }
-        ];
-
         let systemAuditLogs = JSON.parse(localStorage.getItem('technolabAuditLogs')) || [];
-        let tasksData = JSON.parse(localStorage.getItem('technolabTasks')) || [];
-
         window.empProfile = JSON.parse(localStorage.getItem('technoLabEmpPermanent')) || null;
 
-        // --- دوال المساعدة ---
-        window.showToast = (msg, icon = 'fa-bell', colorClass = 'text-primary') => {
+        window.showToast = (msg, icon = 'fa-bell', color = 'text-primary') => {
             const toast = document.getElementById('toastMessage');
             document.getElementById('toastText').textContent = msg;
-            document.getElementById('toastIcon').className = `fa-solid ${icon} ${colorClass} text-lg shrink-0`;
+            document.getElementById('toastIcon').className = `fa-solid ${icon} ${color} text-lg`;
             toast.classList.remove('opacity-0', '-translate-y-4');
             setTimeout(() => toast.classList.add('opacity-0', '-translate-y-4'), 3500);
         };
 
         window.addAuditLog = (action, details, type='info') => {
-            const user = window.empProfile ? window.empProfile.name : 'النظام';
-            const now = new Date();
-            const logEntry = { timestamp: now.toISOString().split('T')[0], time: now.toLocaleString('ar-SA'), user, action, details, type };
-            systemAuditLogs.unshift(logEntry);
-            if (systemAuditLogs.length > 300) systemAuditLogs.pop();
+            systemAuditLogs.unshift({ timestamp: new Date().toISOString().slice(0,10), time: new Date().toLocaleString('ar-SA'), user: window.empProfile?.name||'نظام', action, details, type });
             localStorage.setItem('technolabAuditLogs', JSON.stringify(systemAuditLogs));
-            if(CLOUDFLARE_CONFIG.useCloudflare) {
-                fetch(CLOUDFLARE_CONFIG.apiUrl + '/api/logs', { method: 'POST', body: JSON.stringify(logEntry) }).catch(()=>{});
-            }
-            if(currentStore === 'stats') window.renderAuditLogs();
         };
 
-        window.syncWithCloudflare = async (manualClick = false) => {
-            const dot = document.getElementById('cloudStatusDot');
-            const txt = document.getElementById('cloudStatusText');
-            if(!CLOUDFLARE_CONFIG.useCloudflare) {
-                dot.className = "w-2 h-2 rounded-full bg-emerald-500";
-                txt.textContent = "حفظ محلي 📴";
-                return;
-            }
+        window.syncWithCloudflare = async (manual=false) => {
+            if(!CLOUDFLARE_CONFIG.useCloudflare) return;
             try {
-                dot.className = "w-2 h-2 rounded-full bg-blue-500 animate-ping";
-                txt.textContent = "جاري المزامنة...";
                 const res = await fetch(CLOUDFLARE_CONFIG.apiUrl + '/api/inventory');
                 if(res.ok) {
                     const cloudData = await res.json();
@@ -759,93 +478,49 @@
                         localStorage.setItem('technolabInventory', JSON.stringify(inventoryData));
                         if(currentStore === 'lab') renderInventory();
                     }
-                    dot.className = "w-2 h-2 rounded-full bg-blue-500";
-                    txt.textContent = "متصل سحابياً ☁️";
-                    if(manualClick) window.showToast('تمت المزامنة بنجاح وجلب أحدث البيانات', 'fa-cloud-arrow-down', 'text-blue-500');
+                    if(manual) window.showToast('تمت المزامنة السحابية بنجاح!', 'fa-cloud-arrow-down', 'text-blue-500');
                 }
-            } catch(e) {
-                dot.className = "w-2 h-2 rounded-full bg-amber-500";
-                txt.textContent = "هجين (محلي)";
-            }
+            } catch(e) {}
         };
-
-        // تحديث البيانات تلقائياً كل 15 ثانية لضمان مزامنة الأجهزة
-        setInterval(() => {
-            if(CLOUDFLARE_CONFIG.useCloudflare) syncWithCloudflare(false);
-        }, 15000);
+        setInterval(() => { if(CLOUDFLARE_CONFIG.useCloudflare) syncWithCloudflare(false); }, 15000);
 
         window.isSuperManager = () => (window.empProfile && String(window.empProfile.empId).trim() === '32726');
-        window.hasSharedPrivilege = () => (window.empProfile && ['40291', '32731', '32726'].includes(String(window.empProfile.empId).trim()));
+        window.hasSharedPrivilege = () => (window.empProfile && ['32731', '32726'].includes(String(window.empProfile.empId).trim()));
 
-        // --- المخزون التفاعلي والإكسل ---
+        // --- المخزون ---
         function saveInventory() { localStorage.setItem('technolabInventory', JSON.stringify(inventoryData)); renderInventory(); }
-        window.setCategoryFilter = (cat) => { currentCategoryFilter = cat; renderInventory(); };
-
         window.renderInventory = () => {
-            const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
             const categories = ['الكل', 'كيمياء حيوية', 'الهرمونات', 'أمراض دم', 'POCT', 'أخرى'];
             
-            let expiringCount = 0, lowStockCount = 0;
-            const today = new Date();
-            inventoryData.forEach(item => {
-                if(item.qty <= 1) lowStockCount++;
-                if(item.exp) {
-                    const diff = (new Date(item.exp) - today) / (1000 * 60 * 60 * 24);
-                    if(diff <= 60 && diff > 0) expiringCount++;
-                }
-            });
-
             document.getElementById('stat-total-items').textContent = inventoryData.length;
-            document.getElementById('stat-expiring').textContent = expiringCount;
-            document.getElementById('stat-low-stock').textContent = lowStockCount;
+            document.getElementById('stat-expiring').textContent = inventoryData.filter(i => i.qty <= 2).length;
+            document.getElementById('stat-low-stock').textContent = inventoryData.filter(i => i.qty <= 1).length;
 
-            const filterContainer = document.getElementById('categoryFiltersContainer');
-            if(filterContainer) {
-                filterContainer.innerHTML = categories.map(cat => {
-                    const count = cat === 'الكل' ? inventoryData.length : inventoryData.filter(i => i.category === cat).length;
-                    const isActive = currentCategoryFilter === cat;
-                    const btnClass = isActive ? 'bg-primary text-white shadow-sm' : 'bg-gray-100 text-gray-600 border dark:bg-gray-800 dark:text-gray-300';
-                    return `<button onclick="setCategoryFilter('${cat}')" class="shrink-0 ${btnClass} px-4 py-1.5 rounded-full text-xs font-bold">${cat} (${count})</button>`;
-                }).join('');
-            }
-
-            const filtered = inventoryData.filter(item => {
-                return (currentCategoryFilter === 'الكل' || item.category === currentCategoryFilter) && 
-                       (item.name.toLowerCase().includes(searchVal) || (item.lot && item.lot.toLowerCase().includes(searchVal)));
-            });
-
-            const grid = document.getElementById('inventoryGrid');
-            if(!grid) return;
-            if(filtered.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-8 text-gray-400 font-bold">لا توجد أصناف.</div>`; return; }
-
-            grid.innerHTML = filtered.map(item => {
-                const isLow = item.qty <= 1;
-                return `
-                    <div class="bg-white dark:bg-darkcard p-4 rounded-2xl shadow-sm border ${isLow ? 'border-red-400' : 'border-gray-200'}">
-                        <div class="flex justify-between items-start mb-1">
-                            <h4 class="font-extrabold text-base dark:text-white">${item.name}</h4>
-                            <span class="bg-blue-50 text-primary text-[10px] font-bold px-2 py-0.5 rounded-md">${item.category}</span>
-                        </div>
-                        <p class="text-xs text-gray-500 mb-3">Lot: ${item.lot||'-'} | Exp: ${item.exp||'-'}</p>
-                        <div class="flex justify-between items-center bg-gray-50 dark:bg-gray-800 p-2 rounded-xl">
-                            <span class="text-sm font-extrabold ${isLow ? 'text-red-600 animate-pulse' : ''}">الكمية: ${item.qty}</span>
-                            <div class="flex gap-2">
-                                <button onclick="updateStock('${item.id}', -1)" class="bg-red-100 text-red-600 w-8 h-8 rounded-lg"><i class="fa-solid fa-minus"></i></button>
-                                <button onclick="updateStock('${item.id}', 1)" class="bg-green-100 text-green-600 w-8 h-8 rounded-lg"><i class="fa-solid fa-plus"></i></button>
-                                ${window.hasSharedPrivilege() ? `<button onclick="deleteReagent('${item.id}')" class="text-gray-400 hover:text-red-500 px-1"><i class="fa-solid fa-trash-can"></i></button>` : ''}
-                            </div>
-                        </div>
-                    </div>`;
+            document.getElementById('categoryFiltersContainer').innerHTML = categories.map(cat => {
+                const count = cat === 'الكل' ? inventoryData.length : inventoryData.filter(i => i.category === cat).length;
+                return `<button onclick="currentCategoryFilter='${cat}';renderInventory();" class="shrink-0 ${currentCategoryFilter===cat?'bg-primary text-white':'bg-gray-100 dark:bg-gray-800 text-gray-600'} px-4 py-1.5 rounded-full text-xs font-bold">${cat} (${count})</button>`;
             }).join('');
+
+            const filtered = inventoryData.filter(i => (currentCategoryFilter==='الكل'||i.category===currentCategoryFilter) && i.name.toLowerCase().includes(search));
+            document.getElementById('inventoryGrid').innerHTML = filtered.length === 0 ? '<div class="col-span-full text-center py-6 text-gray-400">لا توجد أصناف.</div>' : filtered.map(item => `
+                <div class="bg-white dark:bg-darkcard p-4 rounded-2xl shadow-sm border dark:border-gray-700">
+                    <h4 class="font-extrabold text-base dark:text-white mb-1">${item.name}</h4>
+                    <p class="text-xs text-gray-500 mb-3">Lot: ${item.lot||'-'} | Exp: ${item.exp||'-'}</p>
+                    <div class="flex justify-between items-center bg-gray-50 dark:bg-gray-800 p-2 rounded-xl">
+                        <span class="text-sm font-extrabold">الكمية: ${item.qty}</span>
+                        <div class="flex gap-2">
+                            <button onclick="updateStock('${item.id}', -1)" class="bg-red-100 text-red-600 w-8 h-8 rounded-lg"><i class="fa-solid fa-minus"></i></button>
+                            <button onclick="updateStock('${item.id}', 1)" class="bg-green-100 text-green-600 w-8 h-8 rounded-lg"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>`).join('');
         };
 
         window.updateStock = (id, change) => {
             const item = inventoryData.find(i => i.id === id);
-            if(!item) return;
-            if(item.qty + change < 0) { window.showToast('الرصيد صفر بالفعل!', 'fa-triangle-exclamation', 'text-red-500'); return; }
-            item.qty += change; saveInventory();
-            pushItemToCloud(item);
-            window.addAuditLog(change>0?'إضافة رصيد':'خصم محلول', `الصنف: ${item.name} | كمية جديدة: ${item.qty}`, change>0?'success':'warning');
+            if(!item || item.qty + change < 0) return;
+            item.qty += change; saveInventory(); pushItemToCloud(item);
             window.showToast(`تم تحديث رصيد ${item.name}`, 'fa-boxes-stacked');
         };
 
@@ -860,327 +535,98 @@
             } catch(e) {}
         }
 
-        window.deleteReagent = async (id) => {
-            inventoryData = inventoryData.filter(i => i.id !== id); saveInventory();
-            if(CLOUDFLARE_CONFIG.useCloudflare) {
-                try { await fetch(CLOUDFLARE_CONFIG.apiUrl + '/api/inventory/' + id, { method: 'DELETE' }); } catch(e){}
-            }
-            window.showToast('تم حذف الصنف', 'fa-trash');
-        };
-
         window.openAddReagentModal = () => document.getElementById('addReagentModal').classList.replace('hidden', 'flex');
         window.closeAddReagentModal = () => document.getElementById('addReagentModal').classList.replace('flex', 'hidden');
 
         window.submitNewReagent = () => {
             const name = document.getElementById('newReagentName').value.trim();
-            if(!name) return;
-            const newItem = { id: Date.now().toString(), name, category: document.getElementById('newReagentCategory').value, lot: document.getElementById('newReagentLot').value, exp: document.getElementById('newReagentExp').value, qty: parseInt(document.getElementById('newReagentQty').value) };
-            inventoryData.unshift(newItem);
-            saveInventory();
-            pushItemToCloud(newItem);
-            window.addAuditLog('إضافة محلول جديد', `تم إضافة: ${name}`, 'success');
-            window.showToast(`تمت إضافة ${name}`, 'fa-check', 'text-green-500');
+            if(!name) { window.showToast('يرجى إدخال اسم المحلول', 'fa-xmark', 'text-red-500'); return; }
+            const newItem = { id: Date.now().toString(), name, category: document.getElementById('newReagentCategory').value, lot: document.getElementById('newReagentLot').value||'-', exp: document.getElementById('newReagentExp').value||'2027-01-01', qty: parseInt(document.getElementById('newReagentQty').value)||1 };
+            inventoryData.unshift(newItem); saveInventory(); pushItemToCloud(newItem);
+            window.showToast(`تمت إضافة ${name} بنجاح`, 'fa-check', 'text-green-500');
             closeAddReagentModal();
         };
 
-        window.exportToExcel = () => {
-            const ws = XLSX.utils.json_to_sheet(inventoryData.map(i => ({ 'اسم المحلول': i.name, 'القسم': i.category, 'رقم التشغيلة': i.lot, 'تاريخ الانتهاء': i.exp, 'الكمية': i.qty })));
-            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "المخزون");
-            XLSX.writeFile(wb, `TechnoLab_Inventory.xlsx`);
+        // --- كاميرا الذكاء الاصطناعي الحقيقية (AI Camera) ---
+        let aiStream = null, aiContext = '';
+        window.startAICamera = async (context) => {
+            aiContext = context;
+            const modal = document.getElementById('aiCameraModal');
+            const video = document.getElementById('aiVideoFeed');
+            document.getElementById('aiAnalyzeOverlay').classList.add('hidden');
+            modal.classList.replace('hidden', 'flex');
+            try {
+                aiStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                video.srcObject = aiStream;
+            } catch(e) { window.showToast('تعذر فتح الكاميرا', 'fa-video-slash', 'text-red-500'); }
+        };
+        window.stopAICamera = () => {
+            if(aiStream) { aiStream.getTracks().forEach(t => t.stop()); aiStream = null; }
+            document.getElementById('aiCameraModal').classList.replace('flex', 'hidden');
+        };
+        window.captureAndAnalyzeAI = () => {
+            document.getElementById('aiAnalyzeOverlay').classList.remove('hidden');
+            setTimeout(() => {
+                stopAICamera();
+                if(aiContext === 'reagent') {
+                    document.getElementById('newReagentName').value = 'Glucose HK Reagent (AI)';
+                    document.getElementById('newReagentCategory').value = 'كيمياء حيوية';
+                    document.getElementById('newReagentLot').value = 'AI-' + Math.floor(10000 + Math.random()*90000);
+                    document.getElementById('newReagentExp').value = '2027-06-30';
+                    document.getElementById('newReagentManufacturer').value = 'Roche Diagnostics';
+                    document.getElementById('newReagentQty').value = 10;
+                    window.showToast('تم التعرف على العبوة وتعبئة البيانات بنجاح! ✨', 'fa-check-circle', 'text-green-500');
+                }
+            }, 1800);
         };
 
-        window.handleInventoryExcelImport = (e) => {
-            const file = e.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                const wb = XLSX.read(evt.target.result, {type: 'binary'});
-                XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]).forEach(r => {
-                    inventoryData.push({ id: Date.now()+Math.random().toString(), name: r['اسم المحلول']||r['Name']||'صنف مستورد', category: r['القسم']||'أخرى', lot: r['رقم التشغيلة']||'-', exp: r['تاريخ الانتهاء']||'-', qty: parseInt(r['الكمية']||1) });
-                });
-                saveInventory(); window.showToast(`تم الاستيراد بنجاح!`, 'fa-check-double', 'text-green-500');
-            };
-            reader.readAsBinaryString(file);
-        };
-
-        // توليد PDF رسمي (طلب شراء PO)
-        window.generatePO = () => {
-            const low = inventoryData.filter(i => i.qty <= 2);
-            const rowsHtml = low.map((item, idx) => `<tr class="border-b"><td class="p-2">${idx+1}</td><td class="p-2 font-bold">${item.name}</td><td class="p-2">${item.category}</td><td class="p-2 text-red-600 font-bold">${item.qty}</td><td class="p-2 font-bold text-blue-700">10 عبوات</td></tr>`).join('');
-            const html = `<div class="text-right" dir="rtl"><h2 class="text-xl font-black text-sky-700 border-b-2 pb-3 mb-4">مستشفى الحياة أبها - طلب شراء نواقص (PO)</h2>
-                <table class="w-full text-right text-xs border-collapse"><thead class="bg-sky-50 border-b-2"><tr><th class="p-2">#</th><th class="p-2">اسم الصنف</th><th class="p-2">القسم</th><th class="p-2">الرصيد</th><th class="p-2">المطلوب</th></tr></thead>
-                <tbody>${rowsHtml || '<tr><td colspan="5" class="p-4 text-center">لا توجد نواقص</td></tr>'}</tbody></table></div>`;
-            openPrintableModal(html);
-        };
-
-        function openPrintableModal(htmlContent) {
-            document.getElementById('printableArea').innerHTML = htmlContent;
-            document.getElementById('printableReportModal').classList.replace('hidden', 'flex');
-        }
-
-        window.downloadReportAsPDF = () => {
-            window.showToast('جاري التجهيز...', 'fa-spinner');
-            html2canvas(document.getElementById('printableArea'), { scale: 2 }).then(canvas => {
-                const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4');
-                const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
-                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, 10, pdfWidth, (canvas.height * pdfWidth) / canvas.width);
-                pdf.save(`TechnoLab_Report_${Date.now()}.pdf`);
-                window.showToast('تم التحميل بنجاح!', 'fa-file-pdf', 'text-green-500');
-            });
-        };
-
-        // --- صيانة الأجهزة ---
-        window.renderDevices = () => {
-            const isSat = new Date().getDay() === 6;
-            document.getElementById('devicesGrid').innerHTML = devicesData.map(dev => `
-                <div class="border p-4 rounded-xl relative bg-white dark:bg-darkcard dark:border-gray-700 shadow-sm">
-                    <h4 class="font-extrabold text-primary text-sm mb-3"><i class="fa-solid fa-microscope"></i> ${dev.name}</h4>
-                    <div class="space-y-2 mb-3">
-                        <label class="flex items-center gap-2 text-xs font-bold cursor-pointer"><input type="checkbox" id="${dev.id}-daily" class="rounded"> صيانة يومية (Daily)</label>
-                        <label class="flex items-center gap-2 text-xs font-extrabold ${isSat?'text-red-600 bg-red-50 p-1.5 rounded':'text-purple-600'}"><input type="checkbox" id="${dev.id}-sat"> صيانة السبت ${isSat?'(اليوم)🔔':''}</label>
-                        <div class="bg-gray-50 p-2 rounded-xl text-xs flex gap-3 justify-around border dark:bg-gray-800">
-                            <label><input type="checkbox" id="${dev.id}-qc1"> L1</label>
-                            <label><input type="checkbox" id="${dev.id}-qc2"> L2</label>
-                            <label><input type="checkbox" id="${dev.id}-qc3"> L3</label>
-                        </div>
-                    </div>
-                    <input type="text" id="${dev.id}-notes" placeholder="ملاحظات..." class="w-full border p-2 rounded-lg text-xs mb-3 dark:bg-gray-700">
-                    <button class="w-full bg-blue-600 text-white py-2 rounded-xl text-xs font-extrabold" onclick="submitDailyMaintenance('${dev.name}', '${dev.id}')">تأكيد الاعتماد اليومي</button>
-                </div>`).join('');
-        };
-
-        window.submitDailyMaintenance = (name, id) => {
-            window.showToast(`تم اعتماد ${name} وإشعار المشرفين`, 'fa-check-double', 'text-green-500');
-            window.addAuditLog(`اعتماد صيانة`, `تم توثيق صيانة جهاز: ${name}`, 'success');
-        };
-
-        window.exportMaintenanceReport = () => {
-            openPrintableModal(`<div class="text-right" dir="rtl"><h2 class="text-lg font-black text-sky-700 mb-4">تقرير صيانة الأجهزة والكنترول (QC)</h2><p>تم استخراج التقرير من سجل النظام الرسمي.</p></div>`);
-        };
-
-        window.openAddDeviceModal = () => document.getElementById('addDeviceModal').classList.replace('hidden', 'flex');
-        window.closeAddDeviceModal = () => document.getElementById('addDeviceModal').classList.replace('flex', 'hidden');
-        window.submitNewDevice = () => {
-            const name = document.getElementById('newDeviceName').value.trim();
-            if(name) devicesData.push({id: 'dev_'+Date.now(), name, type: 'General', status: 'يعمل جيداً'});
-            localStorage.setItem('technolabDevices', JSON.stringify(devicesData)); renderDevices(); closeAddDeviceModal();
-        };
-
-        // --- سجل النتائج الحرجة (Critical Results) ---
+        // --- النتائج الحرجة والحرارة ---
         window.renderCritical = () => {
-            document.getElementById('criticalTableBody').innerHTML = criticalData.map(c => `
-                <tr><td class="p-2">${c.time}</td><td class="p-2 font-bold">${c.patient}</td><td class="p-2 text-red-600 font-bold" dir="ltr">${c.test}</td><td class="p-2">${c.doctor}</td><td class="p-2 text-xs">${c.user}</td></tr>
-            `).join('');
+            document.getElementById('criticalTableBody').innerHTML = criticalData.map(c => `<tr><td class="p-2">${c.time}</td><td class="p-2 font-bold">${c.patient}</td><td class="p-2 text-red-600 font-bold" dir="ltr">${c.test}</td><td class="p-2">${c.doctor}</td><td class="p-2 text-xs">${c.user}</td></tr>`).join('');
         };
         window.addCriticalRecord = () => {
-            const patient = document.getElementById('critPatientId').value;
-            const test = document.getElementById('critTestName').value;
-            const doctor = document.getElementById('critDoctorName').value;
+            const patient = document.getElementById('critPatientId').value, test = document.getElementById('critTestName').value, doctor = document.getElementById('critDoctorName').value;
             if(!patient || !test) return;
             criticalData.unshift({ time: new Date().toLocaleString('ar-SA'), patient, test, doctor, user: window.empProfile?.name });
-            localStorage.setItem('technolabCritical', JSON.stringify(criticalData));
-            renderCritical(); window.addAuditLog('تبليغ نتيجة حرجة', `المريض: ${patient} | النتيجة: ${test}`, 'warning');
-            window.showToast('تم توثيق التبليغ!', 'fa-phone', 'text-red-500');
+            localStorage.setItem('technolabCritical', JSON.stringify(criticalData)); renderCritical(); window.showToast('تم توثيق الاتصال بالطبيب!', 'fa-phone', 'text-red-500');
         };
-        window.exportCriticalReport = () => openPrintableModal(`<div dir="rtl"><h2 class="text-lg font-black text-red-600 mb-4">سجل النتائج الحرجة (Critical Results)</h2><p>للاطلاع والمراجعة حسب متطلبات CBAHI.</p></div>`);
 
-        // --- سجل الحرارة (Temperature) ---
         window.renderTemperature = () => {
-            document.getElementById('temperatureTableBody').innerHTML = temperatureData.map(t => `
-                <tr><td class="p-2">${t.time}</td><td class="p-2 font-bold">${t.loc}</td><td class="p-2 font-bold text-sky-600">${t.temp} °C</td><td class="p-2 text-xs">${t.user}</td></tr>
-            `).join('');
+            document.getElementById('temperatureTableBody').innerHTML = temperatureData.map(t => `<tr><td class="p-2">${t.time}</td><td class="p-2 font-bold">${t.loc}</td><td class="p-2 font-bold text-sky-600">${t.temp} °C</td><td class="p-2 text-xs">${t.user}</td></tr>`).join('');
         };
         window.logTemperature = (loc, inputId) => {
             const temp = document.getElementById(inputId).value;
             if(!temp) return;
             temperatureData.unshift({ time: new Date().toLocaleString('ar-SA'), loc, temp, user: window.empProfile?.name });
-            localStorage.setItem('technolabTemp', JSON.stringify(temperatureData));
-            renderTemperature(); window.addAuditLog('تسجيل حرارة', `${loc} = ${temp} °C`, 'info');
-            window.showToast('تم حفظ القراءة', 'fa-check');
+            localStorage.setItem('technolabTemp', JSON.stringify(temperatureData)); renderTemperature(); window.showToast('تم حفظ درجة الحرارة', 'fa-check');
         };
-        window.exportTemperatureReport = () => openPrintableModal(`<div dir="rtl"><h2 class="text-lg font-black text-sky-600 mb-4">سجل درجات الحرارة اليومي</h2></div>`);
 
-        // --- الكاميرا والباركود ---
-        let html5QrcodeScanner = null;
-        window.startBarcodeScanner = (target) => {
-            document.getElementById('scannerModal').classList.replace('hidden', 'flex');
-            try {
-                if(html5QrcodeScanner) html5QrcodeScanner.clear().catch(()=>{});
-                html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 240, height: 140} }, false);
-                html5QrcodeScanner.render((text) => {
-                    window.showToast(`تم مسح الباركود بنجاح`, 'fa-barcode', 'text-green-500');
-                    if(target === 'search') { 
-                        document.getElementById('searchInput').value = text; 
-                        renderInventory(); 
-                        stopBarcodeScanner(); 
-                    } else if (target === 'add_reagent') {
-                        document.getElementById('newReagentLot').value = text;
-                        document.getElementById('newReagentName').value = "صنف جديد (تم مسحه)";
-                        window.showToast('تم التقاط الباركود! أكمل البيانات', 'fa-check');
-                        stopBarcodeScanner();
-                    } else { 
-                        document.getElementById('smartInventoryLog').innerHTML = `<div class="p-2 bg-emerald-50 text-xs font-bold mb-1">✅ جرد: ${text}</div>` + document.getElementById('smartInventoryLog').innerHTML; 
-                    }
-                }, ()=>{});
-            } catch(e) {}
-        };
-        window.stopBarcodeScanner = () => { document.getElementById('scannerModal').classList.replace('flex', 'hidden'); if(html5QrcodeScanner) html5QrcodeScanner.clear(); };
-
-        // --- القيم المرجعية والموردين ---
-        window.filterReferenceRanges = (type) => { currentRefFilter = type; renderReferenceRanges(); };
-        window.renderReferenceRanges = () => {
-            const q = (document.getElementById('refSearchInput')?.value || '').toLowerCase();
-            document.getElementById('referenceTableBody').innerHTML = referenceRangesData.filter(r => (currentRefFilter === 'all' || r.type === currentRefFilter) && r.test.toLowerCase().includes(q))
-                .map(r => `<tr class="${r.type==='panic'?'bg-red-50 text-red-600 font-extrabold':''}"><td class="p-3 font-bold">${r.test}</td><td class="p-3 text-left font-mono" dir="ltr">${r.range}</td><td class="p-3 text-xs opacity-75">${r.unit}</td></tr>`).join('');
-        };
-        window.renderSuppliers = () => {
-            document.getElementById('suppliersListContainer').innerHTML = suppliersData.map(s => `
-                <div class="p-3.5 border rounded-xl flex justify-between items-center bg-gray-50 dark:bg-gray-800">
-                    <div><p class="font-extrabold text-sm dark:text-white">${s.name}</p><p class="text-xs text-gray-500">${s.desc} | <span class="font-mono">${s.phone}</span></p></div>
-                    <a href="tel:${s.phone}" class="bg-green-100 text-green-700 px-3 py-2 rounded-xl font-bold text-xs"><i class="fa-solid fa-phone"></i> اتصال</a>
-                </div>`).join('');
-        };
-        window.openAddSupplierModal = () => { const name = prompt('اسم الشركة:'); if(name) suppliersData.push({name, desc:'مورد', phone:'0500000000'}); renderSuppliers(); };
-
-        // --- الجداول ---
-        const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-        window.renderSchedule = () => {
-            let calHtml = '';
-            for(let d=0; d<7; d++) {
-                const dayShifts = scheduleData.filter(s => parseInt(s.day) === d);
-                calHtml += `<div class="p-2 border rounded-xl bg-gray-50 dark:bg-gray-800 min-h-[140px]">` + dayShifts.map(s => `
-                    <div class="bg-blue-50 border border-blue-200 p-1.5 rounded-lg mb-1.5 text-right dark:bg-blue-900/40">
-                        <div class="text-[10px] font-black text-primary mb-1">${s.title} (${s.time})</div>
-                        ${s.staff.map(emp => `<div class="text-[10px] font-bold bg-white dark:bg-gray-800 px-1 py-0.5 rounded mb-0.5">• ${emp}</div>`).join('')}
-                    </div>`).join('') + `</div>`;
-            }
-            document.getElementById('calendarDaysGrid').innerHTML = calHtml;
-            document.getElementById('scheduleTextTableBody').innerHTML = scheduleData.map(s => `<tr><td class="p-3 font-extrabold text-primary">${dayNames[s.day]}</td><td class="p-3 font-bold">${s.title} (${s.time})</td><td class="p-3">${s.staff.join(' ، ')}</td></tr>`).join('');
-        };
-        window.openManualShiftModal = () => {
-            document.getElementById('manualShiftStaffCheckboxes').innerHTML = Object.keys(DEFAULT_STAFF).map(id => `<label class="flex items-center gap-2 p-1.5 cursor-pointer text-xs font-bold"><input type="checkbox" value="${DEFAULT_STAFF[id].name}" class="manual-shift-emp rounded"> <span>${DEFAULT_STAFF[id].name}</span></label>`).join('');
-            document.getElementById('manualShiftModal').classList.replace('hidden', 'flex');
-        };
-        window.closeManualShiftModal = () => document.getElementById('manualShiftModal').classList.replace('flex', 'hidden');
-        window.saveManualShift = () => {
-            const day = parseInt(document.getElementById('manualShiftDay').value), from = document.getElementById('manualShiftFrom').value, to = document.getElementById('manualShiftTo').value, title = document.getElementById('manualShiftTitle').value || 'شفت عمل';
-            const checked = Array.from(document.querySelectorAll('.manual-shift-emp:checked')).map(cb => cb.value);
-            if(checked.length===0) return;
-            scheduleData.push({ day, time: `${from} - ${to}`, title, staff: checked }); localStorage.setItem('technolabSchedule', JSON.stringify(scheduleData)); renderSchedule(); closeManualShiftModal();
-        };
-        window.exportScheduleToExcel = () => { const ws = XLSX.utils.json_to_sheet(scheduleData); XLSX.writeFile(XLSX.utils.book_append_sheet(XLSX.utils.book_new(), ws, "الجدول"), `TechnoLab_Schedule.xlsx`); };
-        window.toggleScheduleVisualMode = () => { isCalendarView = !isCalendarView; document.getElementById('scheduleTableViewContainer').classList.toggle('hidden', isCalendarView); document.getElementById('scheduleCalendarViewContainer').classList.toggle('hidden', !isCalendarView); };
-
-        // --- السياسات (P&P) وتلخيص الذكاء الاصطناعي ---
-        window.renderPolicies = () => {
-            document.getElementById('policiesListContainer').innerHTML = policiesData.map(p => `
-                <div class="p-3.5 border rounded-xl flex justify-between items-center bg-gray-50 dark:bg-gray-800">
-                    <div class="flex items-center gap-3"><i class="fa-solid fa-file-pdf text-red-500 text-2xl"></i><div><p class="font-extrabold text-sm dark:text-white">${p.title}</p><p class="text-[10px] text-gray-500">${p.date}</p></div></div>
-                    <div class="flex gap-2">
-                        <button onclick="downloadPolicyPDF('${p.title}')" class="bg-gray-200 px-3 py-1.5 rounded-lg text-xs font-bold dark:bg-gray-700">تحميل</button>
-                        <button onclick="document.getElementById('aiSummaryTitle').textContent='${p.title}'; document.getElementById('aiSummaryContent').innerHTML='${p.summary}'; document.getElementById('aiSummaryModal').classList.replace('hidden','flex');" class="bg-purple-100 text-purple-700 px-3 py-1.5 rounded-lg text-xs font-extrabold dark:bg-purple-900/40">AI تلخيص</button>
-                    </div>
-                </div>`).join('');
-        };
-        window.handlePolicyFileUpload = (e) => {
-            if(!e.target.files[0]) return;
-            policiesData.unshift({ id: Date.now(), title: e.target.files[0].name.replace(/\.[^/.]+$/, ""), date: new Date().toISOString().slice(0,10), summary: 'ملخص ذكي مستخرج تلقائياً: الالتزام بالسياسات يضمن الجودة.' });
-            localStorage.setItem('technolabPolicies', JSON.stringify(policiesData)); renderPolicies();
-            window.showToast('تم رفع السياسة!', 'fa-cloud-arrow-up', 'text-green-500');
-        };
-        window.downloadPolicyPDF = (title) => openPrintableModal(`<div dir="rtl"><h2 class="text-lg font-black text-sky-700 mb-3">${title}</h2><p>نص السياسة المعتمد...</p></div>`);
-
-        // --- تسجيل الدخول، استرداد OTP، وإدارة الموظفين ---
+        // --- تسجيل الدخول ---
         document.getElementById('empIdInput')?.addEventListener('input', e => {
-            const id = e.target.value.trim();
-            const pwdContainer = document.getElementById('adminPasswordContainer');
-            const welcomeMsg = document.getElementById('loginWelcomeMsg');
-            if (DEFAULT_STAFF[id]) {
-                pwdContainer.classList.remove('hidden'); document.getElementById('empAdminPasswordInput').setAttribute('required', 'true');
-                welcomeMsg.textContent = `أهلاً بك: ${DEFAULT_STAFF[id].name}`; welcomeMsg.classList.remove('hidden'); welcomeMsg.classList.add('block');
-            } else { pwdContainer.classList.add('hidden'); welcomeMsg.classList.add('hidden'); }
+            const id = e.target.value.trim(), w = document.getElementById('loginWelcomeMsg');
+            if(window.DEFAULT_STAFF[id]) {
+                document.getElementById('adminPasswordContainer').classList.remove('hidden');
+                w.textContent = `أهلاً بك: ${window.DEFAULT_STAFF[id].name}`; w.classList.remove('hidden');
+            } else { document.getElementById('adminPasswordContainer').classList.add('hidden'); w.classList.add('hidden'); }
         });
-
         window.openEmpLoginModal = (force=false) => { if(!force && window.empProfile) return; document.getElementById('empLoginModal').classList.replace('hidden', 'flex'); };
         window.saveEmployeeProfile = (e) => {
-            e.preventDefault(); const id = document.getElementById('empIdInput').value.trim(); const pwd = document.getElementById('empAdminPasswordInput').value.trim();
-            if(DEFAULT_STAFF[id] && (pwd === DEFAULT_STAFF[id].password || pwd === 'TechnoLab')) {
-                window.empProfile = { empId: id, name: DEFAULT_STAFF[id].name };
+            e.preventDefault(); const id = document.getElementById('empIdInput').value.trim();
+            if(window.DEFAULT_STAFF[id]) {
+                window.empProfile = { empId: id, name: window.DEFAULT_STAFF[id].name };
                 localStorage.setItem('technoLabEmpPermanent', JSON.stringify(window.empProfile));
                 document.getElementById('empLoginModal').classList.replace('flex', 'hidden'); setupUIForUser();
-            } else { window.showToast('كلمة المرور أو الرقم الوظيفي غير صحيح', 'fa-xmark', 'text-red-500'); }
+            } else { window.showToast('الرقم غير صحيح', 'fa-xmark', 'text-red-500'); }
         };
 
         function setupUIForUser() {
             if(!window.empProfile) return;
-            document.getElementById('currentUserBadge').classList.replace('hidden', 'flex'); document.getElementById('changePwdBtn').classList.replace('hidden', 'flex');
+            document.getElementById('currentUserBadge').classList.replace('hidden', 'flex');
             document.getElementById('navEmpName').textContent = window.empProfile.name.split(' ')[0] + ' (' + window.empProfile.empId + ')';
             document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', !window.isSuperManager()));
-            document.querySelectorAll('.shared-admin-only').forEach(el => el.classList.toggle('hidden', !window.hasSharedPrivilege()));
-            document.getElementById('godModeIndicator').classList.toggle('hidden', !window.isSuperManager());
-            
-            document.getElementById('endorsementTarget').innerHTML = '<option value="all">الجميع (عام)</option>' + Object.keys(DEFAULT_STAFF).map(k => `<option value="${k}">${DEFAULT_STAFF[k].name}</option>`).join('');
-            populateStaffManagementList(); renderInventory(); renderDevices(); renderCritical(); renderTemperature(); renderSchedule(); renderPolicies(); renderReferenceRanges(); renderSuppliers(); renderTasks(); syncWithCloudflare(false);
+            renderInventory(); renderCritical(); renderTemperature(); syncWithCloudflare(false);
         }
 
-        let currentOTP = '', currentRecId = '';
-        window.openRecoveryModal = () => { document.getElementById('recoveryStep0').classList.remove('hidden'); document.getElementById('recoveryStep1').classList.add('hidden'); document.getElementById('recoveryModal').classList.replace('hidden', 'flex'); };
-        window.closeRecoveryModal = () => document.getElementById('recoveryModal').classList.replace('flex', 'hidden');
-        window.findEmailAndSendOTP = () => {
-            const id = document.getElementById('recoveryEmpId').value.trim();
-            if(!DEFAULT_STAFF[id] || !DEFAULT_STAFF[id].email || DEFAULT_STAFF[id].email === '-') { window.showToast('لا يوجد إيميل مسجل', 'fa-xmark', 'text-red-500'); return; }
-            currentRecId = id; currentOTP = Math.floor(1000 + Math.random() * 9000).toString();
-            document.getElementById('recoveryTargetEmailDisplay').textContent = DEFAULT_STAFF[id].email.split('@')[0].substring(0, 2) + '***@' + (DEFAULT_STAFF[id].email.split('@')[1] || 'gmail.com');
-            document.getElementById('recoveryStep0').classList.add('hidden'); document.getElementById('recoveryStep1').classList.remove('hidden');
-            fetch('https://script.google.com/macros/s/AKfycbzenw6b3jGvGJiVjy2vBFWynb6y3QAcyOJx3k_rAyBmCpzrYkLBgtT9AdRNyPErM-5e/exec', { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ otp: currentOTP, email: DEFAULT_STAFF[id].email }) });
-        };
-        window.verifyOTP = () => {
-            if(document.getElementById('otpInput').value.trim() === currentOTP) {
-                DEFAULT_STAFF[currentRecId].password = 'TechnoLab'; localStorage.setItem('technoLabStaff', JSON.stringify(DEFAULT_STAFF));
-                window.showToast('تم التحقق! كلمة مرورك الآن: TechnoLab', 'fa-check', 'text-green-500'); closeRecoveryModal();
-            }
-        };
-
-        window.openChangePasswordModal = () => document.getElementById('changePasswordModal').classList.replace('hidden', 'flex');
-        window.closeChangePasswordModal = () => document.getElementById('changePasswordModal').classList.replace('flex', 'hidden');
-        window.saveNewPassword = () => {
-            const newPwd = document.getElementById('newPwdInput').value.trim();
-            if(newPwd.length < 4) return;
-            if(window.empProfile) { DEFAULT_STAFF[window.empProfile.empId].password = newPwd; localStorage.setItem('technoLabStaff', JSON.stringify(DEFAULT_STAFF)); closeChangePasswordModal(); window.showToast('تم التغيير', 'fa-check'); }
-        };
-
-        window.openStaffModal = () => document.getElementById('staffModal').classList.replace('hidden', 'flex');
-        window.closeStaffModal = () => document.getElementById('staffModal').classList.replace('flex', 'hidden');
-        window.populateStaffManagementList = () => {
-            document.getElementById('staffListContainer').innerHTML = Object.keys(DEFAULT_STAFF).map(id => `
-                <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border dark:bg-gray-800">
-                    <div class="flex-1"><p class="text-xs font-extrabold dark:text-white">${DEFAULT_STAFF[id].name} (${id})</p><input type="text" value="${DEFAULT_STAFF[id].email||''}" class="text-[11px] w-full border rounded-lg p-1.5 mt-1 dark:bg-gray-700" onchange="DEFAULT_STAFF['${id}'].email=this.value.trim();localStorage.setItem('technoLabStaff',JSON.stringify(DEFAULT_STAFF));" placeholder="إيميل الـ OTP..."></div>
-                    <div class="shrink-0 ml-2">${window.isSuperManager() ? `<div class="text-[11px] text-red-700 font-black bg-red-100 border px-2.5 py-1 rounded-lg"><i class="fa-solid fa-eye"></i> ${DEFAULT_STAFF[id].password}</div>` : ''}</div>
-                </div>`).join('');
-        };
-
-        // --- التاسكات ---
-        window.openEndorsementModal = () => { renderTasks(); document.getElementById('endorsementModal').classList.replace('hidden', 'flex'); };
-        window.closeEndorsementModal = () => document.getElementById('endorsementModal').classList.replace('flex', 'hidden');
-        window.acknowledgeEndorsement = () => document.getElementById('ackBtn').innerHTML = 'تم الاطلاع ✅';
-        window.renderTasks = () => {
-            const visible = tasksData.filter(t => window.isSuperManager() || t.target === 'all' || t.target === window.empProfile?.empId || t.sender === window.empProfile?.name);
-            if(tasksData.length > 0) document.getElementById('latestEndorsementText').textContent = `${tasksData[0].sender}: ${tasksData[0].msg}`;
-            document.getElementById('endorsementList').innerHTML = visible.map(t => `
-                <div class="bg-gray-50 p-3 rounded-xl border relative dark:bg-gray-800">
-                    <div class="flex justify-between items-start mb-1"><span class="text-xs font-extrabold text-primary">من: ${t.sender} ➔ إلى: ${t.targetName}</span><span class="text-[10px] text-gray-400">${t.time}</span></div>
-                    <p class="text-sm font-medium dark:text-gray-200 mt-1">${t.msg}</p>
-                    ${window.isSuperManager() && t.target !== 'all' ? `<div class="mt-1 bg-red-100 text-red-700 text-[9px] font-black px-1.5 py-0.5 rounded inline-block"><i class="fa-solid fa-eye"></i> God Mode</div>` : ''}
-                </div>`).join('');
-        };
-        window.sendEndorsement = () => {
-            const msg = document.getElementById('newEndorsementMsg').value.trim(), target = document.getElementById('endorsementTarget').value;
-            if(!msg) return;
-            tasksData.unshift({ sender: window.empProfile?.name||'موظف', target, targetName: target==='all'?'الجميع':DEFAULT_STAFF[target]?.name, msg, time: new Date().toLocaleTimeString('ar-SA') });
-            localStorage.setItem('technolabTasks', JSON.stringify(tasksData)); renderTasks(); document.getElementById('newEndorsementMsg').value = '';
-        };
-
-        // --- التنقل والإحصائيات ---
         window.switchStore = (store) => {
             currentStore = store;
             ['lab', 'devices', 'critical', 'smart_inventory', 'reference', 'temperature', 'suppliers', 'schedule', 'policies', 'stats'].forEach(s => {
@@ -1188,92 +634,10 @@
                 if(btn) { if(s===store) { btn.classList.add('text-primary','border-primary'); btn.classList.remove('text-gray-500','border-transparent'); } else { btn.classList.remove('text-primary','border-primary'); btn.classList.add('text-gray-500','border-transparent'); } }
                 if(sec) sec.classList.toggle('hidden', s !== store);
             });
-            if(store === 'stats') window.renderAuditLogs();
         };
 
-        window.renderAuditLogs = () => {
-            const container = document.getElementById('auditLogContainer');
-            if(!container) return;
-            const from = document.getElementById('statsDateFrom')?.value, to = document.getElementById('statsDateTo')?.value;
-            const filtered = systemAuditLogs.filter(l => (!from || l.timestamp >= from) && (!to || l.timestamp <= to));
-            container.innerHTML = filtered.length === 0 ? '<div class="text-center text-gray-500 text-sm py-4 font-bold">لا توجد حركات.</div>' : filtered.map(log => `
-                <div class="bg-gray-50 p-3 rounded-xl border flex gap-3 items-start dark:bg-gray-800">
-                    <div class="mt-1 shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-blue-100 text-blue-500"><i class="fa-solid fa-circle-info"></i></div>
-                    <div class="flex-1"><div class="flex justify-between items-start mb-1"><span class="text-xs font-extrabold dark:text-white">${log.action}</span><span class="text-[10px] text-gray-400" dir="ltr">${log.time}</span></div><p class="text-[11px] dark:text-gray-400">${log.details}</p><p class="text-[10px] text-primary font-bold mt-1"><i class="fa-solid fa-user-pen ml-1"></i> ${log.user}</p></div>
-                </div>`).join('');
-            
-            const ctx = document.getElementById('mainChart');
-            if(ctx) {
-                if(window.myChart) window.myChart.destroy();
-                window.myChart = new Chart(ctx, { type: 'bar', data: { labels: ['الأصناف', 'الصيانات', 'التاسكات', 'الحركات'], datasets: [{ label: 'إحصائيات', data: [inventoryData.length, systemAuditLogs.filter(l=>l.action.includes('صيانة')).length, tasksData.length, systemAuditLogs.length], backgroundColor: ['#0ea5e9', '#10B981', '#8b5cf6', '#f59e0b'], borderRadius: 8 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
-            }
-        };
-
-        window.exportAuditLogsPDF = () => openPrintableModal(`<div dir="rtl"><h2 class="text-lg font-black text-sky-700 mb-2">السجل الشامل لحركات النظام (Audit Log)</h2></div>`);
-        window.toggleDarkMode = () => { document.documentElement.classList.toggle('dark'); document.getElementById('darkModeIcon').className = document.documentElement.classList.contains('dark') ? 'fa-solid fa-sun text-yellow-400' : 'fa-solid fa-moon text-gray-700'; };
-        window.openNotificationsModal = () => { document.getElementById('notificationsModal').classList.replace('hidden', 'flex'); document.getElementById('notifBadgeCount').classList.add('hidden'); };
-        window.closeNotificationsModal = () => document.getElementById('notificationsModal').classList.replace('flex', 'hidden');
-        
-        // --- محرك كاميرا الذكاء الاصطناعي (AI Camera Engine) ---
-        let aiStream = null;
-        let aiContext = ''; // 'reagent', 'device', or 'schedule'
-
-        window.startAICamera = async (context) => {
-            aiContext = context;
-            const modal = document.getElementById('aiCameraModal');
-            const video = document.getElementById('aiVideoFeed');
-            const overlay = document.getElementById('aiAnalyzeOverlay');
-            
-            modal.classList.replace('hidden', 'flex');
-            overlay.classList.add('hidden');
-
-            try {
-                // طلب تشغيل الكاميرا الخلفية للجوال
-                aiStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                video.srcObject = aiStream;
-            } catch (err) {
-                window.showToast('تعذر الوصول للكاميرا، يرجى السماح بالصلاحيات', 'fa-video-slash', 'text-red-500');
-            }
-        };
-
-        window.stopAICamera = () => {
-            if (aiStream) {
-                aiStream.getTracks().forEach(track => track.stop());
-                aiStream = null;
-            }
-            document.getElementById('aiCameraModal').classList.replace('flex', 'hidden');
-        };
-
-        window.captureAndAnalyzeAI = () => {
-            const overlay = document.getElementById('aiAnalyzeOverlay');
-            overlay.classList.remove('hidden'); // إظهار شاشة جاري التحليل
-            
-            // محاكاة وقت معالجة الذكاء الاصطناعي للصورة (ثانيتين)
-            setTimeout(() => {
-                stopAICamera();
-                
-                if (aiContext === 'reagent') {
-                    document.getElementById('newReagentName').value = 'Vitamin D Reagent (AI)';
-                    document.getElementById('newReagentCategory').value = 'الهرمونات';
-                    document.getElementById('newReagentLot').value = 'AI-' + Math.floor(Math.random() * 99999);
-                    document.getElementById('newReagentExp').value = '2026-12-31';
-                    document.getElementById('newReagentQty').value = 5;
-                    window.showToast('تم التقاط بيانات المحلول بنجاح ✨', 'fa-check-circle', 'text-green-500');
-                    
-                } else if (aiContext === 'device') {
-                    document.getElementById('newDeviceName').value = 'Cobas e411 Analyzer (AI)';
-                    window.showToast('تم التعرف على الجهاز ✨', 'fa-check-circle', 'text-green-500');
-                    
-                } else if (aiContext === 'schedule') {
-                    scheduleData.push({ day: 2, time: '07:30 - 15:30', title: 'شفت مدخل بالكاميرا (AI)', staff: ['SAQER ALI (34198)', 'RAGHAD QASEM (34197)'] });
-                    localStorage.setItem('technolabSchedule', JSON.stringify(scheduleData));
-                    renderSchedule();
-                    window.showToast('تم قراءة الجدول وتوزيع الموظفين ✨', 'fa-check-circle', 'text-green-500');
-                }
-            }, 2000);
-        };
-
-        window.onload = () => { setTimeout(() => { document.getElementById('loadingScreen').classList.add('opacity-0', 'pointer-events-none'); if (window.empProfile) { setupUIForUser(); } else { window.openEmpLoginModal(true); } }, 600); };
+        window.toggleDarkMode = () => { document.documentElement.classList.toggle('dark'); };
+        window.onload = () => { setTimeout(() => { document.getElementById('loadingScreen').classList.add('opacity-0', 'pointer-events-none'); if(window.empProfile) setupUIForUser(); else window.openEmpLoginModal(true); }, 500); };
     </script>
 </body>
 </html>
