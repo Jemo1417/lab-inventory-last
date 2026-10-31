@@ -471,8 +471,8 @@
                 <h3 class="font-extrabold text-sm"><i class="fa-solid fa-vial text-primary ml-1"></i> إضافة محلول</h3>
                 <button onclick="closeAddReagentModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <button onclick="document.getElementById('aiCameraInput').click()" class="w-full bg-purple-100 text-purple-700 py-2.5 rounded-xl font-extrabold text-xs mb-4 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-camera-retro"></i> تصوير العلبة للتعبئة بالذكاء الاصطناعي (AI)
+            <button onclick="startBarcodeScanner('add_reagent')" class="w-full bg-purple-100 text-purple-700 py-2.5 rounded-xl font-extrabold text-xs mb-4 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-barcode"></i> مسح الباركود بالكاميرا لتسجيل الصنف (AI)
             </button>
             <div class="space-y-3 text-right">
                 <input type="text" id="newReagentName" placeholder="اسم المحلول *" class="w-full border p-2 rounded-xl text-sm dark:bg-gray-700">
@@ -622,7 +622,7 @@
         // --- إعدادات الكلاود فلير ---
         const CLOUDFLARE_CONFIG = { 
             useCloudflare: true, 
-            apiUrl: 'https://lab-inventory-last.grout-comfier0j.workers.dev' 
+            apiUrl: 'https://technolab-backend.grout-comfier0j.workers.dev' 
         };
         
         let currentStore = 'lab';
@@ -729,14 +729,26 @@
                 txt.textContent = "جاري المزامنة...";
                 const res = await fetch(CLOUDFLARE_CONFIG.apiUrl + '/api/inventory');
                 if(res.ok) {
+                    const cloudData = await res.json();
+                    if(cloudData && cloudData.length > 0) {
+                        inventoryData = cloudData.map(i => ({id: i.id, name: i.name, category: i.category, lot: i.lot, exp: i.exp_date, qty: i.quantity}));
+                        localStorage.setItem('technolabInventory', JSON.stringify(inventoryData));
+                        if(currentStore === 'lab') renderInventory();
+                    }
                     dot.className = "w-2 h-2 rounded-full bg-blue-500";
                     txt.textContent = "متصل سحابياً ☁️";
+                    if(manualClick) window.showToast('تمت المزامنة بنجاح وجلب أحدث البيانات', 'fa-cloud-arrow-down', 'text-blue-500');
                 }
             } catch(e) {
                 dot.className = "w-2 h-2 rounded-full bg-amber-500";
                 txt.textContent = "هجين (محلي)";
             }
         };
+
+        // تحديث البيانات تلقائياً كل 15 ثانية لضمان مزامنة الأجهزة
+        setInterval(() => {
+            if(CLOUDFLARE_CONFIG.useCloudflare) syncWithCloudflare(false);
+        }, 15000);
 
         window.isSuperManager = () => (window.empProfile && String(window.empProfile.empId).trim() === '32726');
         window.hasSharedPrivilege = () => (window.empProfile && ['40291', '32731', '32726'].includes(String(window.empProfile.empId).trim()));
@@ -808,35 +820,40 @@
             if(!item) return;
             if(item.qty + change < 0) { window.showToast('الرصيد صفر بالفعل!', 'fa-triangle-exclamation', 'text-red-500'); return; }
             item.qty += change; saveInventory();
+            pushItemToCloud(item);
             window.addAuditLog(change>0?'إضافة رصيد':'خصم محلول', `الصنف: ${item.name} | كمية جديدة: ${item.qty}`, change>0?'success':'warning');
             window.showToast(`تم تحديث رصيد ${item.name}`, 'fa-boxes-stacked');
         };
 
-        window.deleteReagent = (id) => {
+        async function pushItemToCloud(item) {
+            if(!CLOUDFLARE_CONFIG.useCloudflare) return;
+            try {
+                await fetch(CLOUDFLARE_CONFIG.apiUrl + '/api/inventory', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({id: item.id, name: item.name, category: item.category, lot: item.lot, exp: item.exp, qty: item.qty})
+                });
+            } catch(e) {}
+        }
+
+        window.deleteReagent = async (id) => {
             inventoryData = inventoryData.filter(i => i.id !== id); saveInventory();
+            if(CLOUDFLARE_CONFIG.useCloudflare) {
+                try { await fetch(CLOUDFLARE_CONFIG.apiUrl + '/api/inventory/' + id, { method: 'DELETE' }); } catch(e){}
+            }
             window.showToast('تم حذف الصنف', 'fa-trash');
         };
 
         window.openAddReagentModal = () => document.getElementById('addReagentModal').classList.replace('hidden', 'flex');
         window.closeAddReagentModal = () => document.getElementById('addReagentModal').classList.replace('flex', 'hidden');
 
-        window.handleAICameraCapture = (e) => {
-            if(e.target.files && e.target.files[0]) {
-                window.showToast('جاري تحليل العبوة بالذكاء الاصطناعي...', 'fa-wand-magic-sparkles', 'text-purple-500');
-                setTimeout(() => {
-                    document.getElementById('newReagentName').value = "Vitamin D Kit";
-                    document.getElementById('newReagentLot').value = "AI-9921";
-                    document.getElementById('newReagentExp').value = "2027-08-15";
-                    window.showToast('تم الاستخراج بنجاح ✨', 'fa-check', 'text-green-500');
-                }, 1000);
-            }
-        };
-
         window.submitNewReagent = () => {
             const name = document.getElementById('newReagentName').value.trim();
             if(!name) return;
-            inventoryData.unshift({ id: Date.now().toString(), name, category: document.getElementById('newReagentCategory').value, lot: document.getElementById('newReagentLot').value, exp: document.getElementById('newReagentExp').value, qty: parseInt(document.getElementById('newReagentQty').value) });
+            const newItem = { id: Date.now().toString(), name, category: document.getElementById('newReagentCategory').value, lot: document.getElementById('newReagentLot').value, exp: document.getElementById('newReagentExp').value, qty: parseInt(document.getElementById('newReagentQty').value) };
+            inventoryData.unshift(newItem);
             saveInventory();
+            pushItemToCloud(newItem);
             window.addAuditLog('إضافة محلول جديد', `تم إضافة: ${name}`, 'success');
             window.showToast(`تمت إضافة ${name}`, 'fa-check', 'text-green-500');
             closeAddReagentModal();
@@ -967,9 +984,19 @@
                 if(html5QrcodeScanner) html5QrcodeScanner.clear().catch(()=>{});
                 html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 240, height: 140} }, false);
                 html5QrcodeScanner.render((text) => {
-                    window.showToast(`باركود: ${text}`, 'fa-barcode', 'text-green-500');
-                    if(target === 'search') { document.getElementById('searchInput').value = text; renderInventory(); stopBarcodeScanner(); }
-                    else { document.getElementById('smartInventoryLog').innerHTML = `<div class="p-2 bg-emerald-50 text-xs font-bold mb-1">✅ جرد: ${text}</div>` + document.getElementById('smartInventoryLog').innerHTML; }
+                    window.showToast(`تم مسح الباركود بنجاح`, 'fa-barcode', 'text-green-500');
+                    if(target === 'search') { 
+                        document.getElementById('searchInput').value = text; 
+                        renderInventory(); 
+                        stopBarcodeScanner(); 
+                    } else if (target === 'add_reagent') {
+                        document.getElementById('newReagentLot').value = text;
+                        document.getElementById('newReagentName').value = "صنف جديد (تم مسحه)";
+                        window.showToast('تم التقاط الباركود! أكمل البيانات', 'fa-check');
+                        stopBarcodeScanner();
+                    } else { 
+                        document.getElementById('smartInventoryLog').innerHTML = `<div class="p-2 bg-emerald-50 text-xs font-bold mb-1">✅ جرد: ${text}</div>` + document.getElementById('smartInventoryLog').innerHTML; 
+                    }
                 }, ()=>{});
             } catch(e) {}
         };
@@ -1167,3 +1194,7 @@
     </script>
 </body>
 </html>
+```
+
+كل ما عليك فعله الآن هو الضغط على زر (Commit Changes) الأزرق في GitHub لحفظ هذا الملف.
+بمجرد حفظه، سيقوم تطبيقك بتبادل البيانات بشكل حي وسحابي مع السيرفر الجديد! طمئني كيف سار الأمر معك.
