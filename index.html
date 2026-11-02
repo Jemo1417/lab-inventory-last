@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TechnoLab V8.5 Ultimate | مستشفى الحياة أبها</title>
-    <!-- Tailwind CSS, FontAwesome, SheetJS, and Html5-Qrcode -->
+    <!-- المكتبات الأساسية: Tailwind, FontAwesome, SheetJS (Excel), Html5-Qrcode -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+        
+        :root {
+            --primary: #2563eb;
+            --secondary: #4f46e5;
+            --accent: #7c3aed;
+        }
         
         body {
             font-family: 'Cairo', sans-serif;
@@ -21,6 +27,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* الوضع الليلي */
         body.dark-mode {
             background-color: #0f172a;
             color: #f8fafc;
@@ -65,6 +72,7 @@
             font-weight: 800;
         }
 
+        /* إشعارات Toast الذكية */
         #toast-container {
             position: fixed;
             top: 20px;
@@ -96,9 +104,10 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
+    <!-- حاوية الإشعارات -->
     <div id="toast-container"></div>
 
-    <!-- شاشة تسجيل الدخول -->
+    <!-- ================= شاشة تسجيل الدخول ================= -->
     <div id="login-screen" class="fixed inset-0 gradient-header z-50 flex items-center justify-center p-4">
         <div class="glass-card w-full max-w-md p-8 text-center relative overflow-hidden shadow-2xl">
             <div class="w-20 h-20 bg-blue-600 text-white rounded-2xl mx-auto flex items-center justify-center text-4xl shadow-lg mb-4">
@@ -114,6 +123,7 @@
                     class="w-full p-4 text-center text-xl font-bold border-2 border-blue-100 rounded-xl focus:outline-none focus:border-blue-600 transition">
             </div>
 
+            <!-- معاينة المنصب فور كتابة الرقم -->
             <div id="role-preview-badge" class="hidden mb-4 p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 font-bold text-sm transition-all"></div>
 
             <button onclick="login()" class="w-full gradient-header text-white font-extrabold py-4 rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
@@ -128,8 +138,10 @@
         </div>
     </div>
 
-    <!-- التطبيق الرئيسي -->
+    <!-- ================= واجهة التطبيق الرئيسية ================= -->
     <div id="app-wrapper" class="hidden flex-1 flex flex-col pb-24">
+        
+        <!-- الهيدر العلوي -->
         <header class="gradient-header text-white sticky top-0 z-40 shadow-lg">
             <div class="px-4 py-3 flex justify-between items-center">
                 <div class="flex items-center gap-3">
@@ -158,6 +170,7 @@
                 </div>
             </div>
 
+            <!-- شريط الأقسام الشامل -->
             <nav class="flex overflow-x-auto no-scrollbar bg-black/15 px-2 pt-1 text-xs sm:text-sm">
                 <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn active px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition">
                     <i class="fas fa-boxes"></i> المخزون
@@ -180,17 +193,21 @@
                 <button onclick="switchTab('suppliers')" id="tab-suppliers" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition">
                     <i class="fas fa-truck-medical"></i> الشركات والسياسات
                 </button>
+                <!-- يظهر للمشرفين والمدراء فقط -->
                 <button onclick="switchTab('staff')" id="tab-staff" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition role-restricted hidden">
                     <i class="fas fa-users-cog"></i> الموظفين
                 </button>
+                <!-- God Mode حصرياً للأستاذ جمال (Admin) -->
                 <button onclick="switchTab('logs')" id="tab-logs" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition god-mode-tab hidden">
-                    <i class="fas fa-eye text-yellow-300"></i> السجل والرقابة (God Mode)
+                    <i class="fas fa-eye text-yellow-300"></i> السجل والرقابة
                 </button>
             </nav>
         </header>
 
+        <!-- ================= محتوى الأقسام ================= -->
         <main class="p-4 max-w-6xl mx-auto w-full space-y-6">
-            <!-- المخزون -->
+
+            <!-- 1. قسم المخزون (Inventory) -->
             <section id="sec-inventory" class="tab-section space-y-4">
                 <div class="grid grid-cols-3 gap-3 text-center">
                     <div class="glass-card p-3 border-r-4 border-blue-500">
@@ -207,6 +224,7 @@
                     </div>
                 </div>
 
+                <!-- أزرار التحكم بالمخزون والإحصائيات -->
                 <div class="flex flex-wrap gap-2 justify-between items-center glass-card p-3">
                     <div class="flex flex-wrap gap-2">
                         <button onclick="openInventoryModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow flex items-center gap-2">
@@ -216,17 +234,19 @@
                             <i class="fas fa-camera"></i> إضافة ذكية (AI)
                         </button>
                     </div>
-                    <div class="flex gap-2 role-restricted hidden">
-                        <button onclick="exportInventoryExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1">
-                            <i class="fas fa-file-excel"></i> تصدير Excel
+                    <!-- أدوات الإحصائيات والاستيراد (مخصصة للـ Admin فقط) -->
+                    <div class="flex gap-2 admin-only hidden">
+                        <button onclick="exportInventoryExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 shadow">
+                            <i class="fas fa-chart-pie"></i> استخراج الإحصائيات (Excel)
                         </button>
-                        <label class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer">
+                        <label class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer shadow">
                             <i class="fas fa-file-import"></i> استيراد
                             <input type="file" accept=".xlsx,.xls" class="hidden" onchange="importInventoryExcel(event)">
                         </label>
                     </div>
                 </div>
 
+                <!-- بحث وفلترة المخزون -->
                 <div class="flex gap-2">
                     <input type="text" id="inv-search" oninput="renderInventory()" placeholder="ابحث بالاسم، الباركود، أو رقم التشغيلة (Lot)..." class="flex-1 p-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-500">
                     <select id="inv-filter-cat" onchange="renderInventory()" class="p-3 rounded-xl border border-gray-200 text-sm font-bold">
@@ -244,19 +264,21 @@
                 <div id="inventory-container" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
             </section>
 
-            <!-- الأجهزة -->
+            <!-- 2. قسم الأجهزة والصيانة (Devices) -->
             <section id="sec-devices" class="tab-section hidden space-y-4">
                 <div class="glass-card p-4 border-r-4 border-amber-500 flex justify-between items-center">
                     <div>
                         <h3 class="font-extrabold text-sm sm:text-base"><i class="fas fa-tools text-amber-500 ml-1"></i> جدول الصيانة الأسبوعية المعتمد</h3>
-                        <p class="text-xs text-gray-500 mt-1">يوم الصيانة الأسبوعي لكافة أجهزة المختبر: <strong class="text-blue-600 font-extrabold">يوم السبت (Saturday)</strong></p>
+                        <p class="text-xs text-gray-500 mt-1">يوم الصيانة الأسبوعي لكافة أجهزة المختبر (Alinity, ACL TOP, Gem): <strong class="text-blue-600 font-extrabold">يوم السبت (Saturday)</strong></p>
                     </div>
-                    <button onclick="openDeviceModal()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">+ إضافة جهاز</button>
+                    <button onclick="openDeviceModal()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow role-restricted hidden">
+                        + إضافة جهاز
+                    </button>
                 </div>
                 <div id="devices-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
             </section>
 
-            <!-- الجداول والشفتات -->
+            <!-- 3. قسم الجداول والشفتات (Schedule) -->
             <section id="sec-schedule" class="tab-section hidden space-y-4">
                 <div class="glass-card p-4 flex flex-wrap justify-between items-center gap-2">
                     <div>
@@ -274,7 +296,7 @@
                 <div id="schedule-container" class="grid gap-3"></div>
             </section>
 
-            <!-- النتائج الحرجة -->
+            <!-- 4. قسم النتائج الحرجة (Critical Results) -->
             <section id="sec-critical" class="tab-section hidden space-y-4">
                 <div class="glass-card p-4">
                     <h3 class="font-extrabold text-base mb-3 text-red-600"><i class="fas fa-bell"></i> توثيق تبليغ نتيجة حرجة (CAP / CBAHI Standard)</h3>
@@ -288,7 +310,7 @@
                 <div id="critical-container" class="space-y-2"></div>
             </section>
 
-            <!-- درجات الحرارة -->
+            <!-- 5. قسم درجات الحرارة (Temperature) -->
             <section id="sec-temperature" class="tab-section hidden space-y-4">
                 <div class="glass-card p-4">
                     <h3 class="font-extrabold text-base mb-3 text-blue-600"><i class="fas fa-snowflake"></i> تسجيل حرارة الثلاجات والغرف</h3>
@@ -306,7 +328,7 @@
                 <div id="temperature-container" class="space-y-2"></div>
             </section>
 
-            <!-- المهام والتعاميم -->
+            <!-- 6. قسم المهام والتعاميم (Tasks) -->
             <section id="sec-tasks" class="tab-section hidden space-y-4">
                 <div class="glass-card p-4 role-restricted hidden">
                     <h3 class="font-extrabold text-base mb-3"><i class="fas fa-bullhorn text-purple-600"></i> إرسال مهمة أو تعميم للموظفين</h3>
@@ -319,25 +341,25 @@
                 <div id="tasks-container" class="space-y-2"></div>
             </section>
 
-            <!-- الشركات والسياسات -->
+            <!-- 7. قسم الشركات والسياسات (Suppliers & Policies) -->
             <section id="sec-suppliers" class="tab-section hidden space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="glass-card p-4 space-y-3">
                         <h3 class="font-extrabold text-base"><i class="fas fa-phone-volume text-emerald-600"></i> دليل مهندسي الصيانة والشركات</h3>
                         <div class="flex gap-2 role-restricted hidden">
-                            <input type="text" id="sup-name" placeholder="اسم الشركة" class="p-2 border rounded-lg text-xs flex-1">
-                            <input type="text" id="sup-desc" placeholder="الجهاز" class="p-2 border rounded-lg text-xs flex-1">
-                            <input type="tel" id="sup-phone" placeholder="الجوال" class="p-2 border rounded-lg text-xs flex-1">
+                            <input type="text" id="sup-name" placeholder="اسم الشركة/المهندس" class="p-2 border rounded-lg text-xs flex-1">
+                            <input type="text" id="sup-desc" placeholder="الجهاز (مثال: Alinity)" class="p-2 border rounded-lg text-xs flex-1">
+                            <input type="tel" id="sup-phone" placeholder="رقم الجوال" class="p-2 border rounded-lg text-xs flex-1">
                             <button onclick="addSupplier()" class="bg-emerald-600 text-white px-3 py-2 rounded-lg text-xs font-bold">+</button>
                         </div>
                         <div id="suppliers-container" class="space-y-2"></div>
                     </div>
 
                     <div class="glass-card p-4 space-y-3">
-                        <h3 class="font-extrabold text-base"><i class="fas fa-file-shield text-blue-600"></i> السياسات والاعتمادات (CAP, CBAHI)</h3>
+                        <h3 class="font-extrabold text-base"><i class="fas fa-file-shield text-blue-600"></i> السياسات والاعتمادات (CAP, CBAHI, SFDA)</h3>
                         <div class="flex gap-2 role-restricted hidden">
-                            <input type="text" id="pol-title" placeholder="عنوان السياسة" class="p-2 border rounded-lg text-xs flex-1">
-                            <input type="text" id="pol-summary" placeholder="ملخص" class="p-2 border rounded-lg text-xs flex-1">
+                            <input type="text" id="pol-title" placeholder="عنوان السياسة (SOP)" class="p-2 border rounded-lg text-xs flex-1">
+                            <input type="text" id="pol-summary" placeholder="ملخص أو رابط" class="p-2 border rounded-lg text-xs flex-1">
                             <button onclick="addPolicy()" class="bg-blue-600 text-white px-3 py-2 rounded-lg text-xs font-bold">+</button>
                         </div>
                         <div id="policies-container" class="space-y-2"></div>
@@ -345,26 +367,32 @@
                 </div>
             </section>
 
-            <!-- الموظفين -->
+            <!-- 8. قسم إدارة الموظفين (Staff Management) -->
             <section id="sec-staff" class="tab-section hidden space-y-4">
-                <div class="glass-card p-4">
-                    <h3 class="font-extrabold text-base mb-3"><i class="fas fa-user-plus text-blue-600"></i> إدارة حسابات وصلاحيات الطاقم</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                <div class="glass-card p-4 flex flex-col gap-4">
+                    <div>
+                        <h3 class="font-extrabold text-base mb-1"><i class="fas fa-user-plus text-blue-600"></i> قائمة موظفي المختبر</h3>
+                        <p class="text-xs text-gray-500">استعراض وإدارة الطاقم والصلاحيات</p>
+                    </div>
+                    
+                    <!-- صندوق الإضافة والتعديل يظهر فقط للـ Admin (جمال عسيري) -->
+                    <div class="admin-only hidden grid grid-cols-1 sm:grid-cols-4 gap-2 p-3 bg-blue-50 dark:bg-slate-800 rounded-xl border border-blue-100 dark:border-slate-700">
                         <input type="text" id="new-staff-id" placeholder="الرقم الوظيفي (ID)" class="p-3 border rounded-xl text-sm">
                         <input type="text" id="new-staff-name" placeholder="اسم الموظف" class="p-3 border rounded-xl text-sm">
                         <select id="new-staff-role" class="p-3 border rounded-xl text-sm font-bold">
-                            <option value="Spec">أخصائي مختبر</option>
-                            <option value="Supervisor">Supervisor 🛡️</option>
-                            <option value="Lab Director">Lab Director 🔬</option>
-                            <option value="Admin">Admin 👑</option>
+                            <option value="Spec">أخصائي مختبر (Specialist)</option>
+                            <option value="Supervisor">مشرف (Supervisor)</option>
+                            <option value="Lab Director">مدير مختبر (Director)</option>
+                            <option value="Admin">مدير نظام (Admin)</option>
                         </select>
-                        <button onclick="addStaffMember()" class="bg-blue-600 text-white font-bold p-3 rounded-xl text-sm shadow">حفظ</button>
+                        <button onclick="addStaffMember()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold p-3 rounded-xl text-sm shadow transition">إضافة / تحديث الصلاحية</button>
                     </div>
+
+                    <div id="staff-list-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
                 </div>
-                <div id="staff-list-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
             </section>
 
-            <!-- السجل والرقابة الشاملة -->
+            <!-- 9. قسم السجل والرقابة الشاملة (God Mode) حصرياً للـ Admin -->
             <section id="sec-logs" class="tab-section hidden space-y-4">
                 <div class="glass-card p-4 border-r-4 border-purple-600 flex justify-between items-center">
                     <div>
@@ -377,14 +405,17 @@
                 </div>
                 <div id="logs-container" class="glass-card p-4 max-h-[500px] overflow-y-auto space-y-2"></div>
             </section>
+
         </main>
 
+        <!-- زر ملاحظات المطور العائم خاص بالـ Admin -->
         <button id="admin-dev-btn" onclick="openDevNotesModal()" class="hidden fixed bottom-20 left-4 z-40 bg-amber-500 hover:bg-amber-600 text-white p-4 rounded-full shadow-2xl flex items-center gap-2 font-bold text-xs">
             <i class="fas fa-code text-lg"></i> ملاحظات الإدارة
         </button>
+
     </div>
 
-    <!-- نافذة إضافة مخزون مع كاميرا AI وقارئ الباركود -->
+    <!-- ================= نافذة إضافة مخزون + كاميرا AI + باركود ================= -->
     <div id="modal-inventory" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="modal-box bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl my-auto">
             <div class="px-5 py-4 gradient-header text-white flex justify-between items-center">
@@ -398,11 +429,11 @@
                         <i class="fas fa-wand-magic-sparkles text-purple-600 text-xl"></i>
                         <div>
                             <p class="text-xs font-extrabold text-purple-800 dark:text-purple-300">التعرف الذكي عبر السيرفر المشفر (AI)</p>
-                            <p id="ai-status-text" class="text-[11px] text-gray-500">صور العلبة لتعبئة البيانات آلياً</p>
+                            <p id="ai-status-text" class="text-[11px] text-gray-500">صور العلبة لتعبئة الاسم والـ Lot وتاريخ الانتهاء آلياً</p>
                         </div>
                     </div>
                     <label class="ai-gradient text-white px-3 py-2 rounded-xl text-xs font-bold cursor-pointer shadow flex items-center gap-1.5">
-                        <i class="fas fa-camera"></i> تصوير العلبة
+                        <i class="fas fa-camera"></i> تصوير
                         <input type="file" id="ai-camera-input" accept="image/*" capture="environment" class="hidden" onchange="processImageWithAI(event)">
                     </label>
                 </div>
@@ -417,11 +448,11 @@
                 <div class="space-y-3">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 mb-1">الاسم العلمي / التجاري *</label>
-                        <input type="text" id="itemName" placeholder="مثال: Vitamin D" class="w-full p-3 border rounded-xl text-sm font-bold">
+                        <input type="text" id="itemName" placeholder="مثال: Vitamin D / Alinity c Reagent" class="w-full p-3 border rounded-xl text-sm font-bold">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">الباركود</label>
+                        <label class="block text-xs font-bold text-gray-500 mb-1">الباركود / الكود المرجعي (SFDA)</label>
                         <div class="flex gap-2">
                             <input type="text" id="itemBarcode" placeholder="امسح أو اكتب الباركود..." class="flex-1 p-3 border rounded-xl text-sm">
                             <button type="button" onclick="toggleBarcodeScanner()" class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 px-4 rounded-xl text-gray-700 dark:text-white">
@@ -444,19 +475,19 @@
                     </div>
 
                     <div class="bg-blue-50/60 dark:bg-slate-800/60 p-3 rounded-2xl border border-blue-100 dark:border-slate-700 space-y-3">
-                        <p class="text-xs font-extrabold text-blue-600"><i class="fas fa-box"></i> التعبئة والرصيد</p>
+                        <p class="text-xs font-extrabold text-blue-600"><i class="fas fa-box"></i> التعبئة والرصيد (التاريخ بالميلادي)</p>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-[11px] font-bold text-gray-500 mb-1">رقم التشغيلة (Lot)</label>
                                 <input type="text" id="lotNumber" placeholder="Lot Number" class="w-full p-2.5 border rounded-xl text-xs font-bold">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-bold text-gray-500 mb-1">تاريخ الانتهاء</label>
+                                <label class="block text-[11px] font-bold text-gray-500 mb-1">تاريخ الانتهاء (Gregorian)</label>
                                 <input type="date" id="expiryDate" class="w-full p-2.5 border rounded-xl text-xs font-bold">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-gray-500 mb-1">الكمية الابتدائية</label>
+                            <label class="block text-[11px] font-bold text-gray-500 mb-1">الكمية الابتدائية (الرصيد)</label>
                             <input type="number" id="itemQty" value="1" min="0" class="w-full p-2.5 border rounded-xl text-center font-extrabold text-sm">
                         </div>
                     </div>
@@ -472,18 +503,19 @@
         </div>
     </div>
 
-    <!-- نافذة ملاحظات المطور -->
+    <!-- ================= نافذة ملاحظات المطور (Admin Notes) ================= -->
     <div id="modal-dev-notes" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
         <div class="modal-box bg-white rounded-2xl w-full max-w-md p-5 space-y-3 shadow-2xl">
             <h3 class="font-extrabold text-base text-amber-600"><i class="fas fa-crown"></i> دفتر ملاحظات مدير النظام (Jamal Asiri)</h3>
             <textarea id="dev-notes-area" rows="5" placeholder="اكتب ملاحظاتك الإدارية والبرمجية هنا..." class="w-full p-3 border rounded-xl text-sm"></textarea>
             <div class="flex gap-2">
-                <button onclick="saveDevNotes()" class="flex-1 bg-amber-500 text-white font-bold py-2.5 rounded-xl">حفظ</button>
+                <button onclick="saveDevNotes()" class="flex-1 bg-amber-500 text-white font-bold py-2.5 rounded-xl">حفظ الملاحظات</button>
                 <button onclick="document.getElementById('modal-dev-notes').classList.add('hidden')" class="px-4 bg-gray-200 dark:bg-gray-700 rounded-xl text-sm font-bold">إغلاق</button>
             </div>
         </div>
     </div>
 
+    <!-- ================= لوحة حقوق الملكية الثابتة ================= -->
     <footer class="bg-slate-900 text-white py-3 px-4 border-t border-slate-800 fixed bottom-0 inset-x-0 z-30 shadow-inner">
         <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center text-center gap-1">
             <div class="flex items-center gap-2 text-xs font-extrabold text-sky-400">
@@ -498,25 +530,58 @@
         </div>
     </footer>
 
+    <!-- ================= المحرك البرمجي الشامل (JavaScript) ================= -->
     <script>
+        /* =========================================================================
+           1. إعدادات السحابة والوركر المشفر (Cloudflare Worker Config)
+           ========================================================================= */
         const CLOUDFLARE_CONFIG = {
-            apiUrl: "https://technolab-backend.grout-comfier0j.workers.dev"
+            apiUrl: "https://technolab-backend.grout-comfier0j.workers.dev" // تأكد أن هذا الرابط يطابق رابطك في كلاود فلير
         };
 
+        /* =========================================================================
+           2. قاعدة بيانات المستخدمين والصلاحيات المعدلة (RBAC + God Mode حصري)
+           ========================================================================= */
         const DEFAULT_USERS = {
-            "32726": { id: "32726", name: "Jamal Asiri", roleLabel: "Admin", badge: "Admin 👑", isAdmin: true, isSupervisor: true, godMode: true },
-            "32731": { id: "32731", name: "FAISAL YAHYA", roleLabel: "Supervisor", badge: "Supervisor 🛡️", isAdmin: false, isSupervisor: true, godMode: true },
-            "40291": { id: "40291", name: "فيصل (مشرف المختبر)", roleLabel: "Lab Director", badge: "Lab Director 🔬", isAdmin: false, isSupervisor: true, godMode: true }
+            "32726": {
+                id: "32726",
+                name: "Jamal Asiri",
+                roleLabel: "Admin",
+                badge: "Admin 👑",
+                isAdmin: true,       // يملك كل الصلاحيات بما فيها الإحصائيات وإضافة الموظفين
+                isSupervisor: true,
+                godMode: true        // غرفة المراقبة والسجل حصرياً لجمال
+            },
+            "40291": {
+                id: "40291",
+                name: "د. عمرو",
+                roleLabel: "Lab Director",
+                badge: "Lab Director 🔬",
+                isAdmin: false,      // لا يملك صلاحية استخراج الإحصائيات أو حذف الموظفين
+                isSupervisor: true,  // يرى قسم الموظفين والجداول
+                godMode: false       // لا يرى سجل God Mode
+            },
+            "32731": {
+                id: "32731",
+                name: "فيصل",
+                roleLabel: "Supervisor",
+                badge: "Supervisor 🛡️",
+                isAdmin: false,
+                isSupervisor: true,
+                godMode: false       // لا يرى سجل God Mode
+            }
         };
 
         let usersDB = JSON.parse(localStorage.getItem('tl_users_v85')) || DEFAULT_USERS;
+        // حماية الحسابات الرئيسية من الحذف العرضي وتثبيت مناصبهم المحدثة
         usersDB["32726"] = DEFAULT_USERS["32726"];
-        usersDB["32731"] = DEFAULT_USERS["32731"];
         usersDB["40291"] = DEFAULT_USERS["40291"];
+        usersDB["32731"] = DEFAULT_USERS["32731"];
 
         let currentUser = null;
         let html5QrCode = null;
 
+        // مصفوفات البيانات النظيفة (Clean Slate)
         let inventoryData = JSON.parse(localStorage.getItem('tl_inv_v85')) || [];
         let devicesData   = JSON.parse(localStorage.getItem('tl_dev_v85')) || [];
         let scheduleData  = JSON.parse(localStorage.getItem('tl_sch_v85')) || [];
@@ -527,6 +592,9 @@
         let policiesData  = JSON.parse(localStorage.getItem('tl_pol_v85')) || [];
         let auditLogs     = JSON.parse(localStorage.getItem('tl_log_v85')) || [];
 
+        /* =========================================================================
+           3. دوال التنبيهات والتاريخ الميلادي
+           ========================================================================= */
         function showToast(msg, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -546,6 +614,9 @@
             });
         }
 
+        /* =========================================================================
+           4. نظام تسجيل الدخول وإعداد صلاحيات الواجهة (المحدثة)
+           ========================================================================= */
         function previewUserRole(pin) {
             const badge = document.getElementById('role-preview-badge');
             const cleanPin = pin.trim();
@@ -580,18 +651,25 @@
         function setupUIForUser() {
             document.getElementById('active-user-badge').innerText = `${currentUser.name} | ${currentUser.badge}`;
 
-            const restrictedElems = document.querySelectorAll('.role-restricted');
-            restrictedElems.forEach(el => {
+            // 1. الأقسام المسموحة للمشرفين والمدراء (فيصل ودكتور عمرو وجمال)
+            document.querySelectorAll('.role-restricted').forEach(el => {
                 if (currentUser.isAdmin || currentUser.isSupervisor) el.classList.remove('hidden');
                 else el.classList.add('hidden');
             });
 
-            const godTabs = document.querySelectorAll('.god-mode-tab');
-            godTabs.forEach(el => {
-                if (currentUser.godMode || currentUser.isAdmin) el.classList.remove('hidden');
+            // 2. صلاحيات جمال الحصرية (Admin) -> إضافة الموظفين + الإحصائيات
+            document.querySelectorAll('.admin-only').forEach(el => {
+                if (currentUser.isAdmin) el.classList.remove('hidden');
                 else el.classList.add('hidden');
             });
 
+            // 3. صلاحية غرفة المراقبة (God Mode) -> لجمال فقط
+            document.querySelectorAll('.god-mode-tab').forEach(el => {
+                if (currentUser.godMode) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+
+            // زر المطور
             const devBtn = document.getElementById('admin-dev-btn');
             if (currentUser.id === "32726") devBtn.classList.remove('hidden');
             else devBtn.classList.add('hidden');
@@ -620,6 +698,9 @@
             document.body.classList.toggle('dark-mode');
         }
 
+        /* =========================================================================
+           5. محرك الذكاء الاصطناعي عبر الوركر المشفر + ضغط الصور الذكي
+           ========================================================================= */
         async function compressImage(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -675,28 +756,19 @@
                 }
 
                 const data = await response.json();
-                if (!data.candidates || !data.candidates[0]?.content?.parts[0]?.text) {
-                    throw new Error("لم يتمكن الذكاء الاصطناعي من قراءة نص واضح في الصورة.");
-                }
-
                 const aiText = data.candidates[0].content.parts[0].text;
                 const jsonMatch = aiText.match(/\{[\s\S]*\}/);
                 const cleanJson = jsonMatch ? jsonMatch[0] : aiText.replace(/```json|```/g, '').trim();
                 const parsedData = JSON.parse(cleanJson);
 
-                if (parsedData.name || parsedData.Name) {
-                    document.getElementById('itemName').value = parsedData.name || parsedData.Name;
-                }
-                if (parsedData.lot || parsedData.Lot) {
-                    document.getElementById('lotNumber').value = parsedData.lot || parsedData.Lot;
-                }
+                if (parsedData.name || parsedData.Name) document.getElementById('itemName').value = parsedData.name || parsedData.Name;
+                if (parsedData.lot || parsedData.Lot) document.getElementById('lotNumber').value = parsedData.lot || parsedData.Lot;
                 if (parsedData.expiryDate || parsedData.expiration) {
                     const rawExp = parsedData.expiryDate || parsedData.expiration;
                     document.getElementById('expiryDate').value = rawExp.length === 7 ? `${rawExp}-01` : rawExp;
                 }
-                if (parsedData.barcode || parsedData.ref) {
-                    document.getElementById('itemBarcode').value = parsedData.barcode || parsedData.ref;
-                }
+                if (parsedData.barcode || parsedData.ref) document.getElementById('itemBarcode').value = parsedData.barcode || parsedData.ref;
+                
                 if (parsedData.category) {
                     const catSelect = document.getElementById('itemCategory');
                     for (let opt of catSelect.options) {
@@ -714,7 +786,7 @@
             } catch (error) {
                 console.error("AI Proxy Error:", error);
                 statusText.innerText = "⚠️ تعذر الاتصال، تأكد من تحديث كود الوركر.";
-                showToast("عذراً، فشل الاتصال بالذكاء الاصطناعي. تأكد من رفع كود الوركر الجديد.", "error");
+                showToast("عذراً، فشل الاتصال بالذكاء الاصطناعي.", "error");
             } finally {
                 loadingBox.classList.add('hidden');
                 event.target.value = '';
@@ -763,6 +835,9 @@
             event.target.value = '';
         }
 
+        /* =========================================================================
+           6. إدارة المخزون والباركود والإكسل
+           ========================================================================= */
         function openInventoryModal(triggerCamera = false) {
             document.getElementById('itemName').value = '';
             document.getElementById('itemBarcode').value = '';
@@ -938,13 +1013,14 @@
             }).join('');
         }
 
+        // الإحصائيات والإكسل مخصصة لك أنت فقط (Admin)
         function exportInventoryExcel() {
             if (inventoryData.length === 0) return showToast("لا توجد بيانات لتصديرها", "warning");
             const ws = XLSX.utils.json_to_sheet(inventoryData);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "TechnoLab_Inventory");
-            XLSX.writeFile(wb, `TechnoLab_Inventory_${new Date().toISOString().slice(0,10)}.xlsx`);
-            logAction("تصدير إكسل", "تم تصدير قائمة المخزون", "inventory");
+            XLSX.utils.book_append_sheet(wb, ws, "TechnoLab_Stats");
+            XLSX.writeFile(wb, `TechnoLab_Statistics_${new Date().toISOString().slice(0,10)}.xlsx`);
+            logAction("إحصائيات النظام", "تم استخراج إحصائيات النظام بملف Excel", "admin");
         }
 
         function importInventoryExcel(event) {
@@ -969,11 +1045,14 @@
                 localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData));
                 renderInventory();
                 showToast(`تم استيراد ${rows.length} صنف بنجاح!`, "success");
-                logAction("استيراد إكسل", `تم استيراد ${rows.length} صنف`, "inventory");
+                logAction("استيراد بيانات", `تم استيراد ${rows.length} صنف`, "admin");
             };
             reader.readAsArrayBuffer(file);
         }
 
+        /* =========================================================================
+           7. باقي الأقسام وإدارة الموظفين (المحدثة)
+           ========================================================================= */
         function openDeviceModal() {
             const name = prompt("أدخل اسم الجهاز (مثال: Alinity ci / ACL TOP / Gem):");
             if (!name) return;
@@ -1073,238 +1152,4 @@
 
         async function addTemperatureLog() {
             const loc = document.getElementById('temp-loc').value;
-            const temp = document.getElementById('temp-val').value;
-            if (!temp) return showToast("أدخل درجة الحرارة", "warning");
-
-            const entry = { time: getGregorianTimestamp(), loc, temp: `${temp}°C`, user: currentUser.name };
-            tempData.unshift(entry);
-            localStorage.setItem('tl_tmp_v85', JSON.stringify(tempData));
-            renderTemperature();
-            document.getElementById('temp-val').value = '';
-            logAction("تسجيل حرارة", `${loc}: ${temp}°C`, "temp");
-
-            try {
-                await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/temperature`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(entry) });
-            } catch(e) {}
-        }
-
-        function renderTemperature() {
-            const c = document.getElementById('temperature-container');
-            c.innerHTML = tempData.map(t => `
-                <div class="glass-card p-3 border-r-4 border-sky-500 flex justify-between items-center text-xs">
-                    <div>
-                        <p class="font-extrabold text-sm">${t.loc}: <span class="text-sky-600">${t.temp}</span></p>
-                        <p class="text-gray-500">المسجل: ${t.user}</p>
-                    </div>
-                    <span class="text-gray-400 font-bold">${t.time}</span>
-                </div>
-            `).join('');
-        }
-
-        async function addTask() {
-            const target = document.getElementById('task-target').value.trim() || 'الكل';
-            const msg = document.getElementById('task-msg').value.trim();
-            if (!msg) return;
-            const entry = { sender: currentUser.name, target, msg, time: getGregorianTimestamp() };
-            tasksData.unshift(entry);
-            localStorage.setItem('tl_tsk_v85', JSON.stringify(tasksData));
-            renderTasks();
-            document.getElementById('task-msg').value = '';
-            logAction("إرسال مهمة", `إلى ${target}: ${msg}`, "task");
-
-            try {
-                await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/tasks`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(entry) });
-            } catch(e) {}
-        }
-
-        function renderTasks() {
-            const c = document.getElementById('tasks-container');
-            c.innerHTML = tasksData.map(t => `
-                <div class="glass-card p-3 border-r-4 border-purple-500 text-xs flex justify-between items-center">
-                    <div>
-                        <p class="font-extrabold text-sm">${t.msg || t.message}</p>
-                        <p class="text-gray-500">من: ${t.sender || t.sender_id} ⬅️ إلى: <strong>${t.target || t.target_id}</strong></p>
-                    </div>
-                    <span class="text-gray-400">${t.time || t.timestamp}</span>
-                </div>
-            `).join('');
-        }
-
-        function addSupplier() {
-            const name = document.getElementById('sup-name').value.trim();
-            const desc = document.getElementById('sup-desc').value.trim();
-            const phone = document.getElementById('sup-phone').value.trim();
-            if (!name) return;
-            suppliersData.push({ name, desc, phone });
-            saveLocalAndCloud('suppliers', suppliersData);
-            renderSuppliersAndPolicies();
-            document.getElementById('sup-name').value = '';
-        }
-
-        function addPolicy() {
-            const title = document.getElementById('pol-title').value.trim();
-            const summary = document.getElementById('pol-summary').value.trim();
-            if (!title) return;
-            policiesData.push({ id: 'POL-' + Date.now(), title, date: getGregorianTimestamp(), summary });
-            saveLocalAndCloud('policies', policiesData);
-            renderSuppliersAndPolicies();
-            document.getElementById('pol-title').value = '';
-        }
-
-        function renderSuppliersAndPolicies() {
-            document.getElementById('suppliers-container').innerHTML = suppliersData.map(s => `
-                <div class="p-2.5 border rounded-xl flex justify-between items-center text-xs">
-                    <div><strong>${s.name}</strong> <span class="text-gray-500">(${s.desc})</span></div>
-                    <a href="tel:${s.phone}" class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-lg font-bold"><i class="fas fa-phone"></i> ${s.phone}</a>
-                </div>
-            `).join('');
-
-            document.getElementById('policies-container').innerHTML = policiesData.map(p => `
-                <div class="p-2.5 border rounded-xl text-xs">
-                    <p class="font-bold text-blue-600">${p.title}</p>
-                    <p class="text-gray-500">${p.summary}</p>
-                </div>
-            `).join('');
-        }
-
-        function addStaffMember() {
-            const id = document.getElementById('new-staff-id').value.trim();
-            const name = document.getElementById('new-staff-name').value.trim();
-            const role = document.getElementById('new-staff-role').value;
-            if (!id || !name) return showToast("أدخل الرقم الوظيفي والاسم", "warning");
-
-            usersDB[id] = {
-                id,
-                name,
-                roleLabel: role,
-                badge: role,
-                isAdmin: role === 'Admin',
-                isSupervisor: role !== 'Spec',
-                godMode: role === 'Admin' || role === 'Supervisor' || role === 'Lab Director'
-            };
-            localStorage.setItem('tl_users_v85', JSON.stringify(usersDB));
-            renderStaff();
-            showToast(`تم تفعيل حساب ${name} (${role})`, "success");
-            logAction("إدارة موظفين", `تحديث حساب ${name} (${id})`, "admin");
-        }
-
-        function renderStaff() {
-            const c = document.getElementById('staff-list-container');
-            c.innerHTML = Object.values(usersDB).map(u => `
-                <div class="glass-card p-3 flex justify-between items-center border-r-4 border-blue-600">
-                    <div>
-                        <p class="font-extrabold text-sm">${u.name}</p>
-                        <p class="text-xs text-gray-500">ID: <strong>${u.id}</strong> | الدور: <span class="text-purple-600 font-bold">${u.roleLabel}</span></p>
-                    </div>
-                    <span class="text-lg">${u.godMode ? '🛡️' : '👨‍🔬'}</span>
-                </div>
-            `).join('');
-        }
-
-        async function logAction(action, details, type = 'info') {
-            if (!currentUser) return;
-            const entry = {
-                timestamp: getGregorianTimestamp(),
-                user: `${currentUser.name} (${currentUser.roleLabel})`,
-                action,
-                details,
-                type
-            };
-            auditLogs.unshift(entry);
-            localStorage.setItem('tl_log_v85', JSON.stringify(auditLogs.slice(0, 200)));
-            renderLogs();
-
-            try {
-                await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/logs`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(entry)
-                });
-            } catch (e) {}
-        }
-
-        function renderLogs() {
-            const c = document.getElementById('logs-container');
-            if (!c) return;
-            if (auditLogs.length === 0) {
-                c.innerHTML = `<p class="text-center text-gray-400 py-6 font-bold">السجل الرقابي نظيف حالياً</p>`;
-                return;
-            }
-            c.innerHTML = auditLogs.map(l => `
-                <div class="p-3 rounded-xl border border-gray-100 dark:border-slate-700 flex justify-between items-center text-xs bg-white/50 dark:bg-slate-800/50">
-                    <div>
-                        <span class="font-extrabold text-blue-600">${l.user}</span> — <strong>${l.action}</strong>
-                        <p class="text-gray-500 mt-0.5">${l.details}</p>
-                    </div>
-                    <span class="text-[11px] text-gray-400 font-mono">${l.timestamp}</span>
-                </div>
-            `).join('');
-        }
-
-        async function saveLocalAndCloud(endpoint, dataArray) {
-            const storageMap = { devices: 'tl_dev_v85', schedule: 'tl_sch_v85', suppliers: 'tl_sup_v85', policies: 'tl_pol_v85' };
-            if (storageMap[endpoint]) localStorage.setItem(storageMap[endpoint], JSON.stringify(dataArray));
-            try {
-                await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/${endpoint}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dataArray)
-                });
-            } catch (e) {}
-        }
-
-        async function syncAllFromCloud(showMessage = false) {
-            const icon = document.getElementById('sync-icon');
-            if (icon) icon.classList.add('fa-spin');
-
-            try {
-                const endpoints = [
-                    { ep: 'inventory', setter: d => { inventoryData = d.map(x => ({ id: x.id, name: x.name, category: x.category, lot: x.lot, exp: x.exp_date || x.exp, qty: x.quantity ?? x.qty })); localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData)); } },
-                    { ep: 'devices',   setter: d => { devicesData = d; localStorage.setItem('tl_dev_v85', JSON.stringify(d)); } },
-                    { ep: 'logs',      setter: d => { auditLogs = d; localStorage.setItem('tl_log_v85', JSON.stringify(d)); } },
-                    { ep: 'critical',  setter: d => { criticalData = d; localStorage.setItem('tl_crt_v85', JSON.stringify(d)); } },
-                    { ep: 'temperature', setter: d => { tempData = d; localStorage.setItem('tl_tmp_v85', JSON.stringify(d)); } },
-                    { ep: 'tasks',     setter: d => { tasksData = d; localStorage.setItem('tl_tsk_v85', JSON.stringify(d)); } }
-                ];
-
-                for (const item of endpoints) {
-                    const res = await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/${item.ep}`);
-                    if (res.ok) {
-                        const json = await res.json();
-                        if (Array.isArray(json)) item.setter(json);
-                    }
-                }
-                renderAllSections();
-                if (showMessage) showToast("تمت المزامنة السحابية بنجاح ☁️", "success");
-            } catch (err) {
-                if (showMessage) showToast("العمل في الوضع المحلي (تأكد من اتصال السيرفر)", "warning");
-            } finally {
-                if (icon) icon.classList.remove('fa-spin');
-            }
-        }
-
-        function openDevNotesModal() {
-            document.getElementById('dev-notes-area').value = localStorage.getItem('tl_admin_notes') || '';
-            document.getElementById('modal-dev-notes').classList.remove('hidden');
-        }
-
-        function saveDevNotes() {
-            localStorage.setItem('tl_admin_notes', document.getElementById('dev-notes-area').value);
-            document.getElementById('modal-dev-notes').classList.add('hidden');
-            showToast("تم حفظ ملاحظات الإدارة بنجاح", "success");
-        }
-
-        function renderAllSections() {
-            renderInventory();
-            renderDevices();
-            renderSchedule();
-            renderCritical();
-            renderTemperature();
-            renderTasks();
-            renderSuppliersAndPolicies();
-            renderStaff();
-            renderLogs();
-        }
-    </script>
-</body>
-</html>
+            const temp = document
