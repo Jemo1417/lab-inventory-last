@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TechnoLab V8.5 Ultimate | مستشفى الحياة أبها</title>
-    <!-- المكتبات الأساسية: Tailwind, FontAwesome, SheetJS (Excel), Html5-Qrcode -->
+    <!-- المكتبات الأساسية -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -12,94 +12,24 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
         
-        :root {
-            --primary: #2563eb;
-            --secondary: #4f46e5;
-            --accent: #7c3aed;
-        }
+        :root { --primary: #2563eb; --secondary: #4f46e5; --accent: #7c3aed; }
+        body { font-family: 'Cairo', sans-serif; background-color: #f1f5f9; color: #1e293b; overflow-x: hidden; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body.dark-mode { background-color: #0f172a; color: #f8fafc; }
+        body.dark-mode .glass-card { background: rgba(30, 41, 59, 0.90); border-color: rgba(255, 255, 255, 0.1); color: #f8fafc; }
+        body.dark-mode input, body.dark-mode select, body.dark-mode textarea { background-color: #1e293b !important; border-color: #334155 !important; color: #f8fafc !important; }
+        body.dark-mode .modal-box { background-color: #1e293b; color: #ffffff; }
         
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: #f1f5f9;
-            color: #1e293b;
-            overflow-x: hidden;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* الوضع الليلي */
-        body.dark-mode {
-            background-color: #0f172a;
-            color: #f8fafc;
-        }
-        body.dark-mode .glass-card {
-            background: rgba(30, 41, 59, 0.90);
-            border-color: rgba(255, 255, 255, 0.1);
-            color: #f8fafc;
-        }
-        body.dark-mode input, body.dark-mode select, body.dark-mode textarea {
-            background-color: #1e293b !important;
-            border-color: #334155 !important;
-            color: #f8fafc !important;
-        }
-        body.dark-mode .modal-box {
-            background-color: #1e293b;
-            color: #ffffff;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            border-radius: 1.25rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-        }
-
-        .gradient-header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #4f46e5 100%);
-        }
-
-        .ai-gradient {
-            background: linear-gradient(135deg, #7c3aed 0%, #9333ea 50%, #c026d3 100%);
-        }
-
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(226, 232, 240, 0.8); border-radius: 1.25rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
+        .gradient-header { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #4f46e5 100%); }
+        .ai-gradient { background: linear-gradient(135deg, #7c3aed 0%, #9333ea 50%, #c026d3 100%); }
+        
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        .tab-btn.active {
-            background-color: rgba(255, 255, 255, 0.2);
-            border-bottom: 4px solid #ffffff;
-            font-weight: 800;
-        }
-
-        /* إشعارات Toast الذكية */
-        #toast-container {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-            width: 90%;
-            max-width: 420px;
-            pointer-events: none;
-        }
-        .toast-item {
-            background: #1e293b;
-            color: #fff;
-            padding: 14px 18px;
-            border-radius: 14px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-            animation: slideDown 0.3s ease-out forwards;
-            border-right: 5px solid #3b82f6;
-        }
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .tab-btn.active { background-color: rgba(255, 255, 255, 0.2); border-bottom: 4px solid #ffffff; font-weight: 800; }
+        
+        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 420px; pointer-events: none; }
+        .toast-item { background: #1e293b; color: #fff; padding: 14px 18px; border-radius: 14px; box-shadow: 0 15px 30px rgba(0,0,0,0.25); display: flex; align-items: center; gap: 12px; margin-bottom: 10px; animation: slideDown 0.3s ease-out forwards; border-right: 5px solid #3b82f6; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between">
@@ -123,7 +53,6 @@
                     class="w-full p-4 text-center text-xl font-bold border-2 border-blue-100 rounded-xl focus:outline-none focus:border-blue-600 transition">
             </div>
 
-            <!-- معاينة المنصب فور كتابة الرقم -->
             <div id="role-preview-badge" class="hidden mb-4 p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 font-bold text-sm transition-all"></div>
 
             <button onclick="login()" class="w-full gradient-header text-white font-extrabold py-4 rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
@@ -141,13 +70,10 @@
     <!-- ================= واجهة التطبيق الرئيسية ================= -->
     <div id="app-wrapper" class="hidden flex-1 flex flex-col pb-24">
         
-        <!-- الهيدر العلوي -->
         <header class="gradient-header text-white sticky top-0 z-40 shadow-lg">
             <div class="px-4 py-3 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <div class="bg-white/20 p-2.5 rounded-xl backdrop-blur-sm">
-                        <i class="fas fa-flask text-2xl"></i>
-                    </div>
+                    <div class="bg-white/20 p-2.5 rounded-xl backdrop-blur-sm"><i class="fas fa-flask text-2xl"></i></div>
                     <div>
                         <div class="flex items-center gap-2">
                             <h1 class="font-extrabold text-base sm:text-lg leading-tight">مستشفى الحياة أبها</h1>
@@ -158,95 +84,47 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <button onclick="syncAllFromCloud(true)" title="مزامنة السحابة" class="bg-white/10 hover:bg-white/20 p-2.5 rounded-xl transition">
-                        <i id="sync-icon" class="fas fa-sync-alt"></i>
-                    </button>
-                    <button onclick="toggleDarkMode()" title="الوضع الليلي" class="bg-white/10 hover:bg-white/20 p-2.5 rounded-xl transition">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                    <button onclick="logout()" title="تسجيل خروج" class="bg-red-500/80 hover:bg-red-600 p-2.5 rounded-xl transition">
-                        <i class="fas fa-power-off"></i>
-                    </button>
+                    <button onclick="syncAllFromCloud(true)" title="مزامنة السحابة" class="bg-white/10 hover:bg-white/20 p-2.5 rounded-xl transition"><i id="sync-icon" class="fas fa-sync-alt"></i></button>
+                    <button onclick="toggleDarkMode()" title="الوضع الليلي" class="bg-white/10 hover:bg-white/20 p-2.5 rounded-xl transition"><i class="fas fa-moon"></i></button>
+                    <button onclick="logout()" title="تسجيل خروج" class="bg-red-500/80 hover:bg-red-600 p-2.5 rounded-xl transition"><i class="fas fa-power-off"></i></button>
                 </div>
             </div>
 
-            <!-- شريط الأقسام الشامل -->
+            <!-- شريط الأقسام -->
             <nav class="flex overflow-x-auto no-scrollbar bg-black/15 px-2 pt-1 text-xs sm:text-sm">
-                <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn active px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition">
-                    <i class="fas fa-boxes"></i> المخزون
-                </button>
-                <button onclick="switchTab('devices')" id="tab-devices" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition">
-                    <i class="fas fa-cogs"></i> الأجهزة والصيانة
-                </button>
-                <button onclick="switchTab('schedule')" id="tab-schedule" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition">
-                    <i class="fas fa-calendar-alt"></i> الجداول والشفتات
-                </button>
-                <button onclick="switchTab('critical')" id="tab-critical" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition">
-                    <i class="fas fa-heartbeat"></i> النتائج الحرجة
-                </button>
-                <button onclick="switchTab('temperature')" id="tab-temperature" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition">
-                    <i class="fas fa-thermometer-half"></i> الحرارة
-                </button>
-                <button onclick="switchTab('tasks')" id="tab-tasks" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition">
-                    <i class="fas fa-tasks"></i> المهام والتعاميم
-                </button>
-                <button onclick="switchTab('suppliers')" id="tab-suppliers" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition">
-                    <i class="fas fa-truck-medical"></i> الشركات والسياسات
-                </button>
-                <!-- يظهر للمشرفين والمدراء فقط -->
-                <button onclick="switchTab('staff')" id="tab-staff" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition role-restricted hidden">
-                    <i class="fas fa-users-cog"></i> الموظفين
-                </button>
-                <!-- God Mode حصرياً للأستاذ جمال (Admin) -->
-                <button onclick="switchTab('logs')" id="tab-logs" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition god-mode-tab hidden">
-                    <i class="fas fa-eye text-yellow-300"></i> السجل والرقابة
-                </button>
+                <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn active px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-boxes"></i> المخزون</button>
+                <button onclick="switchTab('devices')" id="tab-devices" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-cogs"></i> الأجهزة والصيانة</button>
+                <button onclick="switchTab('schedule')" id="tab-schedule" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-calendar-alt"></i> الجداول والشفتات</button>
+                <button onclick="switchTab('critical')" id="tab-critical" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-heartbeat"></i> النتائج الحرجة</button>
+                <button onclick="switchTab('temperature')" id="tab-temperature" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-thermometer-half"></i> الحرارة</button>
+                <button onclick="switchTab('tasks')" id="tab-tasks" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-tasks"></i> المهام والتعاميم</button>
+                <button onclick="switchTab('suppliers')" id="tab-suppliers" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-truck-medical"></i> الشركات والسياسات</button>
+                <button onclick="switchTab('staff')" id="tab-staff" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition role-restricted hidden"><i class="fas fa-users-cog"></i> الموظفين</button>
+                <button onclick="switchTab('logs')" id="tab-logs" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition admin-only hidden"><i class="fas fa-eye text-yellow-300"></i> السجل والرقابة</button>
             </nav>
         </header>
 
-        <!-- ================= محتوى الأقسام ================= -->
         <main class="p-4 max-w-6xl mx-auto w-full space-y-6">
 
-            <!-- 1. قسم المخزون (Inventory) -->
+            <!-- 1. المخزون -->
             <section id="sec-inventory" class="tab-section space-y-4">
                 <div class="grid grid-cols-3 gap-3 text-center">
-                    <div class="glass-card p-3 border-r-4 border-blue-500">
-                        <p class="text-xs text-gray-500 font-bold">إجمالي الأصناف</p>
-                        <p id="stat-total-items" class="text-2xl font-extrabold text-blue-600">0</p>
-                    </div>
-                    <div class="glass-card p-3 border-r-4 border-amber-500">
-                        <p class="text-xs text-gray-500 font-bold">نواقص قريبة</p>
-                        <p id="stat-low-items" class="text-2xl font-extrabold text-amber-500">0</p>
-                    </div>
-                    <div class="glass-card p-3 border-r-4 border-red-500">
-                        <p class="text-xs text-gray-500 font-bold">قارب على الانتهاء</p>
-                        <p id="stat-exp-items" class="text-2xl font-extrabold text-red-500">0</p>
-                    </div>
+                    <div class="glass-card p-3 border-r-4 border-blue-500"><p class="text-xs text-gray-500 font-bold">إجمالي الأصناف</p><p id="stat-total-items" class="text-2xl font-extrabold text-blue-600">0</p></div>
+                    <div class="glass-card p-3 border-r-4 border-amber-500"><p class="text-xs text-gray-500 font-bold">نواقص قريبة</p><p id="stat-low-items" class="text-2xl font-extrabold text-amber-500">0</p></div>
+                    <div class="glass-card p-3 border-r-4 border-red-500"><p class="text-xs text-gray-500 font-bold">قارب على الانتهاء</p><p id="stat-exp-items" class="text-2xl font-extrabold text-red-500">0</p></div>
                 </div>
 
-                <!-- أزرار التحكم بالمخزون والإحصائيات -->
                 <div class="flex flex-wrap gap-2 justify-between items-center glass-card p-3">
                     <div class="flex flex-wrap gap-2">
-                        <button onclick="openInventoryModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow flex items-center gap-2">
-                            <i class="fas fa-plus-circle"></i> إضافة محلول / كاشف
-                        </button>
-                        <button onclick="openInventoryModal(true)" class="ai-gradient hover:opacity-95 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow flex items-center gap-2">
-                            <i class="fas fa-camera"></i> إضافة ذكية (AI)
-                        </button>
+                        <button onclick="openInventoryModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow flex items-center gap-2"><i class="fas fa-plus-circle"></i> إضافة محلول / كاشف</button>
+                        <button onclick="openInventoryModal(true)" class="ai-gradient hover:opacity-95 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow flex items-center gap-2"><i class="fas fa-camera"></i> إضافة ذكية (AI)</button>
                     </div>
-                    <!-- أدوات الإحصائيات والاستيراد (مخصصة للـ Admin فقط) -->
                     <div class="flex gap-2 admin-only hidden">
-                        <button onclick="exportInventoryExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 shadow">
-                            <i class="fas fa-chart-pie"></i> استخراج الإحصائيات (Excel)
-                        </button>
-                        <label class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer shadow">
-                            <i class="fas fa-file-import"></i> استيراد
-                            <input type="file" accept=".xlsx,.xls" class="hidden" onchange="importInventoryExcel(event)">
-                        </label>
+                        <button onclick="exportInventoryExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 shadow"><i class="fas fa-chart-pie"></i> الإحصائيات (Excel)</button>
+                        <label class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer shadow"><i class="fas fa-file-import"></i> استيراد<input type="file" accept=".xlsx,.xls" class="hidden" onchange="importInventoryExcel(event)"></label>
                     </div>
                 </div>
 
-                <!-- بحث وفلترة المخزون -->
                 <div class="flex gap-2">
                     <input type="text" id="inv-search" oninput="renderInventory()" placeholder="ابحث بالاسم، الباركود، أو رقم التشغيلة (Lot)..." class="flex-1 p-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-500">
                     <select id="inv-filter-cat" onchange="renderInventory()" class="p-3 rounded-xl border border-gray-200 text-sm font-bold">
@@ -260,25 +138,22 @@
                         <option value="المستودع الفرعي">المستودع الفرعي (Sub-store)</option>
                     </select>
                 </div>
-
                 <div id="inventory-container" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
             </section>
 
-            <!-- 2. قسم الأجهزة والصيانة (Devices) -->
+            <!-- 2. الأجهزة -->
             <section id="sec-devices" class="tab-section hidden space-y-4">
                 <div class="glass-card p-4 border-r-4 border-amber-500 flex justify-between items-center">
                     <div>
                         <h3 class="font-extrabold text-sm sm:text-base"><i class="fas fa-tools text-amber-500 ml-1"></i> جدول الصيانة الأسبوعية المعتمد</h3>
                         <p class="text-xs text-gray-500 mt-1">يوم الصيانة الأسبوعي لكافة أجهزة المختبر (Alinity, ACL TOP, Gem): <strong class="text-blue-600 font-extrabold">يوم السبت (Saturday)</strong></p>
                     </div>
-                    <button onclick="openDeviceModal()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow role-restricted hidden">
-                        + إضافة جهاز
-                    </button>
+                    <button onclick="openDeviceModal()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow role-restricted hidden">+ إضافة جهاز</button>
                 </div>
                 <div id="devices-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
             </section>
 
-            <!-- 3. قسم الجداول والشفتات (Schedule) -->
+            <!-- 3. الجداول -->
             <section id="sec-schedule" class="tab-section hidden space-y-4">
                 <div class="glass-card p-4 flex flex-wrap justify-between items-center gap-2">
                     <div>
@@ -287,16 +162,13 @@
                     </div>
                     <div class="flex gap-2 role-restricted hidden">
                         <button onclick="openScheduleModal()" class="bg-blue-600 text-white px-3 py-2 rounded-xl text-xs font-bold">+ إضافة مناوبة</button>
-                        <label class="ai-gradient text-white px-3 py-2 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1">
-                            <i class="fas fa-camera"></i> مسح جدول (AI)
-                            <input type="file" accept="image/*" class="hidden" onchange="scanScheduleWithAI(event)">
-                        </label>
+                        <label class="ai-gradient text-white px-3 py-2 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1"><i class="fas fa-camera"></i> مسح جدول (AI)<input type="file" accept="image/*" class="hidden" onchange="scanScheduleWithAI(event)"></label>
                     </div>
                 </div>
                 <div id="schedule-container" class="grid gap-3"></div>
             </section>
 
-            <!-- 4. قسم النتائج الحرجة (Critical Results) -->
+            <!-- 4. النتائج الحرجة -->
             <section id="sec-critical" class="tab-section hidden space-y-4">
                 <div class="glass-card p-4">
                     <h3 class="font-extrabold text-base mb-3 text-red-600"><i class="fas fa-bell"></i> توثيق تبليغ نتيجة حرجة (CAP / CBAHI Standard)</h3>
@@ -310,7 +182,7 @@
                 <div id="critical-container" class="space-y-2"></div>
             </section>
 
-            <!-- 5. قسم درجات الحرارة (Temperature) -->
+            <!-- 5. درجات الحرارة -->
             <section id="sec-temperature" class="tab-section hidden space-y-4">
                 <div class="glass-card p-4">
                     <h3 class="font-extrabold text-base mb-3 text-blue-600"><i class="fas fa-snowflake"></i> تسجيل حرارة الثلاجات والغرف</h3>
@@ -328,7 +200,7 @@
                 <div id="temperature-container" class="space-y-2"></div>
             </section>
 
-            <!-- 6. قسم المهام والتعاميم (Tasks) -->
+            <!-- 6. المهام والتعاميم -->
             <section id="sec-tasks" class="tab-section hidden space-y-4">
                 <div class="glass-card p-4 role-restricted hidden">
                     <h3 class="font-extrabold text-base mb-3"><i class="fas fa-bullhorn text-purple-600"></i> إرسال مهمة أو تعميم للموظفين</h3>
@@ -341,22 +213,21 @@
                 <div id="tasks-container" class="space-y-2"></div>
             </section>
 
-            <!-- 7. قسم الشركات والسياسات (Suppliers & Policies) -->
+            <!-- 7. الشركات والسياسات -->
             <section id="sec-suppliers" class="tab-section hidden space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="glass-card p-4 space-y-3">
                         <h3 class="font-extrabold text-base"><i class="fas fa-phone-volume text-emerald-600"></i> دليل مهندسي الصيانة والشركات</h3>
                         <div class="flex gap-2 role-restricted hidden">
-                            <input type="text" id="sup-name" placeholder="اسم الشركة/المهندس" class="p-2 border rounded-lg text-xs flex-1">
+                            <input type="text" id="sup-name" placeholder="الشركة/المهندس" class="p-2 border rounded-lg text-xs flex-1">
                             <input type="text" id="sup-desc" placeholder="الجهاز (مثال: Alinity)" class="p-2 border rounded-lg text-xs flex-1">
-                            <input type="tel" id="sup-phone" placeholder="رقم الجوال" class="p-2 border rounded-lg text-xs flex-1">
+                            <input type="tel" id="sup-phone" placeholder="الجوال" class="p-2 border rounded-lg text-xs flex-1">
                             <button onclick="addSupplier()" class="bg-emerald-600 text-white px-3 py-2 rounded-lg text-xs font-bold">+</button>
                         </div>
                         <div id="suppliers-container" class="space-y-2"></div>
                     </div>
-
                     <div class="glass-card p-4 space-y-3">
-                        <h3 class="font-extrabold text-base"><i class="fas fa-file-shield text-blue-600"></i> السياسات والاعتمادات (CAP, CBAHI, SFDA)</h3>
+                        <h3 class="font-extrabold text-base"><i class="fas fa-file-shield text-blue-600"></i> السياسات والاعتمادات</h3>
                         <div class="flex gap-2 role-restricted hidden">
                             <input type="text" id="pol-title" placeholder="عنوان السياسة (SOP)" class="p-2 border rounded-lg text-xs flex-1">
                             <input type="text" id="pol-summary" placeholder="ملخص أو رابط" class="p-2 border rounded-lg text-xs flex-1">
@@ -367,221 +238,138 @@
                 </div>
             </section>
 
-            <!-- 8. قسم إدارة الموظفين (Staff Management) -->
+            <!-- 8. إدارة الموظفين -->
             <section id="sec-staff" class="tab-section hidden space-y-4">
                 <div class="glass-card p-4 flex flex-col gap-4">
                     <div>
-                        <h3 class="font-extrabold text-base mb-1"><i class="fas fa-user-plus text-blue-600"></i> قائمة موظفي المختبر</h3>
-                        <p class="text-xs text-gray-500">استعراض وإدارة الطاقم والصلاحيات</p>
+                        <h3 class="font-extrabold text-base mb-1"><i class="fas fa-users-cog text-blue-600"></i> إدارة الطاقم والصلاحيات</h3>
+                        <p class="text-xs text-gray-500">الصلاحية الكاملة لإضافة وتعديل وحذف الموظفين متاحة للـ Admin فقط</p>
                     </div>
                     
-                    <!-- صندوق الإضافة والتعديل يظهر فقط للـ Admin (جمال عسيري) -->
-                    <div class="admin-only hidden grid grid-cols-1 sm:grid-cols-4 gap-2 p-3 bg-blue-50 dark:bg-slate-800 rounded-xl border border-blue-100 dark:border-slate-700">
+                    <div id="admin-staff-controls" class="hidden grid grid-cols-1 sm:grid-cols-4 gap-2 p-3 bg-blue-50 dark:bg-slate-800 rounded-xl border border-blue-100 dark:border-slate-700">
                         <input type="text" id="new-staff-id" placeholder="الرقم الوظيفي (ID)" class="p-3 border rounded-xl text-sm">
                         <input type="text" id="new-staff-name" placeholder="اسم الموظف" class="p-3 border rounded-xl text-sm">
                         <select id="new-staff-role" class="p-3 border rounded-xl text-sm font-bold">
-                            <option value="Spec">أخصائي مختبر (Specialist)</option>
-                            <option value="Supervisor">مشرف (Supervisor)</option>
-                            <option value="Lab Director">مدير مختبر (Director)</option>
+                            <option value="Spec">أخصائي مختبر</option>
+                            <option value="Supervisor">مشرف مختبر</option>
+                            <option value="Lab Director">مدير مختبر</option>
                             <option value="Admin">مدير نظام (Admin)</option>
                         </select>
-                        <button onclick="addStaffMember()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold p-3 rounded-xl text-sm shadow transition">إضافة / تحديث الصلاحية</button>
+                        <button onclick="addStaffMember()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold p-3 rounded-xl text-sm shadow transition">حفظ الصلاحية</button>
                     </div>
 
                     <div id="staff-list-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
                 </div>
             </section>
 
-            <!-- 9. قسم السجل والرقابة الشاملة (God Mode) حصرياً للـ Admin -->
+            <!-- 9. السجل والرقابة (God Mode) -->
             <section id="sec-logs" class="tab-section hidden space-y-4">
                 <div class="glass-card p-4 border-r-4 border-purple-600 flex justify-between items-center">
                     <div>
-                        <h3 class="font-extrabold text-base text-purple-700 dark:text-purple-400">
-                            <i class="fas fa-shield-halved"></i> غرفة المراقبة المركزية وسجل الحركات (God Mode)
-                        </h3>
-                        <p class="text-xs text-gray-500">مراقبة حية لكافة عمليات الإدخال، التعديل، المسح الذكي، وتسجيل الدخول</p>
+                        <h3 class="font-extrabold text-base text-purple-700 dark:text-purple-400"><i class="fas fa-shield-halved"></i> سجل النظام الرقابي (God Mode)</h3>
+                        <p class="text-xs text-gray-500">شاشة المراقبة المباشرة لكافة حركات وتعديلات النظام</p>
                     </div>
                     <button onclick="syncAllFromCloud(true)" class="bg-purple-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">تحديث السجل</button>
                 </div>
                 <div id="logs-container" class="glass-card p-4 max-h-[500px] overflow-y-auto space-y-2"></div>
             </section>
-
         </main>
 
-        <!-- زر ملاحظات المطور العائم خاص بالـ Admin -->
-        <button id="admin-dev-btn" onclick="openDevNotesModal()" class="hidden fixed bottom-20 left-4 z-40 bg-amber-500 hover:bg-amber-600 text-white p-4 rounded-full shadow-2xl flex items-center gap-2 font-bold text-xs">
-            <i class="fas fa-code text-lg"></i> ملاحظات الإدارة
-        </button>
-
+        <button id="admin-dev-btn" onclick="openDevNotesModal()" class="hidden fixed bottom-20 left-4 z-40 bg-amber-500 hover:bg-amber-600 text-white p-4 rounded-full shadow-2xl flex items-center gap-2 font-bold text-xs"><i class="fas fa-code text-lg"></i> ملاحظات الإدارة</button>
     </div>
 
-    <!-- ================= نافذة إضافة مخزون + كاميرا AI + باركود ================= -->
+    <!-- ================= نافذة إضافة المخزون (AI + Barcode) ================= -->
     <div id="modal-inventory" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="modal-box bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl my-auto">
+        <div class="modal-box bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl my-auto mt-10">
             <div class="px-5 py-4 gradient-header text-white flex justify-between items-center">
-                <h3 class="font-extrabold text-base"><i class="fas fa-box-open ml-2"></i> بيانات المحلول / الصنف</h3>
+                <h3 class="font-extrabold text-base"><i class="fas fa-box-open ml-2"></i> بيانات الصنف</h3>
                 <button onclick="closeInventoryModal()" class="text-white/80 hover:text-white text-xl"><i class="fas fa-times"></i></button>
             </div>
-
             <div class="p-5 space-y-4">
                 <div class="bg-purple-50 dark:bg-purple-950/40 border-2 border-dashed border-purple-300 rounded-2xl p-3 flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <i class="fas fa-wand-magic-sparkles text-purple-600 text-xl"></i>
                         <div>
-                            <p class="text-xs font-extrabold text-purple-800 dark:text-purple-300">التعرف الذكي عبر السيرفر المشفر (AI)</p>
-                            <p id="ai-status-text" class="text-[11px] text-gray-500">صور العلبة لتعبئة الاسم والـ Lot وتاريخ الانتهاء آلياً</p>
+                            <p class="text-xs font-extrabold text-purple-800 dark:text-purple-300">التعرف الذكي (AI)</p>
+                            <p id="ai-status-text" class="text-[11px] text-gray-500">صور العلبة للتعبئة الآلية الدقيقة</p>
                         </div>
                     </div>
-                    <label class="ai-gradient text-white px-3 py-2 rounded-xl text-xs font-bold cursor-pointer shadow flex items-center gap-1.5">
-                        <i class="fas fa-camera"></i> تصوير
-                        <input type="file" id="ai-camera-input" accept="image/*" capture="environment" class="hidden" onchange="processImageWithAI(event)">
-                    </label>
+                    <label class="ai-gradient text-white px-3 py-2 rounded-xl text-xs font-bold cursor-pointer shadow flex items-center gap-1.5"><i class="fas fa-camera"></i> تصوير<input type="file" id="ai-camera-input" accept="image/*" capture="environment" class="hidden" onchange="processImageWithAI(event)"></label>
                 </div>
-
-                <div id="ai-loading-indicator" class="hidden bg-purple-100 text-purple-900 p-3 rounded-xl text-center text-xs font-bold flex items-center justify-center gap-2">
-                    <i class="fas fa-circle-notch fa-spin text-lg"></i>
-                    <span>جاري ضغط الصورة وتحليلها عبر الوركر المشفر...</span>
-                </div>
-
+                <div id="ai-loading-indicator" class="hidden bg-purple-100 text-purple-900 p-3 rounded-xl text-center text-xs font-bold flex items-center justify-center gap-2"><i class="fas fa-circle-notch fa-spin text-lg"></i><span>جاري التحليل بدقة عالية...</span></div>
+                
                 <div id="barcode-reader-box" class="hidden rounded-xl overflow-hidden border"></div>
-
+                
                 <div class="space-y-3">
+                    <div><label class="block text-xs font-bold text-gray-500 mb-1">الاسم التجاري / المحلول *</label><input type="text" id="itemName" class="w-full p-3 border rounded-xl text-sm font-bold"></div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">الاسم العلمي / التجاري *</label>
-                        <input type="text" id="itemName" placeholder="مثال: Vitamin D / Alinity c Reagent" class="w-full p-3 border rounded-xl text-sm font-bold">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">الباركود / الكود المرجعي (SFDA)</label>
+                        <label class="block text-xs font-bold text-gray-500 mb-1">الباركود / المرجع (REF)</label>
                         <div class="flex gap-2">
-                            <input type="text" id="itemBarcode" placeholder="امسح أو اكتب الباركود..." class="flex-1 p-3 border rounded-xl text-sm">
-                            <button type="button" onclick="toggleBarcodeScanner()" class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 px-4 rounded-xl text-gray-700 dark:text-white">
-                                <i class="fas fa-barcode text-lg"></i>
-                            </button>
+                            <input type="text" id="itemBarcode" class="flex-1 p-3 border rounded-xl text-sm">
+                            <button type="button" onclick="toggleBarcodeScanner()" class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 px-4 rounded-xl text-gray-700 dark:text-white"><i class="fas fa-barcode text-lg"></i></button>
                         </div>
                     </div>
-
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">القسم / منصة الجهاز</label>
+                        <label class="block text-xs font-bold text-gray-500 mb-1">القسم / المنصة</label>
                         <select id="itemCategory" class="w-full p-3 border rounded-xl text-sm font-bold">
-                            <option value="كيمياء حيوية">كيمياء حيوية</option>
-                            <option value="Alinity ci & hq">Alinity ci & hq</option>
-                            <option value="ACL TOP">ACL TOP</option>
-                            <option value="Gem">Gem (Blood Gas)</option>
-                            <option value="Glucometers">Glucometers</option>
-                            <option value="أمراض دم">أمراض دم</option>
-                            <option value="المستودع الفرعي">المستودع الفرعي (Sub-store)</option>
+                            <option value="كيمياء حيوية">كيمياء حيوية</option><option value="Alinity ci & hq">Alinity ci & hq</option><option value="ACL TOP">ACL TOP</option><option value="Gem">Gem (Blood Gas)</option><option value="Glucometers">Glucometers</option><option value="أمراض دم">أمراض دم</option><option value="المستودع الفرعي">المستودع الفرعي</option>
                         </select>
                     </div>
-
-                    <div class="bg-blue-50/60 dark:bg-slate-800/60 p-3 rounded-2xl border border-blue-100 dark:border-slate-700 space-y-3">
-                        <p class="text-xs font-extrabold text-blue-600"><i class="fas fa-box"></i> التعبئة والرصيد (التاريخ بالميلادي)</p>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-[11px] font-bold text-gray-500 mb-1">رقم التشغيلة (Lot)</label>
-                                <input type="text" id="lotNumber" placeholder="Lot Number" class="w-full p-2.5 border rounded-xl text-xs font-bold">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-bold text-gray-500 mb-1">تاريخ الانتهاء (Gregorian)</label>
-                                <input type="date" id="expiryDate" class="w-full p-2.5 border rounded-xl text-xs font-bold">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-gray-500 mb-1">الكمية الابتدائية (الرصيد)</label>
-                            <input type="number" id="itemQty" value="1" min="0" class="w-full p-2.5 border rounded-xl text-center font-extrabold text-sm">
-                        </div>
+                    <div class="bg-blue-50/60 dark:bg-slate-800/60 p-3 rounded-2xl border border-blue-100 dark:border-slate-700 grid grid-cols-2 gap-2">
+                        <div><label class="block text-[11px] font-bold text-gray-500 mb-1">التشغيلة (Lot)</label><input type="text" id="lotNumber" class="w-full p-2.5 border rounded-xl text-xs font-bold"></div>
+                        <div><label class="block text-[11px] font-bold text-gray-500 mb-1">الانتهاء (YYYY-MM-DD)</label><input type="date" id="expiryDate" class="w-full p-2.5 border rounded-xl text-xs font-bold"></div>
+                        <div class="col-span-2"><label class="block text-[11px] font-bold text-gray-500 mb-1">الرصيد</label><input type="number" id="itemQty" value="1" min="0" class="w-full p-2.5 border rounded-xl text-center font-extrabold text-sm"></div>
                     </div>
                 </div>
-
                 <div class="flex gap-2 pt-2">
-                    <button onclick="saveInventoryItem()" class="flex-1 bg-sky-500 hover:bg-sky-600 text-white font-extrabold py-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2">
-                        <i class="fas fa-save"></i> حفظ وإضافة
-                    </button>
-                    <button onclick="closeInventoryModal()" class="px-6 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 font-bold rounded-xl text-sm">إلغاء</button>
+                    <button onclick="saveInventoryItem()" class="flex-1 bg-sky-500 hover:bg-sky-600 text-white font-extrabold py-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2"><i class="fas fa-save"></i> حفظ وإضافة</button>
+                    <button onclick="closeInventoryModal()" class="px-6 bg-gray-100 dark:bg-gray-700 font-bold rounded-xl text-sm">إلغاء</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ================= نافذة ملاحظات المطور (Admin Notes) ================= -->
+    <!-- نافذة المطور -->
     <div id="modal-dev-notes" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
         <div class="modal-box bg-white rounded-2xl w-full max-w-md p-5 space-y-3 shadow-2xl">
-            <h3 class="font-extrabold text-base text-amber-600"><i class="fas fa-crown"></i> دفتر ملاحظات مدير النظام (Jamal Asiri)</h3>
-            <textarea id="dev-notes-area" rows="5" placeholder="اكتب ملاحظاتك الإدارية والبرمجية هنا..." class="w-full p-3 border rounded-xl text-sm"></textarea>
+            <h3 class="font-extrabold text-base text-amber-600"><i class="fas fa-crown"></i> دفتر ملاحظات الإدارة</h3>
+            <textarea id="dev-notes-area" rows="5" class="w-full p-3 border rounded-xl text-sm"></textarea>
             <div class="flex gap-2">
-                <button onclick="saveDevNotes()" class="flex-1 bg-amber-500 text-white font-bold py-2.5 rounded-xl">حفظ الملاحظات</button>
+                <button onclick="saveDevNotes()" class="flex-1 bg-amber-500 text-white font-bold py-2.5 rounded-xl">حفظ</button>
                 <button onclick="document.getElementById('modal-dev-notes').classList.add('hidden')" class="px-4 bg-gray-200 dark:bg-gray-700 rounded-xl text-sm font-bold">إغلاق</button>
             </div>
         </div>
     </div>
 
-    <!-- ================= لوحة حقوق الملكية الثابتة ================= -->
+    <!-- حقوق الملكية -->
     <footer class="bg-slate-900 text-white py-3 px-4 border-t border-slate-800 fixed bottom-0 inset-x-0 z-30 shadow-inner">
         <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center text-center gap-1">
             <div class="flex items-center gap-2 text-xs font-extrabold text-sky-400">
-                <i class="fas fa-globe"></i>
-                <span>TechnoLab.Online</span>
-                <span class="text-slate-500">|</span>
-                <span class="text-slate-300">مستشفى الحياة أبها (Hayat Hospital Abha)</span>
+                <i class="fas fa-globe"></i><span>TechnoLab.Online</span><span class="text-slate-500">|</span><span class="text-slate-300">مستشفى الحياة أبها</span>
             </div>
-            <div class="text-[11px] text-slate-400 font-semibold">
-                Done By <strong class="text-white">Jamal Asiri</strong> — <a href="mailto:alalkmy777@gmail.com" class="text-amber-400 hover:underline">alalkmy777@gmail.com</a>
-            </div>
+            <div class="text-[11px] text-slate-400 font-semibold">Done By <strong class="text-white">Jamal Asiri</strong> — alalkmy777@gmail.com</div>
         </div>
     </footer>
 
-    <!-- ================= المحرك البرمجي الشامل (JavaScript) ================= -->
+    <!-- ================= المحرك البرمجي (JavaScript) ================= -->
     <script>
-        /* =========================================================================
-           1. إعدادات السحابة والوركر المشفر (Cloudflare Worker Config)
-           ========================================================================= */
-        const CLOUDFLARE_CONFIG = {
-            apiUrl: "https://technolab-backend.grout-comfier0j.workers.dev" // تأكد أن هذا الرابط يطابق رابطك في كلاود فلير
-        };
+        // إعدادات الوركر للذكاء الاصطناعي والمزامنة
+        const CLOUDFLARE_CONFIG = { apiUrl: "https://technolab-backend.grout-comfier0j.workers.dev" };
 
-        /* =========================================================================
-           2. قاعدة بيانات المستخدمين والصلاحيات المعدلة (RBAC + God Mode حصري)
-           ========================================================================= */
+        // قاعدة بيانات المستخدمين المحدثة والمثبتة (الادمن يتحكم بالجميع)
         const DEFAULT_USERS = {
-            "32726": {
-                id: "32726",
-                name: "Jamal Asiri",
-                roleLabel: "Admin",
-                badge: "Admin 👑",
-                isAdmin: true,       // يملك كل الصلاحيات بما فيها الإحصائيات وإضافة الموظفين
-                isSupervisor: true,
-                godMode: true        // غرفة المراقبة والسجل حصرياً لجمال
-            },
-            "40291": {
-                id: "40291",
-                name: "د. عمرو",
-                roleLabel: "Lab Director",
-                badge: "Lab Director 🔬",
-                isAdmin: false,      // لا يملك صلاحية استخراج الإحصائيات أو حذف الموظفين
-                isSupervisor: true,  // يرى قسم الموظفين والجداول
-                godMode: false       // لا يرى سجل God Mode
-            },
-            "32731": {
-                id: "32731",
-                name: "فيصل",
-                roleLabel: "Supervisor",
-                badge: "Supervisor 🛡️",
-                isAdmin: false,
-                isSupervisor: true,
-                godMode: false       // لا يرى سجل God Mode
-            }
+            "32726": { id: "32726", name: "Jamal Asiri", roleLabel: "Admin", badge: "Admin 👑", isAdmin: true, isSupervisor: true, godMode: true },
+            "40291": { id: "40291", name: "د. عمرو", roleLabel: "Lab Director", badge: "Lab Director 🔬", isAdmin: false, isSupervisor: true, godMode: false },
+            "32731": { id: "32731", name: "فيصل", roleLabel: "Supervisor", badge: "Supervisor 🛡️", isAdmin: false, isSupervisor: true, godMode: false }
         };
 
+        // استعادة بيانات الموظفين مع حماية مناصب الإدارة العليا من الحذف
         let usersDB = JSON.parse(localStorage.getItem('tl_users_v85')) || DEFAULT_USERS;
-        // حماية الحسابات الرئيسية من الحذف العرضي وتثبيت مناصبهم المحدثة
-        usersDB["32726"] = DEFAULT_USERS["32726"];
-        usersDB["40291"] = DEFAULT_USERS["40291"];
-        usersDB["32731"] = DEFAULT_USERS["32731"];
+        // فرض بقاء حساب جمال كـ Admin دائماً لتفادي الإغلاق العرضي
+        if (!usersDB["32726"]) usersDB["32726"] = DEFAULT_USERS["32726"];
 
-        let currentUser = null;
-        let html5QrCode = null;
-
-        // مصفوفات البيانات النظيفة (Clean Slate)
+        let currentUser = null, html5QrCode = null;
+        
         let inventoryData = JSON.parse(localStorage.getItem('tl_inv_v85')) || [];
         let devicesData   = JSON.parse(localStorage.getItem('tl_dev_v85')) || [];
         let scheduleData  = JSON.parse(localStorage.getItem('tl_sch_v85')) || [];
@@ -592,564 +380,259 @@
         let policiesData  = JSON.parse(localStorage.getItem('tl_pol_v85')) || [];
         let auditLogs     = JSON.parse(localStorage.getItem('tl_log_v85')) || [];
 
-        /* =========================================================================
-           3. دوال التنبيهات والتاريخ الميلادي
-           ========================================================================= */
         function showToast(msg, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = 'toast-item';
+            const c = document.getElementById('toast-container'), t = document.createElement('div');
             const colors = { success: '#10b981', error: '#ef4444', warning: '#f59e0b', info: '#3b82f6' };
-            const icons  = { success: 'fa-check-circle', error: 'fa-exclamation-triangle', warning: 'fa-bell', info: 'fa-info-circle' };
-            toast.style.borderRightColor = colors[type] || colors.info;
-            toast.innerHTML = `<i class="fas ${icons[type] || icons.info} text-lg" style="color:${colors[type]}"></i><span class="text-xs font-bold">${msg}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
+            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-triangle', warning: 'fa-bell', info: 'fa-info-circle' };
+            t.className = 'toast-item'; t.style.borderRightColor = colors[type];
+            t.innerHTML = `<i class="fas ${icons[type]} text-lg" style="color:${colors[type]}"></i><span class="text-xs font-bold">${msg}</span>`;
+            c.appendChild(t); setTimeout(() => t.remove(), 4000);
         }
+        
+        function getGregorianTimestamp() { return new Date().toLocaleString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }); }
 
-        function getGregorianTimestamp() {
-            return new Date().toLocaleString('en-GB', {
-                year: 'numeric', month: '2-digit', day: '2-digit',
-                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-            });
-        }
-
-        /* =========================================================================
-           4. نظام تسجيل الدخول وإعداد صلاحيات الواجهة (المحدثة)
-           ========================================================================= */
         function previewUserRole(pin) {
-            const badge = document.getElementById('role-preview-badge');
-            const cleanPin = pin.trim();
-            if (usersDB[cleanPin]) {
-                const u = usersDB[cleanPin];
-                badge.classList.remove('hidden');
-                badge.innerHTML = `<i class="fas fa-user-check ml-1 text-blue-600"></i> أهلاً بك: <strong>${u.name}</strong> — <span class="text-purple-700 font-extrabold">${u.roleLabel}</span>`;
-            } else {
-                badge.classList.add('hidden');
-            }
+            const b = document.getElementById('role-preview-badge'), p = pin.trim();
+            if (usersDB[p]) { b.classList.remove('hidden'); b.innerHTML = `<i class="fas fa-user-check ml-1 text-blue-600"></i> أهلاً بك: <strong>${usersDB[p].name}</strong> — <span class="text-purple-700 font-extrabold">${usersDB[p].roleLabel}</span>`; } 
+            else { b.classList.add('hidden'); }
         }
 
         function login() {
             const pin = document.getElementById('login-pin').value.trim();
-            const err = document.getElementById('login-error');
-            if (!usersDB[pin]) {
-                err.classList.remove('hidden');
-                return;
-            }
-            err.classList.add('hidden');
+            if (!usersDB[pin]) return document.getElementById('login-error').classList.remove('hidden');
+            document.getElementById('login-error').classList.add('hidden');
             currentUser = usersDB[pin];
-
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-wrapper').classList.remove('hidden');
             setupUIForUser();
-            logAction('تسجيل دخول', `دخل إلى النظام بصلاحية ${currentUser.roleLabel}`, 'auth');
-            showToast(`أهلاً بك ${currentUser.name} (${currentUser.badge})`, 'success');
-            renderAllSections();
-            syncAllFromCloud(false);
+            logAction('تسجيل دخول', `تم دخول النظام`, 'auth');
+            showToast(`أهلاً بك ${currentUser.name}`, 'success');
+            renderAllSections(); syncAllFromCloud(false);
         }
 
         function setupUIForUser() {
             document.getElementById('active-user-badge').innerText = `${currentUser.name} | ${currentUser.badge}`;
+            
+            // إخفاء الأقسام حسب الدور
+            document.querySelectorAll('.role-restricted').forEach(el => currentUser.isAdmin || currentUser.isSupervisor ? el.classList.remove('hidden') : el.classList.add('hidden'));
+            
+            // فرض إظهار أدوات الإدارة (الإكسل، سجل المراقبة، التعديل) حصرياً للـ Admin (جمال 32726)
+            if (currentUser.isAdmin) {
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+                document.getElementById('admin-staff-controls').classList.remove('hidden');
+            } else {
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
+                document.getElementById('admin-staff-controls').classList.add('hidden');
+            }
 
-            // 1. الأقسام المسموحة للمشرفين والمدراء (فيصل ودكتور عمرو وجمال)
-            document.querySelectorAll('.role-restricted').forEach(el => {
-                if (currentUser.isAdmin || currentUser.isSupervisor) el.classList.remove('hidden');
-                else el.classList.add('hidden');
-            });
-
-            // 2. صلاحيات جمال الحصرية (Admin) -> إضافة الموظفين + الإحصائيات
-            document.querySelectorAll('.admin-only').forEach(el => {
-                if (currentUser.isAdmin) el.classList.remove('hidden');
-                else el.classList.add('hidden');
-            });
-
-            // 3. صلاحية غرفة المراقبة (God Mode) -> لجمال فقط
-            document.querySelectorAll('.god-mode-tab').forEach(el => {
-                if (currentUser.godMode) el.classList.remove('hidden');
-                else el.classList.add('hidden');
-            });
-
-            // زر المطور
-            const devBtn = document.getElementById('admin-dev-btn');
-            if (currentUser.id === "32726") devBtn.classList.remove('hidden');
-            else devBtn.classList.add('hidden');
+            if (currentUser.id === "32726") document.getElementById('admin-dev-btn').classList.remove('hidden');
         }
 
-        function logout() {
-            logAction('تسجيل خروج', `خرج من النظام`, 'auth');
-            currentUser = null;
-            document.getElementById('login-pin').value = '';
-            document.getElementById('role-preview-badge').classList.add('hidden');
-            document.getElementById('app-wrapper').classList.add('hidden');
-            document.getElementById('login-screen').classList.remove('hidden');
-        }
+        function logout() { location.reload(); }
+        function switchTab(t) { document.querySelectorAll('.tab-section').forEach(s => s.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.getElementById(`sec-${t}`).classList.remove('hidden'); document.getElementById(`tab-${t}`).classList.add('active'); }
+        function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-
-            const targetSec = document.getElementById(`sec-${tabName}`);
-            const targetBtn = document.getElementById(`tab-${tabName}`);
-            if (targetSec) targetSec.classList.remove('hidden');
-            if (targetBtn) targetBtn.classList.add('active');
-        }
-
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-        }
-
-        /* =========================================================================
-           5. محرك الذكاء الاصطناعي عبر الوركر المشفر + ضغط الصور الذكي
-           ========================================================================= */
+        // ================= ضغط الصورة للذكاء الاصطناعي (تحديث الدقة) =================
         async function compressImage(file) {
             return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.src = event.target.result;
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = (e) => {
+                    const img = new Image(); img.src = e.target.result;
                     img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 800;
-                        const scaleSize = img.width > MAX_WIDTH ? (MAX_WIDTH / img.width) : 1;
-                        canvas.width = img.width * scaleSize;
-                        canvas.height = img.height * scaleSize;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.65));
-                    };
-                    img.onerror = (err) => reject(err);
+                        const cvs = document.createElement('canvas'), ctx = cvs.getContext('2d');
+                        const MAX_WIDTH = 1024; // رفع الدقة لقراءة النصوص الصغيرة بوضوح
+                        const scale = img.width > MAX_WIDTH ? (MAX_WIDTH / img.width) : 1;
+                        cvs.width = img.width * scale; cvs.height = img.height * scale;
+                        ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
+                        resolve(cvs.toDataURL('image/jpeg', 0.80)); // جودة أعلى للصورة
+                    }; img.onerror = reject;
                 };
             });
         }
 
+        // ================= الاتصال بالوركر لمعالجة الصورة AI =================
         async function processImageWithAI(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const loadingBox = document.getElementById('ai-loading-indicator');
-            const statusText = document.getElementById('ai-status-text');
-            loadingBox.classList.remove('hidden');
-            statusText.innerText = "جاري ضغط الصورة وإرسالها للوركر المشفر...";
-
+            const file = event.target.files[0]; if (!file) return;
+            const lb = document.getElementById('ai-loading-indicator'), st = document.getElementById('ai-status-text');
+            lb.classList.remove('hidden'); st.innerText = "جاري التحليل واستخراج البيانات الدقيقة...";
+            
             try {
-                const compressedBase64 = await compressImage(file);
-                const base64Data = compressedBase64.split(',')[1];
-                const mimeType = compressedBase64.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0];
-
-                const response = await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/ai`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [
-                                { text: "أنت خبير مختبرات طبية. استخرج من صورة علبة المحلول أو الجهاز البيانات التالية وأعدها بصيغة JSON فقط بدون أي كلام إضافي: {\"name\": \"اسم الصنف أو المحلول\", \"lot\": \"رقم التشغيلة Lot\", \"expiryDate\": \"تاريخ الانتهاء بصيغة YYYY-MM-DD\", \"barcode\": \"الباركود أو الكود المرجعي REF إن وجد\", \"category\": \"Alinity ci & hq أو ACL TOP أو Gem أو كيمياء حيوية\"}" },
-                                { inlineData: { mimeType: mimeType, data: base64Data } }
-                            ]
-                        }]
-                    })
+                const comp = await compressImage(file);
+                const res = await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/ai`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [
+                        { text: "أنت خبير مختبرات طبية. استخرج من الصورة البيانات بدقة. الاسم التجاري الواضح فقط. رقم التشغيلة (Lot). وتاريخ الانتهاء بصيغة YYYY-MM-DD حصراً. الكود المرجعي REF. القسم (Alinity ci & hq, ACL TOP, Gem, كيمياء حيوية). أعد النتيجة كـ JSON فقط بالصيغة: {\"name\": \"\", \"lot\": \"\", \"expiryDate\": \"\", \"barcode\": \"\", \"category\": \"\"}" },
+                        { inlineData: { mimeType: comp.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0], data: comp.split(',')[1] } }
+                    ]}] })
                 });
-
-                if (!response.ok) {
-                    const errText = await response.text();
-                    throw new Error(`خطأ من الخادم الوسيط (${response.status}): ${errText}`);
-                }
-
-                const data = await response.json();
+                
+                if (!res.ok) throw new Error("تأكد من تحديث كود الوركر في Cloudflare");
+                const data = await res.json();
+                
                 const aiText = data.candidates[0].content.parts[0].text;
                 const jsonMatch = aiText.match(/\{[\s\S]*\}/);
-                const cleanJson = jsonMatch ? jsonMatch[0] : aiText.replace(/```json|```/g, '').trim();
-                const parsedData = JSON.parse(cleanJson);
-
-                if (parsedData.name || parsedData.Name) document.getElementById('itemName').value = parsedData.name || parsedData.Name;
-                if (parsedData.lot || parsedData.Lot) document.getElementById('lotNumber').value = parsedData.lot || parsedData.Lot;
-                if (parsedData.expiryDate || parsedData.expiration) {
-                    const rawExp = parsedData.expiryDate || parsedData.expiration;
-                    document.getElementById('expiryDate').value = rawExp.length === 7 ? `${rawExp}-01` : rawExp;
-                }
-                if (parsedData.barcode || parsedData.ref) document.getElementById('itemBarcode').value = parsedData.barcode || parsedData.ref;
+                const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : aiText.replace(/```json|```/g, '').trim());
                 
-                if (parsedData.category) {
+                if (parsed.name || parsed.Name) document.getElementById('itemName').value = parsed.name || parsed.Name;
+                if (parsed.lot || parsed.Lot) document.getElementById('lotNumber').value = parsed.lot || parsed.Lot;
+                
+                // تنسيق تاريخ الانتهاء ليناسب حقل الـ HTML Date
+                if (parsed.expiryDate || parsed.expiration) {
+                    let exp = parsed.expiryDate || parsed.expiration;
+                    document.getElementById('expiryDate').value = exp.length === 7 ? `${exp}-01` : exp;
+                }
+                
+                if (parsed.barcode || parsed.ref) document.getElementById('itemBarcode').value = parsed.barcode || parsed.ref;
+                
+                if (parsed.category) {
                     const catSelect = document.getElementById('itemCategory');
                     for (let opt of catSelect.options) {
-                        if (opt.value.toLowerCase() === parsedData.category.toLowerCase()) {
-                            catSelect.value = opt.value;
-                            break;
+                        if (opt.value.toLowerCase().includes((parsed.category||'').toLowerCase())) {
+                            catSelect.value = opt.value; break;
                         }
                     }
                 }
-
-                statusText.innerText = "✅ تم استخراج وتعبئة البيانات بنجاح!";
-                showToast("تم التعرف على العلبة وتعبئة الخانات بنجاح! 🚀", "success");
-                logAction("استخدام كاميرا AI", `تم التعرف على الصنف: ${parsedData.name || 'غير محدد'}`, "ai");
-
-            } catch (error) {
-                console.error("AI Proxy Error:", error);
-                statusText.innerText = "⚠️ تعذر الاتصال، تأكد من تحديث كود الوركر.";
-                showToast("عذراً، فشل الاتصال بالذكاء الاصطناعي.", "error");
-            } finally {
-                loadingBox.classList.add('hidden');
-                event.target.value = '';
-            }
+                
+                st.innerText = "✅ اكتمل التعرف بنجاح"; showToast("تم استخراج البيانات آلياً", "success");
+            } catch (err) {
+                console.error(err); st.innerText = "⚠️ فشل الاتصال، جرب مجدداً"; showToast(err.message, "error");
+            } finally { lb.classList.add('hidden'); event.target.value = ''; }
         }
 
         async function scanScheduleWithAI(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            showToast("جاري تحليل صورة الجدول عبر السيرفر الآمن...", "info");
-
+            const file = event.target.files[0]; if (!file) return; showToast("جاري المعالجة...", "info");
             try {
-                const compressedBase64 = await compressImage(file);
-                const base64Data = compressedBase64.split(',')[1];
-                const mimeType = compressedBase64.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0];
-
-                const response = await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/ai`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [
-                                { text: "استخرج جدول المناوبات من الصورة وأعده بصيغة JSON Array فقط كالتالي: [{\"day\": \"اليوم\", \"time\": \"الفترة الصباحية/المسائية\", \"title\": \"القسم\", \"staff\": [\"اسم الموظف\"]}]" },
-                                { inlineData: { mimeType: mimeType, data: base64Data } }
-                            ]
-                        }]
-                    })
+                const comp = await compressImage(file);
+                const res = await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/ai`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [
+                        { text: "استخرج الجدول بصيغة JSON Array: [{\"day\": \"\", \"time\": \"\", \"title\": \"\", \"staff\": [\"\"]}]" },
+                        { inlineData: { mimeType: comp.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0], data: comp.split(',')[1] } }
+                    ]}] })
                 });
-
-                if (!response.ok) throw new Error("فشل تحليل الجدول");
-                const data = await response.json();
-                const aiText = data.candidates[0].content.parts[0].text;
-                const jsonMatch = aiText.match(/\[[\s\S]*\]/);
-                const parsedSchedule = JSON.parse(jsonMatch ? jsonMatch[0] : aiText);
-
-                if (Array.isArray(parsedSchedule) && parsedSchedule.length > 0) {
-                    scheduleData = [...parsedSchedule, ...scheduleData];
-                    saveLocalAndCloud('schedule', scheduleData);
-                    renderSchedule();
-                    showToast("تم استيراد الجدول بالذكاء الاصطناعي بنجاح!", "success");
-                    logAction("مسح جدول AI", `تم استخراج ${parsedSchedule.length} شفتات`, "ai");
-                }
-            } catch (e) {
-                showToast("تعذر قراءة الجدول، تأكد من وضوح الصورة", "error");
-            }
-            event.target.value = '';
+                if (!res.ok) throw new Error("");
+                const data = await res.json();
+                const jsonMatch = data.candidates[0].content.parts[0].text.match(/\[[\s\S]*\]/);
+                const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : data.candidates[0].content.parts[0].text);
+                if (Array.isArray(parsed) && parsed.length > 0) { scheduleData = [...parsed, ...scheduleData]; saveLocalAndCloud('schedule', scheduleData); renderSchedule(); showToast("تم استيراد الجدول", "success"); }
+            } catch (e) { showToast("فشل في القراءة", "error"); } event.target.value = '';
         }
 
-        /* =========================================================================
-           6. إدارة المخزون والباركود والإكسل
-           ========================================================================= */
-        function openInventoryModal(triggerCamera = false) {
-            document.getElementById('itemName').value = '';
-            document.getElementById('itemBarcode').value = '';
-            document.getElementById('lotNumber').value = '';
-            document.getElementById('expiryDate').value = '';
-            document.getElementById('itemQty').value = '1';
-            document.getElementById('modal-inventory').classList.remove('hidden');
-            if (triggerCamera) {
-                setTimeout(() => document.getElementById('ai-camera-input').click(), 200);
-            }
-        }
-
-        function closeInventoryModal() {
-            stopBarcodeScanner();
-            document.getElementById('modal-inventory').classList.add('hidden');
-        }
-
+        // ================= أدوات إدارة المخزون =================
+        function openInventoryModal(c = false) { document.getElementById('itemName').value=''; document.getElementById('modal-inventory').classList.remove('hidden'); if(c) setTimeout(()=>document.getElementById('ai-camera-input').click(),200); }
+        function closeInventoryModal() { stopBarcodeScanner(); document.getElementById('modal-inventory').classList.add('hidden'); }
+        
         function toggleBarcodeScanner() {
-            const box = document.getElementById('barcode-reader-box');
-            if (!box.classList.contains('hidden')) {
-                stopBarcodeScanner();
-                return;
-            }
-            box.classList.remove('hidden');
-            html5QrCode = new Html5Qrcode("barcode-reader-box");
-            html5QrCode.start(
-                { facingMode: "environment" },
-                { fps: 10, qrbox: { width: 240, height: 120 } },
-                (decodedText) => {
-                    document.getElementById('itemBarcode').value = decodedText;
-                    showToast(`تم قراءة الباركود: ${decodedText}`, 'success');
-                    stopBarcodeScanner();
-                },
-                () => {}
-            ).catch(() => {
-                showToast("تعذر فتح كاميرا الباركود", "error");
-                box.classList.add('hidden');
-            });
+            const b = document.getElementById('barcode-reader-box'); if (!b.classList.contains('hidden')) return stopBarcodeScanner();
+            b.classList.remove('hidden'); html5QrCode = new Html5Qrcode("barcode-reader-box");
+            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 240, height: 120 } }, (txt) => { document.getElementById('itemBarcode').value = txt; showToast("تم قراءة الباركود", 'success'); stopBarcodeScanner(); }, ()=>{}).catch(()=>{ b.classList.add('hidden'); });
         }
-
-        function stopBarcodeScanner() {
-            const box = document.getElementById('barcode-reader-box');
-            box.classList.add('hidden');
-            if (html5QrCode) {
-                html5QrCode.stop().then(() => html5QrCode.clear()).catch(() => {});
-                html5QrCode = null;
-            }
-        }
+        function stopBarcodeScanner() { document.getElementById('barcode-reader-box').classList.add('hidden'); if(html5QrCode) html5QrCode.stop().then(()=>html5QrCode.clear()).catch(()=>{}); html5QrCode = null; }
 
         async function saveInventoryItem() {
-            const name = document.getElementById('itemName').value.trim();
-            const barcode = document.getElementById('itemBarcode').value.trim();
-            const category = document.getElementById('itemCategory').value;
-            const lot = document.getElementById('lotNumber').value.trim() || 'N/A';
-            const exp = document.getElementById('expiryDate').value || '2027-01-01';
-            const qty = parseInt(document.getElementById('itemQty').value) || 0;
-
-            if (!name) {
-                showToast("يرجى إدخال اسم المحلول أو الصنف", "warning");
-                return;
-            }
-
-            const itemObj = {
-                id: barcode || ('ID-' + Date.now()),
-                name,
-                category,
-                lot,
-                exp,
-                qty
-            };
-
-            const existingIdx = inventoryData.findIndex(i => i.id === itemObj.id);
-            if (existingIdx > -1) inventoryData[existingIdx] = itemObj;
-            else inventoryData.unshift(itemObj);
-
-            localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData));
-            renderInventory();
-            closeInventoryModal();
-            showToast(`تم حفظ [${name}] في المخزون`, 'success');
-            logAction("إضافة/تحديث مخزون", `${name} | Lot: ${lot} | Qty: ${qty}`, "inventory");
-
-            try {
-                await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/inventory`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(itemObj)
-                });
-            } catch (e) {}
+            const name = document.getElementById('itemName').value.trim(), barcode = document.getElementById('itemBarcode').value.trim();
+            if(!name) return showToast("أدخل الاسم التجاري", "warning");
+            const item = { id: barcode || ('ID-'+Date.now()), name, category: document.getElementById('itemCategory').value, lot: document.getElementById('lotNumber').value.trim()||'N/A', exp: document.getElementById('expiryDate').value||'2027-01-01', qty: parseInt(document.getElementById('itemQty').value)||0 };
+            const idx = inventoryData.findIndex(i => i.id === item.id); idx > -1 ? inventoryData[idx] = item : inventoryData.unshift(item);
+            localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData)); renderInventory(); closeInventoryModal(); showToast("تم الحفظ في المخزون", 'success'); logAction("إضافة/تعديل مخزون", name, "inventory");
+            try { await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/inventory`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(item) }); } catch(e){}
         }
-
-        async function updateItemQty(id, delta) {
-            const item = inventoryData.find(i => i.id === id);
-            if (!item) return;
-            item.qty = Math.max(0, (parseInt(item.qty) || 0) + delta);
-            localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData));
-            renderInventory();
-            logAction("تعديل رصيد", `${item.name} أصبح (${item.qty})`, "inventory");
-
-            try {
-                await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/inventory`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(item)
-                });
-            } catch (e) {}
-        }
-
-        async function deleteInventoryItem(id) {
-            const item = inventoryData.find(i => i.id === id);
-            if (!item) return;
-            inventoryData = inventoryData.filter(i => i.id !== id);
-            localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData));
-            renderInventory();
-            showToast(`تم حذف ${item.name}`, 'warning');
-            logAction("حذف صنف", `تم حذف ${item.name}`, "danger");
-
-            try {
-                await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/inventory/${encodeURIComponent(id)}`, { method: 'DELETE' });
-            } catch (e) {}
-        }
+        async function updateItemQty(id, d) { const item = inventoryData.find(i=>i.id===id); if(!item) return; item.qty = Math.max(0, (parseInt(item.qty)||0)+d); localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData)); renderInventory(); try { await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/inventory`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(item) }); } catch(e){} }
+        async function deleteInventoryItem(id) { inventoryData = inventoryData.filter(i=>i.id!==id); localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData)); renderInventory(); try { await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/inventory/${encodeURIComponent(id)}`, { method: 'DELETE' }); } catch(e){} }
 
         function renderInventory() {
-            const container = document.getElementById('inventory-container');
-            const q = (document.getElementById('inv-search')?.value || '').toLowerCase();
-            const cat = document.getElementById('inv-filter-cat')?.value || 'ALL';
-
-            let lowCount = 0;
-            let expCount = 0;
-            const today = new Date();
-
-            inventoryData.forEach(item => {
-                if (parseInt(item.qty) <= 2) lowCount++;
-                const expDate = new Date(item.exp || item.exp_date);
-                const diffDays = (expDate - today) / (1000 * 60 * 60 * 24);
-                if (diffDays <= 60) expCount++;
-            });
-
-            document.getElementById('stat-total-items').innerText = inventoryData.length;
-            document.getElementById('stat-low-items').innerText = lowCount;
-            document.getElementById('stat-exp-items').innerText = expCount;
-
-            const filtered = inventoryData.filter(item => {
-                const matchQ = item.name.toLowerCase().includes(q) || (item.lot && item.lot.toLowerCase().includes(q)) || (item.id && item.id.toLowerCase().includes(q));
-                const matchCat = cat === 'ALL' || item.category === cat;
-                return matchQ && matchCat;
-            });
-
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="col-span-full glass-card p-8 text-center text-gray-400 font-bold">لا توجد أصناف مطابقة حالياً</div>`;
-                return;
-            }
-
-            container.innerHTML = filtered.map(item => {
-                const expVal = item.exp || item.exp_date || '';
-                const qtyVal = item.qty ?? item.quantity ?? 0;
-                const isLow = qtyVal <= 2;
-                return `
-                <div class="glass-card p-4 flex justify-between items-center border-r-4 ${isLow ? 'border-red-500' : 'border-blue-500'}">
-                    <div class="space-y-1">
-                        <div class="flex items-center gap-2">
-                            <h4 class="font-extrabold text-sm sm:text-base">${item.name}</h4>
-                            <span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded-full font-bold">${item.category}</span>
-                        </div>
-                        <p class="text-xs text-gray-500">Lot: <strong>${item.lot}</strong> | انتهاء: <strong class="text-red-500">${expVal}</strong></p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button onclick="updateItemQty('${item.id}', -1)" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 font-bold">-</button>
-                        <span class="text-lg font-extrabold px-2 ${isLow ? 'text-red-600' : 'text-blue-600'}">${qtyVal}</span>
-                        <button onclick="updateItemQty('${item.id}', 1)" class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 font-bold">+</button>
-                        ${(currentUser?.isAdmin || currentUser?.isSupervisor) ? `<button onclick="deleteInventoryItem('${item.id}')" class="text-red-500 hover:text-red-700 mr-2"><i class="fas fa-trash"></i></button>` : ''}
-                    </div>
-                </div>`;
-            }).join('');
+            const c = document.getElementById('inventory-container'), q = (document.getElementById('inv-search')?.value||'').toLowerCase(), cat = document.getElementById('inv-filter-cat')?.value||'ALL';
+            let l=0, e=0; const today = new Date();
+            inventoryData.forEach(i => { if(parseInt(i.qty)<=2) l++; if((new Date(i.exp||i.exp_date)-today)/(1000*60*60*24) <= 60) e++; });
+            document.getElementById('stat-total-items').innerText = inventoryData.length; document.getElementById('stat-low-items').innerText = l; document.getElementById('stat-exp-items').innerText = e;
+            const fil = inventoryData.filter(i => (i.name.toLowerCase().includes(q) || (i.lot&&i.lot.toLowerCase().includes(q))) && (cat==='ALL' || i.category===cat));
+            if(!fil.length) return c.innerHTML = `<div class="col-span-full glass-card p-8 text-center text-gray-400 font-bold">لا توجد أصناف تطابق البحث</div>`;
+            c.innerHTML = fil.map(i => `<div class="glass-card p-4 flex justify-between items-center border-r-4 ${i.qty<=2?'border-red-500':'border-blue-500'}"><div><h4 class="font-extrabold text-sm sm:text-base">${i.name}</h4><span class="bg-blue-100 text-blue-800 text-[10px] px-2 rounded-full font-bold">${i.category}</span><p class="text-xs text-gray-500">Lot: <strong>${i.lot}</strong> | انتهاء: ${i.exp||i.exp_date}</p></div><div class="flex items-center gap-2"><button onclick="updateItemQty('${i.id}', -1)" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 font-bold">-</button><span class="font-extrabold px-2 ${i.qty<=2?'text-red-600':'text-blue-600'}">${i.qty}</span><button onclick="updateItemQty('${i.id}', 1)" class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 font-bold">+</button>${currentUser?.isAdmin ? `<button onclick="deleteInventoryItem('${i.id}')" class="text-red-500 hover:text-red-700 ml-1"><i class="fas fa-trash"></i></button>` : ''}</div></div>`).join('');
         }
 
-        // الإحصائيات والإكسل مخصصة لك أنت فقط (Admin)
-        function exportInventoryExcel() {
-            if (inventoryData.length === 0) return showToast("لا توجد بيانات لتصديرها", "warning");
-            const ws = XLSX.utils.json_to_sheet(inventoryData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "TechnoLab_Stats");
-            XLSX.writeFile(wb, `TechnoLab_Statistics_${new Date().toISOString().slice(0,10)}.xlsx`);
-            logAction("إحصائيات النظام", "تم استخراج إحصائيات النظام بملف Excel", "admin");
-        }
+        function exportInventoryExcel() { const ws = XLSX.utils.json_to_sheet(inventoryData), wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Stats"); XLSX.writeFile(wb, `TechnoLab_Stats_${Date.now()}.xlsx`); logAction("تصدير Excel", "تم استخراج الإحصائيات", "admin"); }
+        function importInventoryExcel(e) { const reader = new FileReader(); reader.onload=(ev)=>{ const wb = XLSX.read(new Uint8Array(ev.target.result), {type:'array'}), rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]); rows.forEach(r => inventoryData.push({id:String(r.id||'IMP-'+Date.now()), name:r.name||r['الاسم'], category:r.category||r['القسم']||'كيمياء حيوية', lot:r.lot||'N/A', exp:r.exp||'2027-01-01', qty:parseInt(r.qty||1)})); localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData)); renderInventory(); showToast("تم استيراد البيانات", "success"); }; reader.readAsArrayBuffer(e.target.files[0]); }
 
-        function importInventoryExcel(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                const rows = XLSX.utils.sheet_to_json(firstSheet);
-                rows.forEach(r => {
-                    inventoryData.push({
-                        id: String(r.id || 'IMP-' + Math.random().toString(36).substr(2,5)),
-                        name: r.name || r['الاسم'] || 'صنف مستورد',
-                        category: r.category || r['القسم'] || 'كيمياء حيوية',
-                        lot: r.lot || 'N/A',
-                        exp: r.exp || r.exp_date || '2027-01-01',
-                        qty: parseInt(r.qty || r.quantity || 1)
-                    });
-                });
-                localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData));
-                renderInventory();
-                showToast(`تم استيراد ${rows.length} صنف بنجاح!`, "success");
-                logAction("استيراد بيانات", `تم استيراد ${rows.length} صنف`, "admin");
+        // ================= باقي الأقسام =================
+        function openDeviceModal() { const n = prompt("اسم الجهاز:"); if(n){ devicesData.push({id:'DEV-'+Date.now(), name:n, type:prompt("النوع:","صيانة السبت")||'عام', status:'يعمل بكفاءة ✅'}); saveLocalAndCloud('devices', devicesData); renderDevices(); } }
+        function toggleDeviceStatus(id) { const d = devicesData.find(x=>x.id===id); if(d) { d.status = d.status.includes('يعمل') ? 'تحت الصيانة 🛠️' : 'يعمل بكفاءة ✅'; saveLocalAndCloud('devices', devicesData); renderDevices(); } }
+        function renderDevices() { document.getElementById('devices-container').innerHTML = devicesData.map(d => `<div class="glass-card p-4 flex justify-between items-center"><div><h4 class="font-extrabold text-sm">${d.name}</h4><p class="text-xs text-gray-500">${d.type}</p></div><button onclick="toggleDeviceStatus('${d.id}')" class="px-3 py-1 rounded-xl text-xs font-bold ${d.status.includes('يعمل')?'bg-emerald-100 text-emerald-800':'bg-amber-100 text-amber-800'}">${d.status}</button></div>`).join(''); }
+
+        function openScheduleModal() { const d = prompt("اليوم:"); if(d){ scheduleData.unshift({day:d, time:prompt("الشفت:","صباحي"), title:"مناوبة", staff:[prompt("الموظف:")]}); saveLocalAndCloud('schedule', scheduleData); renderSchedule(); } }
+        function renderSchedule() { document.getElementById('schedule-container').innerHTML = scheduleData.map(s => `<div class="glass-card p-4 flex justify-between items-center border-r-4 border-indigo-500"><div><h4 class="font-extrabold text-sm">${s.day} (${s.time})</h4><p class="text-xs text-gray-500">${Array.isArray(s.staff)?s.staff.join(' ، '):s.staff}</p></div><span class="bg-indigo-100 text-indigo-800 text-xs px-3 py-1 rounded-full font-bold">${s.title}</span></div>`).join(''); }
+
+        async function addCriticalResult() { const p = document.getElementById('crit-patient').value, t = document.getElementById('crit-test').value, d = document.getElementById('crit-doctor').value; if(p&&t){ const ent={time:getGregorianTimestamp(), patient:p, test:t, doctor:d, user:currentUser.name}; criticalData.unshift(ent); localStorage.setItem('tl_crt_v85', JSON.stringify(criticalData)); renderCritical(); try{ await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/critical`,{method:'POST',body:JSON.stringify(ent)}); }catch(e){} } }
+        function renderCritical() { document.getElementById('critical-container').innerHTML = criticalData.map(c => `<div class="glass-card p-3 border-r-4 border-red-500 flex justify-between text-xs"><div><p class="font-extrabold text-sm text-red-600">${c.test} — ${c.patient}</p><p class="text-gray-500">طبيب: ${c.doctor} | ${c.user}</p></div><span class="text-gray-400 font-bold">${c.time}</span></div>`).join(''); }
+
+        async function addTemperatureLog() { const t = document.getElementById('temp-val').value, l = document.getElementById('temp-loc').value; if(t){ const ent={time:getGregorianTimestamp(), loc:l, temp:t+'°C', user:currentUser.name}; tempData.unshift(ent); localStorage.setItem('tl_tmp_v85', JSON.stringify(tempData)); renderTemperature(); try{ await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/temperature`,{method:'POST',body:JSON.stringify(ent)}); }catch(e){} } }
+        function renderTemperature() { document.getElementById('temperature-container').innerHTML = tempData.map(t => `<div class="glass-card p-3 border-r-4 border-sky-500 flex justify-between text-xs"><div><p class="font-extrabold text-sm">${t.loc}: <span class="text-sky-600">${t.temp}</span></p><p class="text-gray-500">${t.user}</p></div><span class="text-gray-400 font-bold">${t.time}</span></div>`).join(''); }
+
+        async function addTask() { const m = document.getElementById('task-msg').value, tg = document.getElementById('task-target').value||'الكل'; if(m){ const ent={sender:currentUser.name, target:tg, msg:m, time:getGregorianTimestamp()}; tasksData.unshift(ent); localStorage.setItem('tl_tsk_v85', JSON.stringify(tasksData)); renderTasks(); try{ await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/tasks`,{method:'POST',body:JSON.stringify(ent)}); }catch(e){} } }
+        function renderTasks() { document.getElementById('tasks-container').innerHTML = tasksData.map(t => `<div class="glass-card p-3 border-r-4 border-purple-500 text-xs flex justify-between items-center"><div><p class="font-extrabold text-sm">${t.msg||t.message}</p><p class="text-gray-500">إلى: ${t.target||t.target_id}</p></div><span class="text-gray-400">${t.time||t.timestamp}</span></div>`).join(''); }
+
+        function addSupplier() { const n = document.getElementById('sup-name').value, d = document.getElementById('sup-desc').value, p = document.getElementById('sup-phone').value; if(n){ suppliersData.push({name:n,desc:d,phone:p}); saveLocalAndCloud('suppliers', suppliersData); renderSuppliersAndPolicies(); } }
+        function addPolicy() { const t = document.getElementById('pol-title').value, s = document.getElementById('pol-summary').value; if(t){ policiesData.push({id:'POL-'+Date.now(), title:t, summary:s}); saveLocalAndCloud('policies', policiesData); renderSuppliersAndPolicies(); } }
+        function renderSuppliersAndPolicies() { document.getElementById('suppliers-container').innerHTML = suppliersData.map(s => `<div class="p-2.5 border rounded-xl flex justify-between text-xs"><div><strong>${s.name}</strong> (${s.desc})</div><a href="tel:${s.phone}" class="bg-emerald-100 text-emerald-700 px-2 rounded-lg font-bold">${s.phone}</a></div>`).join(''); document.getElementById('policies-container').innerHTML = policiesData.map(p => `<div class="p-2.5 border rounded-xl text-xs"><p class="font-bold text-blue-600">${p.title}</p><p class="text-gray-500">${p.summary}</p></div>`).join(''); }
+
+        // ================= إدارة صلاحيات الطاقم (حصرية للادمن) =================
+        function addStaffMember() {
+            const id = document.getElementById('new-staff-id').value.trim();
+            const name = document.getElementById('new-staff-name').value.trim();
+            const role = document.getElementById('new-staff-role').value;
+            
+            if (!id || !name) return showToast("يرجى إدخال الرقم والاسم", "warning");
+            if (id === "32726") return showToast("لا يمكنك تعديل صلاحية مدير النظام الرئيسي من هنا", "error"); // حماية لك
+            
+            usersDB[id] = { 
+                id, name, roleLabel: role, 
+                badge: role==='Admin'?'Admin 👑':(role==='Lab Director'?'Lab Director 🔬':(role==='Supervisor'?'Supervisor 🛡️':'أخصائي مختبر')), 
+                isAdmin: role==='Admin', 
+                isSupervisor: role!=='Spec', 
+                godMode: role==='Admin' 
             };
-            reader.readAsArrayBuffer(file);
+            
+            localStorage.setItem('tl_users_v85', JSON.stringify(usersDB)); 
+            renderStaff(); 
+            showToast(`تم تعديل صلاحية [${name}] بنجاح`, "success"); 
+            logAction("صلاحيات الإدارة", `إعطاء دور ${role} لـ ${name}`, "admin");
         }
-
-        /* =========================================================================
-           7. باقي الأقسام وإدارة الموظفين (المحدثة)
-           ========================================================================= */
-        function openDeviceModal() {
-            const name = prompt("أدخل اسم الجهاز (مثال: Alinity ci / ACL TOP / Gem):");
-            if (!name) return;
-            const type = prompt("القسم / نوع الصيانة:", "صيانة أسبوعية - يوم السبت");
-            devicesData.push({ id: 'DEV-' + Date.now(), name, type: type || 'عام', status: 'يعمل بكفاءة ✅' });
-            saveLocalAndCloud('devices', devicesData);
-            renderDevices();
-            logAction("إضافة جهاز", name, "devices");
-        }
-
-        function toggleDeviceStatus(id) {
-            const dev = devicesData.find(d => d.id === id);
-            if (!dev) return;
-            dev.status = dev.status.includes('يعمل') ? 'تحت الصيانة 🛠️' : 'يعمل بكفاءة ✅';
-            saveLocalAndCloud('devices', devicesData);
-            renderDevices();
-            logAction("حالة جهاز", `${dev.name}: ${dev.status}`, "devices");
-        }
-
-        function renderDevices() {
-            const c = document.getElementById('devices-container');
-            if (devicesData.length === 0) {
-                c.innerHTML = `<div class="col-span-full glass-card p-6 text-center text-gray-400 font-bold">لا توجد أجهزة مضافة حالياً</div>`;
-                return;
+        
+        function deleteStaffMember(id) {
+            if(id === "32726") return showToast("غير مسموح بحذف مدير النظام الرئيسي", "error");
+            if(confirm('هل أنت متأكد من حذف حساب هذا الموظف؟')) { 
+                delete usersDB[id]; 
+                localStorage.setItem('tl_users_v85', JSON.stringify(usersDB)); 
+                renderStaff(); 
+                logAction("صلاحيات الإدارة", `حذف الموظف رقم (${id})`, "admin");
             }
-            c.innerHTML = devicesData.map(d => `
-                <div class="glass-card p-4 flex justify-between items-center">
-                    <div>
-                        <h4 class="font-extrabold text-sm">${d.name}</h4>
-                        <p class="text-xs text-gray-500">${d.type} | الصيانة الأسبوعية: <strong>السبت</strong></p>
-                    </div>
-                    <button onclick="toggleDeviceStatus('${d.id}')" class="px-3 py-1.5 rounded-xl text-xs font-bold ${d.status.includes('يعمل') ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${d.status}</button>
-                </div>
-            `).join('');
+        }
+        
+        function renderStaff() {
+            document.getElementById('staff-list-container').innerHTML = Object.values(usersDB).map(u => `
+                <div class="glass-card p-3 flex justify-between items-center border-r-4 ${u.isAdmin?'border-purple-600':(u.id==='40291'?'border-emerald-500':'border-blue-600')}">
+                    <div><p class="font-extrabold text-sm">${u.name}</p><p class="text-xs text-gray-500">ID: <strong>${u.id}</strong> | <span class="text-blue-600">${u.roleLabel}</span></p></div>
+                    <div class="flex items-center gap-2"><span class="text-lg">${u.isAdmin?'👑':(u.isSupervisor?'🛡️':'👨‍🔬')}</span>
+                    ${(currentUser?.isAdmin && u.id !== "32726") ? `<button onclick="deleteStaffMember('${u.id}')" class="text-red-500 ml-1 hover:text-red-700"><i class="fas fa-trash"></i></button>` : ''}</div>
+                </div>`).join('');
         }
 
-        function openScheduleModal() {
-            const day = prompt("اليوم / التاريخ الميلادي:");
-            if (!day) return;
-            const time = prompt("الشفت (صباحي / مسائي / ليلي):", "صباحي");
-            const staff = prompt("أسماء الموظفين المناوبين:");
-            scheduleData.unshift({ day, time, title: "مناوبة مختبر", staff: [staff] });
-            saveLocalAndCloud('schedule', scheduleData);
-            renderSchedule();
-            logAction("إضافة شفت", `${day} - ${staff}`, "schedule");
-        }
+        // ================= الرقابة والمزامنة =================
+        async function logAction(act, det, t='info') { if(!currentUser) return; const e = {timestamp:getGregorianTimestamp(), user:`${currentUser.name}`, action:act, details:det, type:t}; auditLogs.unshift(e); localStorage.setItem('tl_log_v85', JSON.stringify(auditLogs.slice(0, 200))); renderLogs(); try{ await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/logs`,{method:'POST',body:JSON.stringify(e)}); }catch(err){} }
+        function renderLogs() { const c = document.getElementById('logs-container'); if(c) c.innerHTML = auditLogs.map(l => `<div class="p-3 rounded-xl border flex justify-between text-xs bg-white/50"><div><span class="font-extrabold text-purple-700">${l.user}</span> — <strong>${l.action}</strong><p class="text-gray-500 mt-0.5">${l.details}</p></div><span class="text-[11px] text-gray-400">${l.timestamp}</span></div>`).join(''); }
 
-        function renderSchedule() {
-            const c = document.getElementById('schedule-container');
-            if (scheduleData.length === 0) {
-                c.innerHTML = `<div class="glass-card p-6 text-center text-gray-400 font-bold">لا توجد مناوبات مسجلة</div>`;
-                return;
-            }
-            c.innerHTML = scheduleData.map(s => `
-                <div class="glass-card p-4 flex justify-between items-center border-r-4 border-indigo-500">
-                    <div>
-                        <h4 class="font-extrabold text-sm">${s.day} (${s.time})</h4>
-                        <p class="text-xs text-gray-500">${Array.isArray(s.staff) ? s.staff.join(' ، ') : s.staff}</p>
-                    </div>
-                    <span class="bg-indigo-100 text-indigo-800 text-xs px-3 py-1 rounded-full font-bold">${s.title || 'مناوبة'}</span>
-                </div>
-            `).join('');
-        }
-
-        async function addCriticalResult() {
-            const patient = document.getElementById('crit-patient').value.trim();
-            const test = document.getElementById('crit-test').value.trim();
-            const doctor = document.getElementById('crit-doctor').value.trim();
-            if (!patient || !test) return showToast("أكمل بيانات النتيجة الحرجة", "warning");
-
-            const entry = { time: getGregorianTimestamp(), patient, test, doctor, user: currentUser.name };
-            criticalData.unshift(entry);
-            localStorage.setItem('tl_crt_v85', JSON.stringify(criticalData));
-            renderCritical();
-            document.getElementById('crit-patient').value = '';
-            document.getElementById('crit-test').value = '';
-            document.getElementById('crit-doctor').value = '';
-            logAction("تبليغ نتيجة حرجة", `${patient} (${test})`, "critical");
-
+        async function saveLocalAndCloud(ep, arr) { const m = {devices:'tl_dev_v85',schedule:'tl_sch_v85',suppliers:'tl_sup_v85',policies:'tl_pol_v85'}; if(m[ep]) localStorage.setItem(m[ep], JSON.stringify(arr)); try{ await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/${ep}`,{method:'POST',body:JSON.stringify(arr)}); }catch(e){} }
+        async function syncAllFromCloud(show=false) {
+            const i = document.getElementById('sync-icon'); if(i) i.classList.add('fa-spin');
             try {
-                await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/critical`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(entry) });
-            } catch(e) {}
+                const eps = [{e:'inventory',s:d=>{inventoryData=d.map(x=>({id:x.id,name:x.name,category:x.category,lot:x.lot,exp:x.exp_date||x.exp,qty:x.quantity??x.qty}));localStorage.setItem('tl_inv_v85',JSON.stringify(inventoryData));}},{e:'devices',s:d=>{devicesData=d;localStorage.setItem('tl_dev_v85',JSON.stringify(d));}},{e:'logs',s:d=>{auditLogs=d;localStorage.setItem('tl_log_v85',JSON.stringify(d));}},{e:'critical',s:d=>{criticalData=d;localStorage.setItem('tl_crt_v85',JSON.stringify(d));}},{e:'temperature',s:d=>{tempData=d;localStorage.setItem('tl_tmp_v85',JSON.stringify(d));}},{e:'tasks',s:d=>{tasksData=d;localStorage.setItem('tl_tsk_v85',JSON.stringify(d));}}];
+                for (const item of eps) { const r = await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/${item.e}`); if (r.ok) { const j = await r.json(); if (Array.isArray(j)) item.s(j); } }
+                renderAllSections(); if(show) showToast("تمت المزامنة السحابية", "success");
+            } catch (err) { if(show) showToast("العمل في الوضع المحلي", "warning"); } finally { if(i) i.classList.remove('fa-spin'); }
         }
 
-        function renderCritical() {
-            const c = document.getElementById('critical-container');
-            c.innerHTML = criticalData.map(cr => `
-                <div class="glass-card p-3 border-r-4 border-red-500 flex justify-between items-center text-xs">
-                    <div>
-                        <p class="font-extrabold text-sm text-red-600">${cr.test} — المريض: ${cr.patient}</p>
-                        <p class="text-gray-500">تم تبليغ: ${cr.doctor} | بواسطة: ${cr.user}</p>
-                    </div>
-                    <span class="text-gray-400 font-bold">${cr.time}</span>
-                </div>
-            `).join('');
-        }
-
-        async function addTemperatureLog() {
-            const loc = document.getElementById('temp-loc').value;
-            const temp = document
+        function openDevNotesModal() { document.getElementById('dev-notes-area').value = localStorage.getItem('tl_admin_notes')||''; document.getElementById('modal-dev-notes').classList.remove('hidden'); }
+        function saveDevNotes() { localStorage.setItem('tl_admin_notes', document.getElementById('dev-notes-area').value); document.getElementById('modal-dev-notes').classList.add('hidden'); }
+        function renderAllSections() { renderInventory(); renderDevices(); renderSchedule(); renderCritical(); renderTemperature(); renderTasks(); renderSuppliersAndPolicies(); renderStaff(); renderLogs(); }
+    </script>
+</body>
+</html>
