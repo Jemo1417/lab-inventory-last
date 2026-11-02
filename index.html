@@ -34,7 +34,6 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-    <!-- حاوية الإشعارات -->
     <div id="toast-container"></div>
 
     <!-- ================= شاشة تسجيل الدخول ================= -->
@@ -100,7 +99,7 @@
                 <button onclick="switchTab('tasks')" id="tab-tasks" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-tasks"></i> المهام والتعاميم</button>
                 <button onclick="switchTab('suppliers')" id="tab-suppliers" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-truck-medical"></i> الشركات والسياسات</button>
                 <button onclick="switchTab('staff')" id="tab-staff" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition role-restricted hidden"><i class="fas fa-users-cog"></i> الموظفين</button>
-                <button onclick="switchTab('logs')" id="tab-logs" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition admin-only hidden"><i class="fas fa-eye text-yellow-300"></i> السجل والرقابة</button>
+                <button onclick="switchTab('logs')" id="tab-logs" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition admin-only hidden"><i class="fas fa-eye text-yellow-300"></i> السجل والرقابة (God Mode)</button>
             </nav>
         </header>
 
@@ -238,27 +237,35 @@
                 </div>
             </section>
 
-            <!-- 8. إدارة الموظفين -->
+            <!-- 8. إدارة الموظفين والصلاحيات (التحكم الكامل للأدمن) -->
             <section id="sec-staff" class="tab-section hidden space-y-4">
                 <div class="glass-card p-4 flex flex-col gap-4">
-                    <div>
-                        <h3 class="font-extrabold text-base mb-1"><i class="fas fa-users-cog text-blue-600"></i> إدارة الطاقم والصلاحيات</h3>
-                        <p class="text-xs text-gray-500">الصلاحية الكاملة لإضافة وتعديل وحذف الموظفين متاحة للـ Admin فقط</p>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="font-extrabold text-base mb-1"><i class="fas fa-users-cog text-blue-600"></i> إدارة الطاقم وتوزيع الصلاحيات</h3>
+                            <p class="text-xs text-gray-500">لوحة التحكم الكاملة لتعيين الصلاحيات والمهام وتعديل أي حساب</p>
+                        </div>
+                        <button onclick="resetDefaultStaff()" class="admin-only hidden text-xs bg-slate-200 dark:bg-slate-700 px-3 py-1.5 rounded-lg font-bold text-gray-700 dark:text-gray-200 hover:bg-slate-300">
+                            <i class="fas fa-undo ml-1"></i> استعادة قائمة الطاقم المعتمدة
+                        </button>
                     </div>
                     
+                    <!-- صندوق الإضافة والتحكم بالصلاحيات (حصري لـ 32726) -->
                     <div id="admin-staff-controls" class="hidden grid grid-cols-1 sm:grid-cols-4 gap-2 p-3 bg-blue-50 dark:bg-slate-800 rounded-xl border border-blue-100 dark:border-slate-700">
-                        <input type="text" id="new-staff-id" placeholder="الرقم الوظيفي (ID)" class="p-3 border rounded-xl text-sm">
-                        <input type="text" id="new-staff-name" placeholder="اسم الموظف" class="p-3 border rounded-xl text-sm">
+                        <input type="text" id="new-staff-id" placeholder="الرقم الوظيفي (ID)" class="p-3 border rounded-xl text-sm font-bold">
+                        <input type="text" id="new-staff-name" placeholder="اسم الموظف" class="p-3 border rounded-xl text-sm font-bold">
                         <select id="new-staff-role" class="p-3 border rounded-xl text-sm font-bold">
-                            <option value="Spec">أخصائي مختبر</option>
-                            <option value="Supervisor">مشرف مختبر</option>
-                            <option value="Lab Director">مدير مختبر</option>
-                            <option value="Admin">مدير نظام (Admin)</option>
+                            <option value="Spec">أخصائي مختبر (Specialist)</option>
+                            <option value="Supervisor">مشرف مختبر (Supervisor 🛡️)</option>
+                            <option value="Lab Director">مدير مختبر (Lab Director 🔬)</option>
+                            <option value="Admin">مدير نظام كامل (Admin 👑)</option>
                         </select>
-                        <button onclick="addStaffMember()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold p-3 rounded-xl text-sm shadow transition">حفظ الصلاحية</button>
+                        <button onclick="saveStaffPermissions()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold p-3 rounded-xl text-sm shadow transition">
+                            <i class="fas fa-user-shield ml-1"></i> تطبيق وتثبيت الصلاحية
+                        </button>
                     </div>
 
-                    <div id="staff-list-container" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+                    <div id="staff-list-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
                 </div>
             </section>
 
@@ -296,7 +303,7 @@
                     </div>
                     <label class="ai-gradient text-white px-3 py-2 rounded-xl text-xs font-bold cursor-pointer shadow flex items-center gap-1.5"><i class="fas fa-camera"></i> تصوير<input type="file" id="ai-camera-input" accept="image/*" capture="environment" class="hidden" onchange="processImageWithAI(event)"></label>
                 </div>
-                <div id="ai-loading-indicator" class="hidden bg-purple-100 text-purple-900 p-3 rounded-xl text-center text-xs font-bold flex items-center justify-center gap-2"><i class="fas fa-circle-notch fa-spin text-lg"></i><span>جاري التحليل بدقة عالية...</span></div>
+                <div id="ai-loading-indicator" class="hidden bg-purple-100 text-purple-900 p-3 rounded-xl text-center text-xs font-bold flex items-center justify-center gap-2"><i class="fas fa-circle-notch fa-spin text-lg"></i><span>جاري التحليل واستخراج البيانات بدقة...</span></div>
                 
                 <div id="barcode-reader-box" class="hidden rounded-xl overflow-hidden border"></div>
                 
@@ -305,7 +312,7 @@
                     <div>
                         <label class="block text-xs font-bold text-gray-500 mb-1">الباركود / المرجع (REF)</label>
                         <div class="flex gap-2">
-                            <input type="text" id="itemBarcode" class="flex-1 p-3 border rounded-xl text-sm">
+                            <input type="text" id="itemBarcode" class="flex-1 p-3 border rounded-xl text-sm font-mono">
                             <button type="button" onclick="toggleBarcodeScanner()" class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 px-4 rounded-xl text-gray-700 dark:text-white"><i class="fas fa-barcode text-lg"></i></button>
                         </div>
                     </div>
@@ -316,7 +323,7 @@
                         </select>
                     </div>
                     <div class="bg-blue-50/60 dark:bg-slate-800/60 p-3 rounded-2xl border border-blue-100 dark:border-slate-700 grid grid-cols-2 gap-2">
-                        <div><label class="block text-[11px] font-bold text-gray-500 mb-1">التشغيلة (Lot)</label><input type="text" id="lotNumber" class="w-full p-2.5 border rounded-xl text-xs font-bold"></div>
+                        <div><label class="block text-[11px] font-bold text-gray-500 mb-1">التشغيلة (Lot)</label><input type="text" id="lotNumber" class="w-full p-2.5 border rounded-xl text-xs font-bold font-mono"></div>
                         <div><label class="block text-[11px] font-bold text-gray-500 mb-1">الانتهاء (YYYY-MM-DD)</label><input type="date" id="expiryDate" class="w-full p-2.5 border rounded-xl text-xs font-bold"></div>
                         <div class="col-span-2"><label class="block text-[11px] font-bold text-gray-500 mb-1">الرصيد</label><input type="number" id="itemQty" value="1" min="0" class="w-full p-2.5 border rounded-xl text-center font-extrabold text-sm"></div>
                     </div>
@@ -353,20 +360,21 @@
 
     <!-- ================= المحرك البرمجي (JavaScript) ================= -->
     <script>
-        // إعدادات الوركر للذكاء الاصطناعي والمزامنة
         const CLOUDFLARE_CONFIG = { apiUrl: "https://technolab-backend.grout-comfier0j.workers.dev" };
 
-        // قاعدة بيانات المستخدمين المحدثة والمثبتة (الادمن يتحكم بالجميع)
-        const DEFAULT_USERS = {
+        // قاعدة بيانات الطاقم الكاملة المعتمدة
+        const DEFAULT_STAFF = {
             "32726": { id: "32726", name: "Jamal Asiri", roleLabel: "Admin", badge: "Admin 👑", isAdmin: true, isSupervisor: true, godMode: true },
             "40291": { id: "40291", name: "د. عمرو", roleLabel: "Lab Director", badge: "Lab Director 🔬", isAdmin: false, isSupervisor: true, godMode: false },
-            "32731": { id: "32731", name: "فيصل", roleLabel: "Supervisor", badge: "Supervisor 🛡️", isAdmin: false, isSupervisor: true, godMode: false }
+            "32731": { id: "32731", name: "فيصل", roleLabel: "Supervisor", badge: "Supervisor 🛡️", isAdmin: false, isSupervisor: true, godMode: false },
+            "1001": { id: "1001", name: "أحمد الشهري", roleLabel: "Spec", badge: "أخصائي مختبر", isAdmin: false, isSupervisor: false, godMode: false },
+            "1002": { id: "1002", name: "سعيد القحطاني", roleLabel: "Spec", badge: "أخصائي مختبر", isAdmin: false, isSupervisor: false, godMode: false },
+            "1003": { id: "1003", name: "محمد العمري", roleLabel: "Spec", badge: "أخصائي مختبر", isAdmin: false, isSupervisor: false, godMode: false }
         };
 
-        // استعادة بيانات الموظفين مع حماية مناصب الإدارة العليا من الحذف
-        let usersDB = JSON.parse(localStorage.getItem('tl_users_v85')) || DEFAULT_USERS;
-        // فرض بقاء حساب جمال كـ Admin دائماً لتفادي الإغلاق العرضي
-        if (!usersDB["32726"]) usersDB["32726"] = DEFAULT_USERS["32726"];
+        let usersDB = JSON.parse(localStorage.getItem('tl_users_v85')) || DEFAULT_STAFF;
+        // ضمان بقاء حساب المدير جمال مفعلاً بكامل الصلاحيات
+        if (!usersDB["32726"]) usersDB["32726"] = DEFAULT_STAFF["32726"];
 
         let currentUser = null, html5QrCode = null;
         
@@ -413,10 +421,8 @@
         function setupUIForUser() {
             document.getElementById('active-user-badge').innerText = `${currentUser.name} | ${currentUser.badge}`;
             
-            // إخفاء الأقسام حسب الدور
             document.querySelectorAll('.role-restricted').forEach(el => currentUser.isAdmin || currentUser.isSupervisor ? el.classList.remove('hidden') : el.classList.add('hidden'));
             
-            // فرض إظهار أدوات الإدارة (الإكسل، سجل المراقبة، التعديل) حصرياً للـ Admin (جمال 32726)
             if (currentUser.isAdmin) {
                 document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
                 document.getElementById('admin-staff-controls').classList.remove('hidden');
@@ -432,7 +438,7 @@
         function switchTab(t) { document.querySelectorAll('.tab-section').forEach(s => s.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.getElementById(`sec-${t}`).classList.remove('hidden'); document.getElementById(`tab-${t}`).classList.add('active'); }
         function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
 
-        // ================= ضغط الصورة للذكاء الاصطناعي (تحديث الدقة) =================
+        // ================= ضغط الصورة للذكاء الاصطناعي (دقة عالية) =================
         async function compressImage(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader(); reader.readAsDataURL(file);
@@ -440,17 +446,17 @@
                     const img = new Image(); img.src = e.target.result;
                     img.onload = () => {
                         const cvs = document.createElement('canvas'), ctx = cvs.getContext('2d');
-                        const MAX_WIDTH = 1024; // رفع الدقة لقراءة النصوص الصغيرة بوضوح
+                        const MAX_WIDTH = 1024;
                         const scale = img.width > MAX_WIDTH ? (MAX_WIDTH / img.width) : 1;
                         cvs.width = img.width * scale; cvs.height = img.height * scale;
                         ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
-                        resolve(cvs.toDataURL('image/jpeg', 0.80)); // جودة أعلى للصورة
+                        resolve(cvs.toDataURL('image/jpeg', 0.82));
                     }; img.onerror = reject;
                 };
             });
         }
 
-        // ================= الاتصال بالوركر لمعالجة الصورة AI =================
+        // ================= معالجة الكاميرا عبر الوركر المشفر =================
         async function processImageWithAI(event) {
             const file = event.target.files[0]; if (!file) return;
             const lb = document.getElementById('ai-loading-indicator'), st = document.getElementById('ai-status-text');
@@ -461,12 +467,12 @@
                 const res = await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/ai`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [
-                        { text: "أنت خبير مختبرات طبية. استخرج من الصورة البيانات بدقة. الاسم التجاري الواضح فقط. رقم التشغيلة (Lot). وتاريخ الانتهاء بصيغة YYYY-MM-DD حصراً. الكود المرجعي REF. القسم (Alinity ci & hq, ACL TOP, Gem, كيمياء حيوية). أعد النتيجة كـ JSON فقط بالصيغة: {\"name\": \"\", \"lot\": \"\", \"expiryDate\": \"\", \"barcode\": \"\", \"category\": \"\"}" },
+                        { text: "أنت خبير كواشف ومحاليل طبية. استخرج بدقة تامة من الصورة: 1. اسم الصنف التجاري الدقيق فقط دون كلام إضافي 2. رقم التشغيلة Lot Number بدقة دون خلطه برقم الكتالوج 3. تاريخ الانتهاء بصيغة YYYY-MM-DD بالميلادي فقط 4. رقم المرجع REF/Barcode إن وجد 5. القسم الأقرب (Alinity ci & hq, ACL TOP, Gem, كيمياء حيوية). أعد الإجابة كـ JSON خالص بالصيغة: {\"name\": \"\", \"lot\": \"\", \"expiryDate\": \"\", \"barcode\": \"\", \"category\": \"\"}" },
                         { inlineData: { mimeType: comp.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0], data: comp.split(',')[1] } }
                     ]}] })
                 });
                 
-                if (!res.ok) throw new Error("تأكد من تحديث كود الوركر في Cloudflare");
+                if (!res.ok) throw new Error("تعذر الاتصال بخادم الوركر، تأكد من اتصال الشبكة");
                 const data = await res.json();
                 
                 const aiText = data.candidates[0].content.parts[0].text;
@@ -476,7 +482,6 @@
                 if (parsed.name || parsed.Name) document.getElementById('itemName').value = parsed.name || parsed.Name;
                 if (parsed.lot || parsed.Lot) document.getElementById('lotNumber').value = parsed.lot || parsed.Lot;
                 
-                // تنسيق تاريخ الانتهاء ليناسب حقل الـ HTML Date
                 if (parsed.expiryDate || parsed.expiration) {
                     let exp = parsed.expiryDate || parsed.expiration;
                     document.getElementById('expiryDate').value = exp.length === 7 ? `${exp}-01` : exp;
@@ -493,20 +498,21 @@
                     }
                 }
                 
-                st.innerText = "✅ اكتمل التعرف بنجاح"; showToast("تم استخراج البيانات آلياً", "success");
+                st.innerText = "✅ اكتمل التعرف بنجاح"; showToast("تم استخراج البيانات وتعبئتها", "success");
+                logAction("استخدام AI", `التعرف على: ${parsed.name || 'محلول'}`);
             } catch (err) {
                 console.error(err); st.innerText = "⚠️ فشل الاتصال، جرب مجدداً"; showToast(err.message, "error");
             } finally { lb.classList.add('hidden'); event.target.value = ''; }
         }
 
         async function scanScheduleWithAI(event) {
-            const file = event.target.files[0]; if (!file) return; showToast("جاري المعالجة...", "info");
+            const file = event.target.files[0]; if (!file) return; showToast("جاري قراءة الجدول...", "info");
             try {
                 const comp = await compressImage(file);
                 const res = await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/ai`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [
-                        { text: "استخرج الجدول بصيغة JSON Array: [{\"day\": \"\", \"time\": \"\", \"title\": \"\", \"staff\": [\"\"]}]" },
+                        { text: "استخرج جدول الشفتات بصيغة JSON Array: [{\"day\": \"\", \"time\": \"\", \"title\": \"\", \"staff\": [\"\"]}]" },
                         { inlineData: { mimeType: comp.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0], data: comp.split(',')[1] } }
                     ]}] })
                 });
@@ -515,10 +521,10 @@
                 const jsonMatch = data.candidates[0].content.parts[0].text.match(/\[[\s\S]*\]/);
                 const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : data.candidates[0].content.parts[0].text);
                 if (Array.isArray(parsed) && parsed.length > 0) { scheduleData = [...parsed, ...scheduleData]; saveLocalAndCloud('schedule', scheduleData); renderSchedule(); showToast("تم استيراد الجدول", "success"); }
-            } catch (e) { showToast("فشل في القراءة", "error"); } event.target.value = '';
+            } catch (e) { showToast("فشل في استخراج الجدول", "error"); } event.target.value = '';
         }
 
-        // ================= أدوات إدارة المخزون =================
+        // ================= إدارة المخزون =================
         function openInventoryModal(c = false) { document.getElementById('itemName').value=''; document.getElementById('modal-inventory').classList.remove('hidden'); if(c) setTimeout(()=>document.getElementById('ai-camera-input').click(),200); }
         function closeInventoryModal() { stopBarcodeScanner(); document.getElementById('modal-inventory').classList.add('hidden'); }
         
@@ -531,10 +537,10 @@
 
         async function saveInventoryItem() {
             const name = document.getElementById('itemName').value.trim(), barcode = document.getElementById('itemBarcode').value.trim();
-            if(!name) return showToast("أدخل الاسم التجاري", "warning");
+            if(!name) return showToast("أدخل اسم الصنف أو المحلول", "warning");
             const item = { id: barcode || ('ID-'+Date.now()), name, category: document.getElementById('itemCategory').value, lot: document.getElementById('lotNumber').value.trim()||'N/A', exp: document.getElementById('expiryDate').value||'2027-01-01', qty: parseInt(document.getElementById('itemQty').value)||0 };
             const idx = inventoryData.findIndex(i => i.id === item.id); idx > -1 ? inventoryData[idx] = item : inventoryData.unshift(item);
-            localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData)); renderInventory(); closeInventoryModal(); showToast("تم الحفظ في المخزون", 'success'); logAction("إضافة/تعديل مخزون", name, "inventory");
+            localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData)); renderInventory(); closeInventoryModal(); showToast("تم حفظ الصنف", 'success'); logAction("إضافة مخزون", name, "inventory");
             try { await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/inventory`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(item) }); } catch(e){}
         }
         async function updateItemQty(id, d) { const item = inventoryData.find(i=>i.id===id); if(!item) return; item.qty = Math.max(0, (parseInt(item.qty)||0)+d); localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData)); renderInventory(); try { await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/inventory`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(item) }); } catch(e){} }
@@ -546,14 +552,14 @@
             inventoryData.forEach(i => { if(parseInt(i.qty)<=2) l++; if((new Date(i.exp||i.exp_date)-today)/(1000*60*60*24) <= 60) e++; });
             document.getElementById('stat-total-items').innerText = inventoryData.length; document.getElementById('stat-low-items').innerText = l; document.getElementById('stat-exp-items').innerText = e;
             const fil = inventoryData.filter(i => (i.name.toLowerCase().includes(q) || (i.lot&&i.lot.toLowerCase().includes(q))) && (cat==='ALL' || i.category===cat));
-            if(!fil.length) return c.innerHTML = `<div class="col-span-full glass-card p-8 text-center text-gray-400 font-bold">لا توجد أصناف تطابق البحث</div>`;
+            if(!fil.length) return c.innerHTML = `<div class="col-span-full glass-card p-8 text-center text-gray-400 font-bold">لا توجد أصناف مطابقة</div>`;
             c.innerHTML = fil.map(i => `<div class="glass-card p-4 flex justify-between items-center border-r-4 ${i.qty<=2?'border-red-500':'border-blue-500'}"><div><h4 class="font-extrabold text-sm sm:text-base">${i.name}</h4><span class="bg-blue-100 text-blue-800 text-[10px] px-2 rounded-full font-bold">${i.category}</span><p class="text-xs text-gray-500">Lot: <strong>${i.lot}</strong> | انتهاء: ${i.exp||i.exp_date}</p></div><div class="flex items-center gap-2"><button onclick="updateItemQty('${i.id}', -1)" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 font-bold">-</button><span class="font-extrabold px-2 ${i.qty<=2?'text-red-600':'text-blue-600'}">${i.qty}</span><button onclick="updateItemQty('${i.id}', 1)" class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 font-bold">+</button>${currentUser?.isAdmin ? `<button onclick="deleteInventoryItem('${i.id}')" class="text-red-500 hover:text-red-700 ml-1"><i class="fas fa-trash"></i></button>` : ''}</div></div>`).join('');
         }
 
         function exportInventoryExcel() { const ws = XLSX.utils.json_to_sheet(inventoryData), wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Stats"); XLSX.writeFile(wb, `TechnoLab_Stats_${Date.now()}.xlsx`); logAction("تصدير Excel", "تم استخراج الإحصائيات", "admin"); }
         function importInventoryExcel(e) { const reader = new FileReader(); reader.onload=(ev)=>{ const wb = XLSX.read(new Uint8Array(ev.target.result), {type:'array'}), rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]); rows.forEach(r => inventoryData.push({id:String(r.id||'IMP-'+Date.now()), name:r.name||r['الاسم'], category:r.category||r['القسم']||'كيمياء حيوية', lot:r.lot||'N/A', exp:r.exp||'2027-01-01', qty:parseInt(r.qty||1)})); localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData)); renderInventory(); showToast("تم استيراد البيانات", "success"); }; reader.readAsArrayBuffer(e.target.files[0]); }
 
-        // ================= باقي الأقسام =================
+        // ================= الأجهزة والجداول والحرارة =================
         function openDeviceModal() { const n = prompt("اسم الجهاز:"); if(n){ devicesData.push({id:'DEV-'+Date.now(), name:n, type:prompt("النوع:","صيانة السبت")||'عام', status:'يعمل بكفاءة ✅'}); saveLocalAndCloud('devices', devicesData); renderDevices(); } }
         function toggleDeviceStatus(id) { const d = devicesData.find(x=>x.id===id); if(d) { d.status = d.status.includes('يعمل') ? 'تحت الصيانة 🛠️' : 'يعمل بكفاءة ✅'; saveLocalAndCloud('devices', devicesData); renderDevices(); } }
         function renderDevices() { document.getElementById('devices-container').innerHTML = devicesData.map(d => `<div class="glass-card p-4 flex justify-between items-center"><div><h4 class="font-extrabold text-sm">${d.name}</h4><p class="text-xs text-gray-500">${d.type}</p></div><button onclick="toggleDeviceStatus('${d.id}')" class="px-3 py-1 rounded-xl text-xs font-bold ${d.status.includes('يعمل')?'bg-emerald-100 text-emerald-800':'bg-amber-100 text-amber-800'}">${d.status}</button></div>`).join(''); }
@@ -574,51 +580,100 @@
         function addPolicy() { const t = document.getElementById('pol-title').value, s = document.getElementById('pol-summary').value; if(t){ policiesData.push({id:'POL-'+Date.now(), title:t, summary:s}); saveLocalAndCloud('policies', policiesData); renderSuppliersAndPolicies(); } }
         function renderSuppliersAndPolicies() { document.getElementById('suppliers-container').innerHTML = suppliersData.map(s => `<div class="p-2.5 border rounded-xl flex justify-between text-xs"><div><strong>${s.name}</strong> (${s.desc})</div><a href="tel:${s.phone}" class="bg-emerald-100 text-emerald-700 px-2 rounded-lg font-bold">${s.phone}</a></div>`).join(''); document.getElementById('policies-container').innerHTML = policiesData.map(p => `<div class="p-2.5 border rounded-xl text-xs"><p class="font-bold text-blue-600">${p.title}</p><p class="text-gray-500">${p.summary}</p></div>`).join(''); }
 
-        // ================= إدارة صلاحيات الطاقم (حصرية للادمن) =================
-        function addStaffMember() {
+        // ================= إدارة الصلاحيات الكاملة (حصري للأدمن 32726) =================
+        function editUserRole(id) {
+            const user = usersDB[id];
+            if (!user) return;
+            document.getElementById('new-staff-id').value = user.id;
+            document.getElementById('new-staff-name').value = user.name;
+            document.getElementById('new-staff-role').value = user.roleLabel;
+            showToast(`جاري تعديل صلاحيات: ${user.name}`, 'info');
+        }
+
+        function saveStaffPermissions() {
             const id = document.getElementById('new-staff-id').value.trim();
             const name = document.getElementById('new-staff-name').value.trim();
             const role = document.getElementById('new-staff-role').value;
             
             if (!id || !name) return showToast("يرجى إدخال الرقم والاسم", "warning");
-            if (id === "32726") return showToast("لا يمكنك تعديل صلاحية مدير النظام الرئيسي من هنا", "error"); // حماية لك
             
+            const badges = {
+                'Admin': 'Admin 👑',
+                'Lab Director': 'Lab Director 🔬',
+                'Supervisor': 'Supervisor 🛡️',
+                'Spec': 'أخصائي مختبر'
+            };
+
             usersDB[id] = { 
-                id, name, roleLabel: role, 
-                badge: role==='Admin'?'Admin 👑':(role==='Lab Director'?'Lab Director 🔬':(role==='Supervisor'?'Supervisor 🛡️':'أخصائي مختبر')), 
-                isAdmin: role==='Admin', 
-                isSupervisor: role!=='Spec', 
-                godMode: role==='Admin' 
+                id, 
+                name, 
+                roleLabel: role, 
+                badge: badges[role] || role, 
+                isAdmin: role === 'Admin', 
+                isSupervisor: role !== 'Spec', 
+                godMode: role === 'Admin' 
             };
             
             localStorage.setItem('tl_users_v85', JSON.stringify(usersDB)); 
             renderStaff(); 
-            showToast(`تم تعديل صلاحية [${name}] بنجاح`, "success"); 
-            logAction("صلاحيات الإدارة", `إعطاء دور ${role} لـ ${name}`, "admin");
+            showToast(`تم تحديث صلاحية [${name}] إلى (${role}) بنجاح`, "success"); 
+            logAction("تعديل صلاحيات", `تم تعيين ${name} (${id}) بدور: ${role}`, "admin");
+            
+            // تصفير الخانات
+            document.getElementById('new-staff-id').value = '';
+            document.getElementById('new-staff-name').value = '';
         }
         
         function deleteStaffMember(id) {
-            if(id === "32726") return showToast("غير مسموح بحذف مدير النظام الرئيسي", "error");
-            if(confirm('هل أنت متأكد من حذف حساب هذا الموظف؟')) { 
+            if (id === "32726") return showToast("لا يمكن حذف حساب المدير الأساسي", "error");
+            if (confirm(`هل أنت متأكد من حذف الحساب رقم (${id}) نهائياً؟`)) { 
                 delete usersDB[id]; 
                 localStorage.setItem('tl_users_v85', JSON.stringify(usersDB)); 
                 renderStaff(); 
-                logAction("صلاحيات الإدارة", `حذف الموظف رقم (${id})`, "admin");
+                showToast("تم إزالة الحساب", "warning");
+                logAction("حذف موظف", `تم حذف الحساب رقم (${id})`, "admin");
+            }
+        }
+
+        function resetDefaultStaff() {
+            if (confirm("هل تريد استعادة قائمة الطاقم المعتمدة الأصلية؟")) {
+                usersDB = JSON.parse(JSON.stringify(DEFAULT_STAFF));
+                localStorage.setItem('tl_users_v85', JSON.stringify(usersDB));
+                renderStaff();
+                showToast("تم استرجاع قائمة الطاقم بالكامل", "success");
             }
         }
         
         function renderStaff() {
-            document.getElementById('staff-list-container').innerHTML = Object.values(usersDB).map(u => `
-                <div class="glass-card p-3 flex justify-between items-center border-r-4 ${u.isAdmin?'border-purple-600':(u.id==='40291'?'border-emerald-500':'border-blue-600')}">
-                    <div><p class="font-extrabold text-sm">${u.name}</p><p class="text-xs text-gray-500">ID: <strong>${u.id}</strong> | <span class="text-blue-600">${u.roleLabel}</span></p></div>
-                    <div class="flex items-center gap-2"><span class="text-lg">${u.isAdmin?'👑':(u.isSupervisor?'🛡️':'👨‍🔬')}</span>
-                    ${(currentUser?.isAdmin && u.id !== "32726") ? `<button onclick="deleteStaffMember('${u.id}')" class="text-red-500 ml-1 hover:text-red-700"><i class="fas fa-trash"></i></button>` : ''}</div>
+            const container = document.getElementById('staff-list-container');
+            container.innerHTML = Object.values(usersDB).map(u => `
+                <div class="glass-card p-4 flex flex-col justify-between border-r-4 ${u.isAdmin?'border-purple-600':(u.id==='40291'?'border-emerald-500':'border-blue-600')}">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <p class="font-extrabold text-sm sm:text-base">${u.name}</p>
+                            <p class="text-xs text-gray-500 font-mono mt-0.5">ID: <strong>${u.id}</strong></p>
+                        </div>
+                        <span class="text-sm px-2.5 py-1 rounded-full font-bold ${u.isAdmin?'bg-purple-100 text-purple-800':(u.roleLabel==='Lab Director'?'bg-emerald-100 text-emerald-800':(u.roleLabel==='Supervisor'?'bg-blue-100 text-blue-800':'bg-gray-100 text-gray-700'))}">
+                            ${u.badge}
+                        </span>
+                    </div>
+                    
+                    ${currentUser?.isAdmin ? `
+                    <div class="flex gap-2 mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 text-xs font-bold">
+                        <button onclick="editUserRole('${u.id}')" class="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 py-1.5 rounded-lg transition">
+                            <i class="fas fa-edit ml-1"></i> تعديل الصلاحية
+                        </button>
+                        ${u.id !== "32726" ? `
+                        <button onclick="deleteStaffMember('${u.id}')" class="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg transition">
+                            <i class="fas fa-trash"></i>
+                        </button>` : ''}
+                    </div>` : ''}
                 </div>`).join('');
         }
 
-        // ================= الرقابة والمزامنة =================
+        // ================= الرقابة والمزامنة السحابية =================
         async function logAction(act, det, t='info') { if(!currentUser) return; const e = {timestamp:getGregorianTimestamp(), user:`${currentUser.name}`, action:act, details:det, type:t}; auditLogs.unshift(e); localStorage.setItem('tl_log_v85', JSON.stringify(auditLogs.slice(0, 200))); renderLogs(); try{ await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/logs`,{method:'POST',body:JSON.stringify(e)}); }catch(err){} }
-        function renderLogs() { const c = document.getElementById('logs-container'); if(c) c.innerHTML = auditLogs.map(l => `<div class="p-3 rounded-xl border flex justify-between text-xs bg-white/50"><div><span class="font-extrabold text-purple-700">${l.user}</span> — <strong>${l.action}</strong><p class="text-gray-500 mt-0.5">${l.details}</p></div><span class="text-[11px] text-gray-400">${l.timestamp}</span></div>`).join(''); }
+        function renderLogs() { const c = document.getElementById('logs-container'); if(c) c.innerHTML = auditLogs.map(l => `<div class="p-3 rounded-xl border flex justify-between text-xs bg-white/50"><div><span class="font-extrabold text-purple-700">${l.user}</span> — <strong>${l.action}</strong><p class="text-gray-500 mt-0.5">${l.details}</p></div><span class="text-[11px] text-gray-400 font-mono">${l.timestamp}</span></div>`).join(''); }
 
         async function saveLocalAndCloud(ep, arr) { const m = {devices:'tl_dev_v85',schedule:'tl_sch_v85',suppliers:'tl_sup_v85',policies:'tl_pol_v85'}; if(m[ep]) localStorage.setItem(m[ep], JSON.stringify(arr)); try{ await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/${ep}`,{method:'POST',body:JSON.stringify(arr)}); }catch(e){} }
         async function syncAllFromCloud(show=false) {
@@ -626,12 +681,12 @@
             try {
                 const eps = [{e:'inventory',s:d=>{inventoryData=d.map(x=>({id:x.id,name:x.name,category:x.category,lot:x.lot,exp:x.exp_date||x.exp,qty:x.quantity??x.qty}));localStorage.setItem('tl_inv_v85',JSON.stringify(inventoryData));}},{e:'devices',s:d=>{devicesData=d;localStorage.setItem('tl_dev_v85',JSON.stringify(d));}},{e:'logs',s:d=>{auditLogs=d;localStorage.setItem('tl_log_v85',JSON.stringify(d));}},{e:'critical',s:d=>{criticalData=d;localStorage.setItem('tl_crt_v85',JSON.stringify(d));}},{e:'temperature',s:d=>{tempData=d;localStorage.setItem('tl_tmp_v85',JSON.stringify(d));}},{e:'tasks',s:d=>{tasksData=d;localStorage.setItem('tl_tsk_v85',JSON.stringify(d));}}];
                 for (const item of eps) { const r = await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/${item.e}`); if (r.ok) { const j = await r.json(); if (Array.isArray(j)) item.s(j); } }
-                renderAllSections(); if(show) showToast("تمت المزامنة السحابية", "success");
+                renderAllSections(); if(show) showToast("تمت المزامنة السحابية بنجاح ☁️", "success");
             } catch (err) { if(show) showToast("العمل في الوضع المحلي", "warning"); } finally { if(i) i.classList.remove('fa-spin'); }
         }
 
         function openDevNotesModal() { document.getElementById('dev-notes-area').value = localStorage.getItem('tl_admin_notes')||''; document.getElementById('modal-dev-notes').classList.remove('hidden'); }
-        function saveDevNotes() { localStorage.setItem('tl_admin_notes', document.getElementById('dev-notes-area').value); document.getElementById('modal-dev-notes').classList.add('hidden'); }
+        function saveDevNotes() { localStorage.setItem('tl_admin_notes', document.getElementById('dev-notes-area').value); document.getElementById('modal-dev-notes').classList.add('hidden'); showToast("تم حفظ ملاحظات الإدارة", "success"); }
         function renderAllSections() { renderInventory(); renderDevices(); renderSchedule(); renderCritical(); renderTemperature(); renderTasks(); renderSuppliersAndPolicies(); renderStaff(); renderLogs(); }
     </script>
 </body>
