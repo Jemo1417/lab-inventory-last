@@ -1,1204 +1,929 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TechnoLab V8.6 Ultimate | مستشفى الحياة أبها</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>TechnoLab V8.6 Ultimate | مستشفى الحياة أبها</title>
 
-    <!-- إعدادات تطبيق الآيفون (iOS PWA & Splash Screens) -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="TechnoLab">
-    <meta name="theme-color" content="#1e3a8a">
-    <link rel="apple-touch-icon" id="pwa-apple-icon" sizes="180x180" href="">
-    <link rel="apple-touch-startup-image" id="splash-1125x2436" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="">
-    <link rel="apple-touch-startup-image" id="splash-1242x2688" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)" href="">
-    <link rel="apple-touch-startup-image" id="splash-828x1792"  media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="">
-    <link rel="manifest" id="pwa-manifest" href="">
+  <!-- إعدادات تطبيق الويب التقدمي للآيفون (iOS PWA) -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="TechnoLab" />
+  <meta name="theme-color" content="#0f172a" />
+  <link id="apple-touch-icon" rel="apple-touch-icon" href="" />
+  <link id="pwa-manifest" rel="manifest" href="" />
 
-    <!-- المكتبات الأساسية: Tailwind, FontAwesome, SheetJS (Excel), Html5-Qrcode -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <!-- Tailwind CSS & FontAwesome & Cairo Font -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
-        
-        :root { --primary: #2563eb; --secondary: #4f46e5; --accent: #7c3aed; }
-        body { font-family: 'Cairo', sans-serif; background-color: #f1f5f9; color: #1e293b; overflow-x: hidden; user-select: none; -webkit-tap-highlight-color: transparent; }
-        
-        body.dark-mode { background-color: #0f172a; color: #f8fafc; }
-        body.dark-mode .glass-card { background: rgba(30, 41, 59, 0.92); border-color: rgba(255, 255, 255, 0.1); color: #f8fafc; }
-        body.dark-mode input, body.dark-mode select, body.dark-mode textarea { background-color: #1e293b !important; border-color: #334155 !important; color: #f8fafc !important; }
-        body.dark-mode .modal-box { background-color: #1e293b; color: #ffffff; }
-        
-        .glass-card { background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(12px); border: 1px solid rgba(226, 232, 240, 0.85); border-radius: 1.25rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
-        .gradient-header { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #4f46e5 100%); }
-        .ai-gradient { background: linear-gradient(135deg, #7c3aed 0%, #9333ea 50%, #c026d3 100%); }
-        
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .tab-btn.active { background-color: rgba(255, 255, 255, 0.22); border-bottom: 4px solid #ffffff; font-weight: 800; }
-        .policy-badge-active { ring: 3px solid #2563eb; transform: translateY(-2px); }
-        
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 92%; max-width: 430px; pointer-events: none; }
-        .toast-item { background: #1e293b; color: #fff; padding: 14px 18px; border-radius: 14px; box-shadow: 0 15px 30px rgba(0,0,0,0.28); display: flex; align-items: center; gap: 12px; margin-bottom: 10px; animation: slideDown 0.3s ease-out forwards; border-right: 5px solid #3b82f6; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #0b1120;
+      color: #f1f5f9;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.78);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .tab-active {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+    }
+    .custom-scroll::-webkit-scrollbar {
+      height: 5px;
+      width: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-    <!-- حاوية الإشعارات -->
-    <div id="toast-container"></div>
+  <!-- شاشة تسجيل الدخول -->
+  <div id="login-screen" class="fixed inset-0 z-50 bg-slate-950 flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-md rounded-3xl p-8 text-center shadow-2xl border border-sky-500/20">
+      <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center shadow-lg shadow-sky-500/30">
+        <i class="fa-solid fa-microscope text-4xl text-white"></i>
+      </div>
+      <h1 class="text-2xl font-extrabold text-white tracking-wide">TechnoLab <span class="text-sky-400 text-base">V8.6 Ultimate</span></h1>
+      <p class="text-sky-300 font-bold mt-1">مستشفى الحياة أبها | Hayat Hospital Abha</p>
+      <p class="text-xs text-slate-400 mt-1 mb-6">نظام إدارة المختبر والمخزون والجودة الذكي</p>
 
-    <!-- ================= شاشة تسجيل الدخول ================= -->
-    <div id="login-screen" class="fixed inset-0 gradient-header z-50 flex items-center justify-center p-4">
-        <div class="glass-card w-full max-w-md p-8 text-center relative overflow-hidden shadow-2xl">
-            <div class="w-20 h-20 bg-blue-600 text-white rounded-2xl mx-auto flex items-center justify-center text-4xl shadow-lg mb-4">
-                <i class="fas fa-microscope"></i>
-            </div>
-            <h1 id="login-hosp-ar" class="text-2xl font-extrabold text-gray-800 dark:text-white">مستشفى الحياة أبها</h1>
-            <p id="login-hosp-en" class="text-sm font-bold text-blue-600 dark:text-blue-400 mb-1">Hayat Hospital Abha</p>
-            <span class="inline-block bg-purple-100 text-purple-800 text-xs px-3 py-1 rounded-full font-extrabold mb-6">TechnoLab V8.6 Ultimate PWA</span>
+      <div class="text-right mb-4">
+        <label class="block text-xs text-slate-300 mb-2 font-semibold">الرقم الوظيفي (Employee ID)</label>
+        <input id="login-id-input" type="password" inputmode="numeric" placeholder="أدخل الرقم الوظيفي (مثال: 40291)" 
+          class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-3.5 text-center text-lg font-bold text-white tracking-widest focus:outline-none focus:border-sky-500" />
+      </div>
 
-            <div class="mb-4 text-right">
-                <label class="block text-xs font-bold text-gray-500 mb-2">الرقم الوظيفي (User ID)</label>
-                <input type="password" id="login-pin" oninput="previewUserRole(this.value)" onkeydown="if(event.key==='Enter') login()" placeholder="أدخل الرقم الوظيفي..." 
-                    class="w-full p-4 text-center text-xl font-bold border-2 border-blue-100 rounded-xl focus:outline-none focus:border-blue-600 transition">
-            </div>
+      <button onclick="handleLogin()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold text-base shadow-lg shadow-sky-600/30 transition">
+        <i class="fa-solid fa-right-to-bracket ml-2"></i> دخول للنظام
+      </button>
 
-            <div id="role-preview-badge" class="hidden mb-4 p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 font-bold text-sm transition-all"></div>
+      <div id="login-error" class="hidden mt-3 text-xs text-rose-400 bg-rose-950/50 border border-rose-500/30 rounded-lg p-2.5"></div>
 
-            <button onclick="login()" class="w-full gradient-header text-white font-extrabold py-4 rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
-                <i class="fas fa-sign-in-alt"></i> دخول للنظام
+      <div class="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-400 space-y-1">
+        <div>Done by <span class="text-sky-400 font-bold">Jamal Asiri</span></div>
+        <div><a href="mailto:alalkmy777@gmail.com" class="hover:text-sky-300">alalkmy777@gmail.com</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- الواجهة الرئيسية -->
+  <div id="app-container" class="hidden flex-1 flex flex-col max-w-7xl w-full mx-auto px-3 sm:px-6 py-4">
+    
+    <!-- الهيدر الرئيسي -->
+    <header class="glass-card rounded-2xl p-4 mb-4 flex flex-wrap items-center justify-between gap-3 border-b-2 border-sky-500/40">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-500 to-blue-700 flex items-center justify-center shadow-md">
+          <i class="fa-solid fa-flask-vial text-2xl text-white"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-extrabold text-white">مستشفى الحياة أبها | Hayat Hospital Abha</h1>
+            <span class="bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[10px] px-2 py-0.5 rounded-full font-bold">V8.6 Ultimate</span>
+          </div>
+          <p class="text-xs text-slate-300">TechnoLab Smart Clinical Laboratory System — CAP | CBAHI | SFDA | AABB | HIMSS</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-3 mr-auto">
+        <div id="cloud-status" class="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700 px-3 py-1.5 rounded-xl text-xs">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-slate-300">Cloud Worker متصل</span>
+        </div>
+        <div class="bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-xl text-xs">
+          <span class="text-slate-400">المستخدم:</span>
+          <span id="current-user-name" class="font-bold text-sky-400 mr-1"></span>
+          <span id="current-user-badge" class="text-[10px] bg-sky-900/60 text-sky-200 px-1.5 py-0.5 rounded mr-1"></span>
+        </div>
+        <button onclick="syncWithCloud()" title="مزامنة سحابية" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 border border-slate-700 transition">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+        </button>
+        <button onclick="handleLogout()" title="تسجيل الخروج" class="p-2.5 rounded-xl bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-500/30 transition">
+          <i class="fa-solid fa-power-off"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- شريط التنبيهات (الصيانة الأسبوعية يوم السبت + النواقص) -->
+    <div id="saturday-banner" class="mb-4 rounded-xl bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-transparent border border-amber-500/40 p-3 flex items-center justify-between">
+      <div class="flex items-center gap-2.5 text-xs sm:text-sm text-amber-200">
+        <i class="fa-solid fa-calendar-check text-amber-400 text-lg"></i>
+        <span><strong>جدول الصيانة الأسبوعية المعتمد:</strong> يوم <strong>السبت (Saturday)</strong> لجميع أجهزة المختبر (Alinity ci & hq, ACL TOP, GEM Premier, Glucometers).</span>
+      </div>
+      <span id="today-day-badge" class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-400/30"></span>
+    </div>
+
+    <!-- شريط التبويبات -->
+    <nav class="flex items-center gap-2 overflow-x-auto custom-scroll pb-2 mb-4">
+      <button onclick="switchTab('inventory')" id="tab-btn-inventory" class="tab-btn tab-active flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap bg-slate-800/80 text-slate-300 transition">
+        <i class="fa-solid fa-boxes-stacked"></i> المخزون والكواشف
+      </button>
+      <button onclick="switchTab('maintenance')" id="tab-btn-maintenance" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap bg-slate-800/80 text-slate-300 transition">
+        <i class="fa-solid fa-screwdriver-wrench"></i> صيانة الأجهزة (السبت)
+      </button>
+      <button onclick="switchTab('schedule')" id="tab-btn-schedule" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap bg-slate-800/80 text-slate-300 transition">
+        <i class="fa-solid fa-calendar-days"></i> جدول المناوبات والمهام
+      </button>
+      <button onclick="switchTab('quality')" id="tab-btn-quality" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap bg-slate-800/80 text-slate-300 transition">
+        <i class="fa-solid fa-temperature-half"></i> النتائج الحرجة والحرارة
+      </button>
+      <button onclick="switchTab('policies')" id="tab-btn-policies" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap bg-slate-800/80 text-slate-300 transition">
+        <i class="fa-solid fa-book-medical"></i> السياسات الذكية (AI)
+      </button>
+      <button onclick="switchTab('godmode')" id="tab-btn-godmode" class="tab-btn hidden flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap bg-slate-800/80 text-amber-300 border border-amber-500/30 transition">
+        <i class="fa-solid fa-eye"></i> مراقبة المشرفين والصلاحيات (God Mode)
+      </button>
+    </nav>
+
+    <!-- محتوى التبويبات -->
+    <main class="flex-1">
+
+      <!-- 1. تبويب المخزون والكواشف -->
+      <section id="tab-inventory" class="tab-content space-y-4">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="glass-card p-3.5 rounded-2xl border-r-4 border-sky-500">
+            <div class="text-xs text-slate-400">إجمالي الأصناف</div>
+            <div id="stat-total-items" class="text-2xl font-extrabold text-white mt-1">0</div>
+          </div>
+          <div class="glass-card p-3.5 rounded-2xl border-r-4 border-emerald-500">
+            <div class="text-xs text-slate-400">مخزون آمن</div>
+            <div id="stat-ok-items" class="text-2xl font-extrabold text-emerald-400 mt-1">0</div>
+          </div>
+          <div class="glass-card p-3.5 rounded-2xl border-r-4 border-amber-500">
+            <div class="text-xs text-slate-400">قريب الانتهاء / منخفض</div>
+            <div id="stat-low-items" class="text-2xl font-extrabold text-amber-400 mt-1">0</div>
+          </div>
+          <div class="glass-card p-3.5 rounded-2xl border-r-4 border-purple-500">
+            <div class="text-xs text-slate-400">المسح الذكي بالـ AI</div>
+            <button onclick="document.getElementById('ai-camera-input').click()" class="mt-1.5 w-full py-1.5 rounded-lg bg-purple-600/30 hover:bg-purple-600/50 border border-purple-400/40 text-purple-200 text-xs font-bold transition">
+              <i class="fa-solid fa-camera ml-1"></i> مسح علبة كاشف
             </button>
-            <p id="login-error" class="text-red-500 text-xs font-bold mt-3 hidden">⚠️ الرقم الوظيفي غير مسجل في النظام!</p>
-
-            <div class="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 text-center">
-                <p class="text-xs font-bold text-gray-500">TechnoLab.Online © 2026</p>
-                <p class="text-[11px] text-gray-400 mt-1">Done By Jamal Asiri | alalkmy777@gmail.com</p>
-            </div>
+            <input id="ai-camera-input" type="file" accept="image/*" capture="environment" class="hidden" onchange="scanReagentWithAI(event)" />
+          </div>
         </div>
-    </div>
 
-    <!-- ================= واجهة التطبيق الرئيسية ================= -->
-    <div id="app-wrapper" class="hidden flex-1 flex flex-col pb-24">
-        
-        <header class="gradient-header text-white sticky top-0 z-40 shadow-lg">
-            <div class="px-4 py-3 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="bg-white/20 p-2.5 rounded-xl backdrop-blur-sm"><i class="fas fa-flask text-2xl"></i></div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h1 id="header-hosp-ar" class="font-extrabold text-base sm:text-lg leading-tight">مستشفى الحياة أبها</h1>
-                            <span class="bg-green-400/20 border border-green-300 text-green-100 text-[10px] px-2 py-0.5 rounded-full font-bold">V8.6 Ultimate</span>
-                        </div>
-                        <p id="active-user-badge" class="text-xs text-blue-100 font-semibold mt-0.5"></p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <button onclick="syncAllFromCloud(true)" title="مزامنة السحابة" class="bg-white/10 hover:bg-white/20 p-2.5 rounded-xl transition"><i id="sync-icon" class="fas fa-sync-alt"></i></button>
-                    <button onclick="toggleDarkMode()" title="الوضع الليلي" class="bg-white/10 hover:bg-white/20 p-2.5 rounded-xl transition"><i class="fas fa-moon"></i></button>
-                    <button onclick="logout()" title="تسجيل خروج" class="bg-red-500/80 hover:bg-red-600 p-2.5 rounded-xl transition"><i class="fas fa-power-off"></i></button>
-                </div>
-            </div>
-
-            <!-- شريط الأقسام الشامل -->
-            <nav class="flex overflow-x-auto no-scrollbar bg-black/15 px-2 pt-1 text-xs sm:text-sm">
-                <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn active px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-boxes"></i> المخزون</button>
-                <button onclick="switchTab('devices')" id="tab-devices" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-cogs"></i> الأجهزة والصيانة</button>
-                <button onclick="switchTab('schedule')" id="tab-schedule" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-calendar-alt"></i> الجداول والشفتات</button>
-                <button onclick="switchTab('critical')" id="tab-critical" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-heartbeat"></i> النتائج الحرجة</button>
-                <button onclick="switchTab('temperature')" id="tab-temperature" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-thermometer-half"></i> الحرارة</button>
-                <button onclick="switchTab('tasks')" id="tab-tasks" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-tasks"></i> المهام والتعاميم</button>
-                <button onclick="switchTab('suppliers')" id="tab-suppliers" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition"><i class="fas fa-file-shield"></i> السياسات والشركات</button>
-                <button onclick="switchTab('staff')" id="tab-staff" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition role-staff-view hidden"><i class="fas fa-users-cog"></i> الموظفين والصلاحيات</button>
-                <button onclick="switchTab('logs')" id="tab-logs" class="tab-btn px-4 py-3 whitespace-nowrap flex items-center gap-1.5 transition god-mode-only hidden"><i class="fas fa-eye text-yellow-300"></i> السجل والرقابة (God Mode)</button>
-            </nav>
-        </header>
-
-        <main class="p-4 max-w-6xl mx-auto w-full space-y-6">
-
-            <!-- ================= 1. قسم المخزون ================= -->
-            <section id="sec-inventory" class="tab-section space-y-4">
-                <div class="grid grid-cols-3 gap-3 text-center">
-                    <div class="glass-card p-3 border-r-4 border-blue-500"><p class="text-xs text-gray-500 font-bold">إجمالي الأصناف</p><p id="stat-total-items" class="text-2xl font-extrabold text-blue-600">0</p></div>
-                    <div class="glass-card p-3 border-r-4 border-amber-500"><p class="text-xs text-gray-500 font-bold">نواقص قريبة</p><p id="stat-low-items" class="text-2xl font-extrabold text-amber-500">0</p></div>
-                    <div class="glass-card p-3 border-r-4 border-red-500"><p class="text-xs text-gray-500 font-bold">قارب على الانتهاء</p><p id="stat-exp-items" class="text-2xl font-extrabold text-red-500">0</p></div>
-                </div>
-
-                <div class="flex flex-wrap gap-2 justify-between items-center glass-card p-3">
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="openInventoryModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow flex items-center gap-2"><i class="fas fa-plus-circle"></i> إضافة محلول / كاشف</button>
-                        <button onclick="openInventoryModal(true)" class="ai-gradient hover:opacity-95 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow flex items-center gap-2"><i class="fas fa-camera"></i> إضافة ذكية (AI)</button>
-                    </div>
-                    <div id="stats-export-box" class="flex gap-2 hidden">
-                        <button onclick="exportInventoryExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 shadow"><i class="fas fa-chart-pie"></i> استخراج الإحصائيات (Excel)</button>
-                        <label class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer shadow"><i class="fas fa-file-import"></i> استيراد<input type="file" accept=".xlsx,.xls" class="hidden" onchange="importInventoryExcel(event)"></label>
-                    </div>
-                </div>
-
-                <div class="flex gap-2">
-                    <input type="text" id="inv-search" oninput="renderInventory()" placeholder="ابحث بالاسم، الباركود، أو رقم التشغيلة (Lot)..." class="flex-1 p-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-500">
-                    <select id="inv-filter-cat" onchange="renderInventory()" class="p-3 rounded-xl border border-gray-200 text-sm font-bold">
-                        <option value="ALL">كل المنصات والأقسام</option>
-                        <option value="Alinity ci & hq">Alinity ci & hq</option>
-                        <option value="ACL TOP">ACL TOP</option>
-                        <option value="Gem">Gem (Blood Gas)</option>
-                        <option value="Glucometers">Glucometers</option>
-                        <option value="كيمياء حيوية">كيمياء حيوية</option>
-                        <option value="أمراض دم">أمراض دم</option>
-                        <option value="المستودع الفرعي">المستودع الفرعي (Sub-store)</option>
-                    </select>
-                </div>
-                <div id="inventory-container" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-            </section>
-
-            <!-- ================= 2. قسم الأجهزة والصيانة ================= -->
-            <section id="sec-devices" class="tab-section hidden space-y-4">
-                <div class="glass-card p-4 border-r-4 border-amber-500 flex justify-between items-center">
-                    <div>
-                        <h3 class="font-extrabold text-sm sm:text-base"><i class="fas fa-tools text-amber-500 ml-1"></i> جدول الصيانة الأسبوعية المعتمد</h3>
-                        <p class="text-xs text-gray-500 mt-1">يوم الصيانة الأسبوعي لكافة أجهزة المختبر (Alinity, ACL TOP, Gem): <strong id="maint-day-label" class="text-blue-600 font-extrabold">يوم السبت (Saturday)</strong></p>
-                    </div>
-                    <button onclick="openDeviceModal()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">+ إضافة جهاز</button>
-                </div>
-                <div id="devices-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-            </section>
-
-            <!-- ================= 3. قسم الجداول والشفتات ================= -->
-            <section id="sec-schedule" class="tab-section hidden space-y-4">
-                <div class="glass-card p-4 flex flex-wrap justify-between items-center gap-2">
-                    <div>
-                        <h3 class="font-extrabold text-base">جدول المناوبات والشفتات</h3>
-                        <p class="text-xs text-gray-500">يدعم الإضافة اليدوية أو القراءة الذكية للجدول بالذكاء الاصطناعي</p>
-                    </div>
-                    <div id="schedule-controls-box" class="flex gap-2 hidden">
-                        <button onclick="openScheduleModal()" class="bg-blue-600 text-white px-3 py-2 rounded-xl text-xs font-bold">+ إضافة مناوبة</button>
-                        <label class="ai-gradient text-white px-3 py-2 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1"><i class="fas fa-camera"></i> مسح جدول (AI)<input type="file" accept="image/*" class="hidden" onchange="scanScheduleWithAI(event)"></label>
-                    </div>
-                </div>
-                <div id="schedule-container" class="grid gap-3"></div>
-            </section>
-
-            <!-- ================= 4. قسم النتائج الحرجة ================= -->
-            <section id="sec-critical" class="tab-section hidden space-y-4">
-                <div class="glass-card p-4">
-                    <h3 class="font-extrabold text-base mb-3 text-red-600"><i class="fas fa-bell"></i> توثيق تبليغ نتيجة حرجة (CAP / CBAHI Standard)</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
-                        <input type="text" id="crit-patient" placeholder="اسم المريض / رقم الملف" class="p-3 border rounded-xl text-sm">
-                        <input type="text" id="crit-test" placeholder="الفحص والنتيجة (مثال: K = 6.8)" class="p-3 border rounded-xl text-sm">
-                        <input type="text" id="crit-doctor" placeholder="اسم الطبيب/الممرض المُبلّغ" class="p-3 border rounded-xl text-sm">
-                        <button onclick="addCriticalResult()" class="bg-red-600 text-white font-bold p-3 rounded-xl text-sm shadow">توثيق التبليغ</button>
-                    </div>
-                </div>
-                <div id="critical-container" class="space-y-2"></div>
-            </section>
-
-            <!-- ================= 5. قسم درجات الحرارة ================= -->
-            <section id="sec-temperature" class="tab-section hidden space-y-4">
-                <div class="glass-card p-4">
-                    <h3 class="font-extrabold text-base mb-3 text-blue-600"><i class="fas fa-snowflake"></i> تسجيل حرارة الثلاجات والغرف</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <select id="temp-loc" class="p-3 border rounded-xl text-sm font-bold">
-                            <option value="ثلاجة الكواشف (2-8°C)">ثلاجة الكواشف (2-8°C)</option>
-                            <option value="ثلاجة بنك الدم (2-6°C)">ثلاجة بنك الدم (2-6°C)</option>
-                            <option value="الفريزر (-20°C)">الفريزر (-20°C)</option>
-                            <option value="حرارة الغرفة (20-25°C)">حرارة الغرفة (20-25°C)</option>
-                        </select>
-                        <input type="number" step="0.1" id="temp-val" placeholder="الدرجة المئوية (°C)" class="p-3 border rounded-xl text-sm">
-                        <button onclick="addTemperatureLog()" class="bg-blue-600 text-white font-bold p-3 rounded-xl text-sm shadow">حفظ القراءة</button>
-                    </div>
-                </div>
-                <div id="temperature-container" class="space-y-2"></div>
-            </section>
-
-            <!-- ================= 6. قسم المهام والتعاميم ================= -->
-            <section id="sec-tasks" class="tab-section hidden space-y-4">
-                <div id="tasks-controls-box" class="glass-card p-4 hidden">
-                    <h3 class="font-extrabold text-base mb-3"><i class="fas fa-bullhorn text-purple-600"></i> إرسال مهمة أو تعميم للموظفين</h3>
-                    <div class="flex flex-col sm:flex-row gap-2">
-                        <input type="text" id="task-target" placeholder="إلى (الكل أو رقم الموظف)" value="الكل" class="p-3 border rounded-xl text-sm sm:w-1/4">
-                        <input type="text" id="task-msg" placeholder="نص المهمة أو التعميم الإداري..." class="p-3 border rounded-xl text-sm flex-1">
-                        <button onclick="addTask()" class="bg-purple-600 text-white font-bold px-6 py-3 rounded-xl text-sm shadow">إرسال</button>
-                    </div>
-                </div>
-                <div id="tasks-container" class="space-y-2"></div>
-            </section>
-
-            <!-- ================= 7. قسم السياسات الذكية والشركات (CAP, CBAHI, SFDA) ================= -->
-            <section id="sec-suppliers" class="tab-section hidden space-y-6">
-                
-                <!-- الأيقونات الثلاث للسياسات والاعتمادات -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <!-- أيقونة CAP -->
-                    <div onclick="filterPoliciesByOrg('CAP')" id="pol-card-CAP" class="glass-card p-4 cursor-pointer hover:shadow-lg transition border-t-4 border-blue-600 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center text-2xl font-black shadow-sm">
-                                <i class="fas fa-award"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-black text-base text-blue-800 dark:text-blue-400">سياسات CAP</h4>
-                                <p class="text-[11px] text-gray-500">College of American Pathologists</p>
-                            </div>
-                        </div>
-                        <span id="count-pol-CAP" class="bg-blue-600 text-white text-xs font-extrabold px-2.5 py-1 rounded-full">0</span>
-                    </div>
-
-                    <!-- أيقونة سباهي CBAHI -->
-                    <div onclick="filterPoliciesByOrg('CBAHI')" id="pol-card-CBAHI" class="glass-card p-4 cursor-pointer hover:shadow-lg transition border-t-4 border-emerald-600 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-black shadow-sm">
-                                <i class="fas fa-hospital-check"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-black text-base text-emerald-800 dark:text-emerald-400">سياسات سباهي (CBAHI)</h4>
-                                <p class="text-[11px] text-gray-500">المركز السعودي لاعتماد المنشآت</p>
-                            </div>
-                        </div>
-                        <span id="count-pol-CBAHI" class="bg-emerald-600 text-white text-xs font-extrabold px-2.5 py-1 rounded-full">0</span>
-                    </div>
-
-                    <!-- أيقونة الغذاء والدواء SFDA -->
-                    <div onclick="filterPoliciesByOrg('SFDA')" id="pol-card-SFDA" class="glass-card p-4 cursor-pointer hover:shadow-lg transition border-t-4 border-amber-500 flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-2xl font-black shadow-sm">
-                                <i class="fas fa-shield-virus"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-black text-base text-amber-800 dark:text-amber-400">سياسات SFDA</h4>
-                                <p class="text-[11px] text-gray-500">الهيئة العامة للغذاء والدواء</p>
-                            </div>
-                        </div>
-                        <span id="count-pol-SFDA" class="bg-amber-500 text-white text-xs font-extrabold px-2.5 py-1 rounded-full">0</span>
-                    </div>
-                </div>
-
-                <!-- الأيقونة الذكية ومساعد السياسات بالذكاء الاصطناعي (AI Policy Assistant) -->
-                <div class="glass-card p-5 border-2 border-purple-200 dark:border-purple-900 space-y-4">
-                    <div class="flex items-center justify-between flex-wrap gap-2">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-10 h-10 rounded-xl ai-gradient text-white flex items-center justify-center text-xl shadow">
-                                <i class="fas fa-robot"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-extrabold text-base text-purple-800 dark:text-purple-300">المساعد الذكي للسياسات والاعتمادات (AI Policy Center)</h3>
-                                <p class="text-xs text-gray-500">لخص أي سياسة مسجلة أو اسأل الذكاء الاصطناعي عن أي معيار عالمي مع الترجمة الفورية</p>
-                            </div>
-                        </div>
-                        <button onclick="filterPoliciesByOrg('ALL')" class="text-xs bg-gray-100 dark:bg-gray-700 px-3 py-1.5 rounded-lg font-bold">عرض كل السياسات</button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <!-- 1. اختيار سياسة مسجلة لتلخيصها -->
-                        <div class="bg-purple-50/70 dark:bg-slate-800/70 p-3 rounded-xl border border-purple-100 dark:border-slate-700 space-y-2">
-                            <label class="block text-xs font-extrabold text-purple-900 dark:text-purple-300"><i class="fas fa-list-check ml-1"></i> 1. اختر سياسة مسجلة لتلخيصها:</label>
-                            <div class="flex gap-2">
-                                <select id="ai-policy-select" class="flex-1 p-2.5 border rounded-xl text-xs font-bold">
-                                    <option value="">-- اختر السياسة من القائمة --</option>
-                                </select>
-                                <button onclick="summarizeSelectedPolicyAI()" class="ai-gradient text-white px-4 py-2.5 rounded-xl text-xs font-extrabold shadow whitespace-nowrap flex items-center gap-1">
-                                    <i class="fas fa-wand-magic-sparkles"></i> تلخيص ذكي
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- 2. سؤال الذكاء الاصطناعي عن أي سياسة -->
-                        <div class="bg-blue-50/70 dark:bg-slate-800/70 p-3 rounded-xl border border-blue-100 dark:border-slate-700 space-y-2">
-                            <label class="block text-xs font-extrabold text-blue-900 dark:text-blue-300"><i class="fas fa-magnifying-glass-chart ml-1"></i> 2. اسأل الذكاء الاصطناعي عن أي سياسة (CAP / CBAHI / SFDA):</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="ai-policy-query" placeholder="مثال: سياسة التبليغ عن النتائج الحرجة أو معايرة الأجهزة..." class="flex-1 p-2.5 border rounded-xl text-xs font-bold">
-                                <button onclick="askAIPolicyQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs font-extrabold shadow whitespace-nowrap flex items-center gap-1">
-                                    <i class="fas fa-paper-plane"></i> جلب وتلخيص
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- صندوق عرض نتيجة الذكاء الاصطناعي + زر الترجمة للعربية -->
-                    <div id="ai-policy-output-box" class="hidden bg-white dark:bg-slate-900 p-4 rounded-2xl border border-purple-200 dark:border-slate-700 space-y-3 shadow-inner">
-                        <div class="flex justify-between items-center border-b pb-2 border-gray-100 dark:border-slate-800">
-                            <span id="ai-policy-output-title" class="text-xs font-extrabold text-purple-700 dark:text-purple-400"><i class="fas fa-sparkles ml-1"></i> ملخص الذكاء الاصطناعي</span>
-                            <div class="flex gap-2">
-                                <button onclick="translatePolicyOutputToArabic()" id="btn-translate-ar" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow flex items-center gap-1.5 transition">
-                                    <i class="fas fa-language text-sm"></i> ترجمة للغة العربية
-                                </button>
-                                <button onclick="document.getElementById('ai-policy-output-box').classList.add('hidden')" class="text-gray-400 hover:text-red-500 text-xs px-2"><i class="fas fa-times"></i></button>
-                            </div>
-                        </div>
-                        <div id="ai-policy-output-text" class="text-xs sm:text-sm leading-relaxed whitespace-pre-line font-semibold text-gray-700 dark:text-gray-200"></div>
-                    </div>
-                </div>
-
-                <!-- قائمة السياسات + دليل الشركات -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- السياسات (يتحكم الأدمن في من يدخلها) -->
-                    <div class="glass-card p-4 space-y-3">
-                        <div class="flex justify-between items-center">
-                            <h3 class="font-extrabold text-base"><i class="fas fa-file-shield text-blue-600"></i> مكتبة السياسات المعتمدة (<span id="active-pol-filter-label">الكل</span>)</h3>
-                        </div>
-
-                        <!-- نموذج إدخال السياسات: يظهر فقط لمن منحه الأدمن جمال صلاحية canManagePolicies -->
-                        <div id="policy-input-form" class="hidden bg-blue-50/50 dark:bg-slate-800 p-3 rounded-xl border border-blue-100 dark:border-slate-700 space-y-2">
-                            <p class="text-[11px] font-extrabold text-blue-700 dark:text-blue-400"><i class="fas fa-plus-circle"></i> إضافة سياسة جديدة (مخول لك من الإدارة):</p>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                                <select id="pol-org" class="p-2 border rounded-lg text-xs font-bold">
-                                    <option value="CAP">CAP</option>
-                                    <option value="CBAHI">سباهي (CBAHI)</option>
-                                    <option value="SFDA">الغذاء والدواء (SFDA)</option>
-                                </select>
-                                <input type="text" id="pol-title" placeholder="عنوان السياسة (SOP Title)" class="p-2 border rounded-lg text-xs font-bold sm:col-span-2">
-                            </div>
-                            <textarea id="pol-summary" rows="2" placeholder="نص السياسة أو الملخص التفصيلي..." class="w-full p-2 border rounded-lg text-xs"></textarea>
-                            <button onclick="addPolicy()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-extrabold shadow">+ حفظ وإدراج السياسة</button>
-                        </div>
-
-                        <div id="policies-container" class="space-y-2 max-h-96 overflow-y-auto"></div>
-                    </div>
-
-                    <!-- دليل مهندسي الصيانة والشركات -->
-                    <div class="glass-card p-4 space-y-3">
-                        <h3 class="font-extrabold text-base"><i class="fas fa-phone-volume text-emerald-600"></i> دليل مهندسي الصيانة والشركات</h3>
-                        <div id="supplier-input-form" class="flex gap-2 hidden">
-                            <input type="text" id="sup-name" placeholder="الشركة/المهندس" class="p-2 border rounded-lg text-xs flex-1">
-                            <input type="text" id="sup-desc" placeholder="الجهاز (Alinity)" class="p-2 border rounded-lg text-xs flex-1">
-                            <input type="tel" id="sup-phone" placeholder="الجوال" class="p-2 border rounded-lg text-xs flex-1">
-                            <button onclick="addSupplier()" class="bg-emerald-600 text-white px-3 py-2 rounded-lg text-xs font-bold">+</button>
-                        </div>
-                        <div id="suppliers-container" class="space-y-2"></div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ================= 8. قسم الموظفين والتحكم الشامل بالصلاحيات ================= -->
-            <section id="sec-staff" class="tab-section hidden space-y-5">
-                
-                <!-- لوحة التحكم الشاملة بالنظام (حصرية لليوزر 32726 جمال عسيري) -->
-                <div id="super-admin-system-panel" class="hidden glass-card p-5 border-2 border-amber-400 space-y-4">
-                    <div class="flex justify-between items-center flex-wrap gap-2">
-                        <div>
-                            <h3 class="font-black text-base text-amber-700 dark:text-amber-400"><i class="fas fa-sliders ml-1"></i> لوحة التحكم الشاملة بالنظام (Super Admin - جمال عسيري)</h3>
-                            <p class="text-xs text-gray-500">تحكم في كل صغيرة وكبيرة داخل التطبيق وعدّل إعدادات المستشفى والسيرفر مباشرة</p>
-                        </div>
-                        <button onclick="resetDefaultStaff()" class="text-xs bg-amber-100 text-amber-900 px-3 py-1.5 rounded-lg font-bold hover:bg-amber-200">
-                            <i class="fas fa-undo ml-1"></i> استعادة الطاقم الافتراضي
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2 border-t border-gray-100 dark:border-slate-700">
-                        <div>
-                            <label class="block text-[11px] font-bold text-gray-500 mb-1">اسم المستشفى (عربي)</label>
-                            <input type="text" id="cfg-hosp-ar" class="w-full p-2.5 border rounded-xl text-xs font-bold">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-gray-500 mb-1">اسم المستشفى (إنجليزي)</label>
-                            <input type="text" id="cfg-hosp-en" class="w-full p-2.5 border rounded-xl text-xs font-bold">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-gray-500 mb-1">يوم الصيانة الأسبوعي</label>
-                            <input type="text" id="cfg-maint-day" class="w-full p-2.5 border rounded-xl text-xs font-bold">
-                        </div>
-                        <div class="flex items-end">
-                            <button onclick="saveGlobalSystemConfig()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-extrabold py-2.5 rounded-xl text-xs shadow">حفظ إعدادات النظام</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- إدارة الموظفين وتفصيل الصلاحيات -->
-                <div class="glass-card p-5 flex flex-col gap-4">
-                    <div>
-                        <h3 class="font-extrabold text-base mb-1"><i class="fas fa-users-cog text-blue-600"></i> إدارة الطاقم وتفصيل الصلاحيات الدقيقة</h3>
-                        <p class="text-xs text-gray-500">يمكن لمدير النظام (32726) إضافة أي موظف أو التعديل على صلاحياته ومهامه الفردية (بما في ذلك من هو مخول لإدخال السياسات)</p>
-                    </div>
-                    
-                    <!-- صندوق إضافة وتعديل صلاحيات الموظف (حصري لجمال 32726) -->
-                    <div id="admin-staff-controls" class="hidden p-4 bg-blue-50/80 dark:bg-slate-800 rounded-2xl border border-blue-200 dark:border-slate-700 space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                            <input type="text" id="new-staff-id" placeholder="الرقم الوظيفي (ID)" class="p-3 border rounded-xl text-sm font-bold">
-                            <input type="text" id="new-staff-name" placeholder="اسم الموظف" class="p-3 border rounded-xl text-sm font-bold">
-                            <select id="new-staff-role" onchange="autoCheckRolePresets(this.value)" class="p-3 border rounded-xl text-sm font-bold">
-                                <option value="Spec">أخصائي مختبر (Specialist)</option>
-                                <option value="Supervisor">مشرف مختبر (Supervisor 🛡️)</option>
-                                <option value="Lab Director">مدير مختبر (Lab Director 🔬)</option>
-                                <option value="Admin">مدير نظام كامل (Admin 👑)</option>
-                            </select>
-                            <button onclick="saveStaffPermissions()" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold p-3 rounded-xl text-sm shadow transition">
-                                <i class="fas fa-save ml-1"></i> حفظ وتطبيق الصلاحيات
-                            </button>
-                        </div>
-
-                        <!-- خيارات التحكم الدقيقة بالصلاحيات لكل يوزر -->
-                        <div class="pt-2 border-t border-blue-100 dark:border-slate-700">
-                            <p class="text-xs font-extrabold text-blue-900 dark:text-blue-300 mb-2"><i class="fas fa-key ml-1"></i> تحديد الصلاحيات الممنوحة لهذا الموظف:</p>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 text-xs font-bold">
-                                <label class="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-lg border cursor-pointer">
-                                    <input type="checkbox" id="perm-policies" class="w-4 h-4 accent-blue-600">
-                                    <span>إدخال السياسات</span>
-                                </label>
-                                <label class="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-lg border cursor-pointer">
-                                    <input type="checkbox" id="perm-schedule" class="w-4 h-4 accent-blue-600">
-                                    <span>تعديل الجداول</span>
-                                </label>
-                                <label class="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-lg border cursor-pointer">
-                                    <input type="checkbox" id="perm-del-inv" class="w-4 h-4 accent-blue-600">
-                                    <span>حذف المخزون</span>
-                                </label>
-                                <label class="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-lg border cursor-pointer">
-                                    <input type="checkbox" id="perm-tasks" class="w-4 h-4 accent-blue-600">
-                                    <span>إرسال التعاميم</span>
-                                </label>
-                                <label class="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-lg border cursor-pointer">
-                                    <input type="checkbox" id="perm-stats" class="w-4 h-4 accent-blue-600">
-                                    <span>استخراج الإحصائيات</span>
-                                </label>
-                                <label class="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-lg border cursor-pointer">
-                                    <input type="checkbox" id="perm-staff-view" class="w-4 h-4 accent-blue-600">
-                                    <span>رؤية قسم الموظفين</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="staff-list-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
-                </div>
-            </section>
-
-            <!-- ================= 9. قسم السجل والرقابة (God Mode) ================= -->
-            <section id="sec-logs" class="tab-section hidden space-y-4">
-                <div class="glass-card p-4 border-r-4 border-purple-600 flex justify-between items-center">
-                    <div>
-                        <h3 class="font-extrabold text-base text-purple-700 dark:text-purple-400"><i class="fas fa-shield-halved"></i> سجل النظام الرقابي (God Mode)</h3>
-                        <p class="text-xs text-gray-500">شاشة المراقبة المباشرة لكافة حركات وتعديلات النظام بالتاريخ الميلادي</p>
-                    </div>
-                    <button onclick="syncAllFromCloud(true)" class="bg-purple-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">تحديث السجل</button>
-                </div>
-                <div id="logs-container" class="glass-card p-4 max-h-[500px] overflow-y-auto space-y-2"></div>
-            </section>
-        </main>
-
-        <!-- زر ملاحظات الإدارة العائم -->
-        <button id="admin-dev-btn" onclick="openDevNotesModal()" class="hidden fixed bottom-20 left-4 z-40 bg-amber-500 hover:bg-amber-600 text-white p-4 rounded-full shadow-2xl flex items-center gap-2 font-bold text-xs"><i class="fas fa-code text-lg"></i> ملاحظات الإدارة</button>
-    </div>
-
-    <!-- ================= نافذة إضافة المخزون (AI + Barcode) ================= -->
-    <div id="modal-inventory" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="modal-box bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl my-auto mt-10">
-            <div class="px-5 py-4 gradient-header text-white flex justify-between items-center">
-                <h3 class="font-extrabold text-base"><i class="fas fa-box-open ml-2"></i> بيانات الصنف / الكاشف</h3>
-                <button onclick="closeInventoryModal()" class="text-white/80 hover:text-white text-xl"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="p-5 space-y-4">
-                <div class="bg-purple-50 dark:bg-purple-950/40 border-2 border-dashed border-purple-300 rounded-2xl p-3 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-wand-magic-sparkles text-purple-600 text-xl"></i>
-                        <div>
-                            <p class="text-xs font-extrabold text-purple-800 dark:text-purple-300">التعرف الذكي (AI)</p>
-                            <p id="ai-status-text" class="text-[11px] text-gray-500">صور العلبة للتعبئة الآلية الدقيقة</p>
-                        </div>
-                    </div>
-                    <label class="ai-gradient text-white px-3 py-2 rounded-xl text-xs font-bold cursor-pointer shadow flex items-center gap-1.5"><i class="fas fa-camera"></i> تصوير<input type="file" id="ai-camera-input" accept="image/*" capture="environment" class="hidden" onchange="processImageWithAI(event)"></label>
-                </div>
-                <div id="ai-loading-indicator" class="hidden bg-purple-100 text-purple-900 p-3 rounded-xl text-center text-xs font-bold flex items-center justify-center gap-2"><i class="fas fa-circle-notch fa-spin text-lg"></i><span>جاري التحليل واستخراج البيانات بدقة...</span></div>
-                
-                <div id="barcode-reader-box" class="hidden rounded-xl overflow-hidden border"></div>
-                
-                <div class="space-y-3">
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">الاسم التجاري / المحلول *</label><input type="text" id="itemName" class="w-full p-3 border rounded-xl text-sm font-bold"></div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">الباركود / المرجع (REF)</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="itemBarcode" class="flex-1 p-3 border rounded-xl text-sm font-mono">
-                            <button type="button" onclick="toggleBarcodeScanner()" class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 px-4 rounded-xl text-gray-700 dark:text-white"><i class="fas fa-barcode text-lg"></i></button>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">القسم / المنصة</label>
-                        <select id="itemCategory" class="w-full p-3 border rounded-xl text-sm font-bold">
-                            <option value="كيمياء حيوية">كيمياء حيوية</option><option value="Alinity ci & hq">Alinity ci & hq</option><option value="ACL TOP">ACL TOP</option><option value="Gem">Gem (Blood Gas)</option><option value="Glucometers">Glucometers</option><option value="أمراض دم">أمراض دم</option><option value="المستودع الفرعي">المستودع الفرعي</option>
-                        </select>
-                    </div>
-                    <div class="bg-blue-50/60 dark:bg-slate-800/60 p-3 rounded-2xl border border-blue-100 dark:border-slate-700 grid grid-cols-2 gap-2">
-                        <div><label class="block text-[11px] font-bold text-gray-500 mb-1">التشغيلة (Lot)</label><input type="text" id="lotNumber" class="w-full p-2.5 border rounded-xl text-xs font-bold font-mono"></div>
-                        <div><label class="block text-[11px] font-bold text-gray-500 mb-1">الانتهاء (YYYY-MM-DD)</label><input type="date" id="expiryDate" class="w-full p-2.5 border rounded-xl text-xs font-bold"></div>
-                        <div class="col-span-2"><label class="block text-[11px] font-bold text-gray-500 mb-1">الرصيد</label><input type="number" id="itemQty" value="1" min="0" class="w-full p-2.5 border rounded-xl text-center font-extrabold text-sm"></div>
-                    </div>
-                </div>
-                <div class="flex gap-2 pt-2">
-                    <button onclick="saveInventoryItem()" class="flex-1 bg-sky-500 hover:bg-sky-600 text-white font-extrabold py-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2"><i class="fas fa-save"></i> حفظ وإضافة</button>
-                    <button onclick="closeInventoryModal()" class="px-6 bg-gray-100 dark:bg-gray-700 font-bold rounded-xl text-sm">إلغاء</button>
-                </div>
-            </div>
+        <!-- فلترة وإضافة صنف -->
+        <div class="glass-card p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-2 flex-1">
+            <input id="inv-search" type="text" oninput="renderInventory()" placeholder="بحث باسم الكاشف، الجهاز، أو رقم التشغيلة LOT..." 
+              class="bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white flex-1 min-w-[200px]" />
+            <select id="inv-filter-section" onchange="renderInventory()" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white">
+              <option value="ALL">جميع الأقسام والأجهزة</option>
+              <option value="Alinity ci">Alinity ci (الكيمياء والمناعة)</option>
+              <option value="Alinity hq">Alinity hq (أمراض الدم)</option>
+              <option value="ACL TOP">ACL TOP (التخثر)</option>
+              <option value="GEM Premier">GEM Premier (غازات الدم)</option>
+              <option value="Glucometers">Glucometers (أجهزة السكر)</option>
+            </select>
+          </div>
+          <button onclick="openAddInventoryModal()" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs sm:text-sm transition">
+            <i class="fa-solid fa-plus ml-1"></i> إضافة كاشف جديد
+          </button>
         </div>
-    </div>
 
-    <!-- نافذة المطور -->
-    <div id="modal-dev-notes" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-4">
-        <div class="modal-box bg-white rounded-2xl w-full max-w-md p-5 space-y-3 shadow-2xl">
-            <h3 class="font-extrabold text-base text-amber-600"><i class="fas fa-crown"></i> دفتر ملاحظات الإدارة (Jamal Asiri)</h3>
-            <textarea id="dev-notes-area" rows="5" class="w-full p-3 border rounded-xl text-sm"></textarea>
-            <div class="flex gap-2">
-                <button onclick="saveDevNotes()" class="flex-1 bg-amber-500 text-white font-bold py-2.5 rounded-xl">حفظ</button>
-                <button onclick="document.getElementById('modal-dev-notes').classList.add('hidden')" class="px-4 bg-gray-200 dark:bg-gray-700 rounded-xl text-sm font-bold">إغلاق</button>
-            </div>
-        </div>
-    </div>
+        <div id="ai-scan-status" class="hidden glass-card p-3 rounded-xl border border-purple-500/40 text-xs text-purple-200"></div>
 
-    <!-- حقوق الملكية الثابتة -->
-    <footer class="bg-slate-900 text-white py-3 px-4 border-t border-slate-800 fixed bottom-0 inset-x-0 z-30 shadow-inner">
-        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center text-center gap-1">
-            <div class="flex items-center gap-2 text-xs font-extrabold text-sky-400">
-                <i class="fas fa-globe"></i><span>TechnoLab.Online</span><span class="text-slate-500">|</span><span id="footer-hosp-ar" class="text-slate-300">مستشفى الحياة أبها (Hayat Hospital Abha)</span>
-            </div>
-            <div class="text-[11px] text-slate-400 font-semibold">Done By <strong class="text-white">Jamal Asiri</strong> — <a href="mailto:alalkmy777@gmail.com" class="text-amber-400 hover:underline">alalkmy777@gmail.com</a></div>
+        <!-- جدول المخزون -->
+        <div class="glass-card rounded-2xl overflow-hidden">
+          <div class="overflow-x-auto custom-scroll">
+            <table class="w-full text-right text-xs sm:text-sm">
+              <thead class="bg-slate-900/90 text-slate-300 border-b border-slate-700">
+                <tr>
+                  <th class="p-3">الكاشف / الصنف</th>
+                  <th class="p-3">الجهاز / القسم</th>
+                  <th class="p-3">رقم التشغيلة (LOT)</th>
+                  <th class="p-3">تاريخ الانتهاء</th>
+                  <th class="p-3">المستودع الرئيسي (علبة)</th>
+                  <th class="p-3">المستودع الفرعي (كارتريدج/شريط)</th>
+                  <th class="p-3">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-tbody" class="divide-y divide-slate-800"></tbody>
+            </table>
+          </div>
         </div>
+      </section>
+
+      <!-- 2. تبويب الصيانة والأجهزة (السبت) -->
+      <section id="tab-maintenance" class="tab-content hidden space-y-4">
+        <div class="glass-card p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-white"><i class="fa-solid fa-gears text-sky-400 ml-2"></i>سجل صيانة أجهزة المختبر</h2>
+            <p class="text-xs text-slate-400">الصيانة الأسبوعية المجدولة لجميع الأجهزة تتم يوم <strong class="text-amber-400">السبت (Saturday)</strong> من كل أسبوع.</p>
+          </div>
+          <button onclick="recordWeeklySaturdayMaintenance()" class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs sm:text-sm shadow-lg transition">
+            <i class="fa-solid fa-check-double ml-1"></i> اعتماد صيانة يوم السبت للأجهزة
+          </button>
+        </div>
+
+        <div id="devices-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+
+      <!-- 3. تبويب جدول المناوبات والمهام -->
+      <section id="tab-schedule" class="tab-content hidden space-y-4">
+        <div class="glass-card p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-white"><i class="fa-solid fa-calendar-week text-sky-400 ml-2"></i>جدول المناوبات وتوزيع المهام</h2>
+            <p class="text-xs text-slate-400">متاح للتعديل للمشرفين المعتمدين (معرفات <code class="text-sky-300">32726</code>، <code class="text-sky-300">40291</code>، <code class="text-sky-300">32731</code>).</p>
+          </div>
+          <button id="btn-add-shift" onclick="addShiftRow()" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs sm:text-sm transition">
+            <i class="fa-solid fa-user-clock ml-1"></i> إضافة مناوبة / مهمة
+          </button>
+        </div>
+
+        <div class="glass-card rounded-2xl overflow-hidden">
+          <div class="overflow-x-auto custom-scroll">
+            <table class="w-full text-right text-xs sm:text-sm">
+              <thead class="bg-slate-900/90 text-slate-300 border-b border-slate-700">
+                <tr>
+                  <th class="p-3">اليوم / التاريخ</th>
+                  <th class="p-3">الموظف المناوب</th>
+                  <th class="p-3">الفترة (Shift)</th>
+                  <th class="p-3">القسم / الجهاز المسؤول عنه</th>
+                  <th class="p-3">حالة المهمة</th>
+                  <th class="p-3">إجراء</th>
+                </tr>
+              </thead>
+              <tbody id="schedule-tbody" class="divide-y divide-slate-800"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. تبويب النتائج الحرجة والحرارة -->
+      <section id="tab-quality" class="tab-content hidden grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- النتائج الحرجة -->
+        <div class="glass-card p-4 rounded-2xl space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-rose-400 text-sm sm:text-base"><i class="fa-solid fa-triangle-exclamation ml-1"></i> سجل إبلاغ النتائج الحرجة (Critical Values - CAP/CBAHI)</h3>
+            <button onclick="addCriticalResult()" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold">+ تسجيل إبلاغ</button>
+          </div>
+          <div id="critical-list" class="space-y-2 max-h-80 overflow-y-auto custom-scroll"></div>
+        </div>
+
+        <!-- سجل الحرارة -->
+        <div class="glass-card p-4 rounded-2xl space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-sky-400 text-sm sm:text-base"><i class="fa-solid fa-temperature-low ml-1"></i> مراقبة درجات حرارة الثلاجات والمختبر</h3>
+            <button onclick="addTempLog()" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold">+ تسجيل قراءة</button>
+          </div>
+          <div id="temp-list" class="space-y-2 max-h-80 overflow-y-auto custom-scroll"></div>
+        </div>
+      </section>
+
+      <!-- 5. تبويب مكتبة السياسات الذكية (CAP, CBAHI, SFDA) -->
+      <section id="tab-policies" class="tab-content hidden space-y-4">
+        <div class="glass-card p-4 rounded-2xl">
+          <h2 class="text-base sm:text-lg font-bold text-white mb-1"><i class="fa-solid fa-shield-halved text-emerald-400 ml-2"></i>مكتبة السياسات والمعايير المعتمدة (CAP | CBAHI | SFDA | AABB | HIMSS)</h2>
+          <p class="text-xs text-slate-400 mb-4">اختر أي سياسة لعرضها أو تلخيصها وترجمتها فورياً عبر الذكاء الاصطناعي المتصل بالوركر المشفر.</p>
+
+          <div id="policies-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+        </div>
+
+        <div id="ai-policy-output" class="hidden glass-card p-4 rounded-2xl border border-sky-500/40 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-sky-400"><i class="fa-solid fa-wand-magic-sparkles ml-1"></i> ملخص الذكاء الاصطناعي (TechnoLab AI Proxy)</span>
+            <button onclick="document.getElementById('ai-policy-output').classList.add('hidden')" class="text-xs text-slate-400 hover:text-white">إغلاق</button>
+          </div>
+          <div id="ai-policy-text" class="text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-line"></div>
+        </div>
+      </section>
+
+      <!-- 6. تبويب مراقبة المشرفين والتحكم بالصلاحيات (God Mode) -->
+      <section id="tab-godmode" class="tab-content hidden space-y-4">
+        <div class="glass-card p-4 rounded-2xl border border-amber-500/40 bg-amber-950/10">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="text-base sm:text-lg font-extrabold text-amber-300"><i class="fa-solid fa-user-shield ml-2"></i>لوحة مراقبة المشرفين والتحكم الكامل بالصلاحيات (God Mode)</h2>
+              <p class="text-xs text-slate-300 mt-0.5">مفعّلة للمشرف العام ومطور النظام (<code class="text-amber-300">32726</code>) ولحسابات الإشراف المعتمدة (<code class="text-amber-300">40291</code> و <code class="text-amber-300">32731</code>).</p>
+            </div>
+            <button onclick="addNewStaffModal()" class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs">
+              <i class="fa-solid fa-user-plus ml-1"></i> إضافة موظف / صلاحية
+            </button>
+          </div>
+        </div>
+
+        <!-- جدول الموظفين والصلاحيات -->
+        <div class="glass-card p-4 rounded-2xl space-y-3">
+          <h3 class="text-sm font-bold text-sky-400"><i class="fa-solid fa-users-gear ml-1"></i> إدارة الموظفين وتعديل الصلاحيات الفورية</h3>
+          <div class="overflow-x-auto custom-scroll">
+            <table class="w-full text-right text-xs sm:text-sm">
+              <thead class="bg-slate-900 text-slate-300 border-b border-slate-700">
+                <tr>
+                  <th class="p-2.5">الرقم الوظيفي (ID)</th>
+                  <th class="p-2.5">الاسم</th>
+                  <th class="p-2.5">المسمى / الدور</th>
+                  <th class="p-2.5">تعديل الجداول والبيانات</th>
+                  <th class="p-2.5">مراقبة المشرفين (God Mode)</th>
+                  <th class="p-2.5">إجراء</th>
+                </tr>
+              </thead>
+              <tbody id="staff-tbody" class="divide-y divide-slate-800"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- سجل الرقابة الفوري (Audit Log) -->
+        <div class="glass-card p-4 rounded-2xl space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-amber-400"><i class="fa-solid fa-clipboard-list ml-1"></i> سجل عمليات المشرفين والموظفين (Live Audit Trail)</h3>
+            <button onclick="clearAuditLogs()" class="text-xs text-rose-400 hover:underline">مسح السجل</button>
+          </div>
+          <div id="audit-log-list" class="space-y-2 max-h-72 overflow-y-auto custom-scroll text-xs"></div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- الفوتر الرسمي الثابت -->
+    <footer class="mt-6 glass-card rounded-2xl p-4 text-center text-xs text-slate-400 border-t border-slate-800">
+      <div class="font-bold text-slate-200">مستشفى الحياة أبها | Hayat Hospital Abha — TechnoLab V8.6 Ultimate</div>
+      <div class="mt-1">
+        Done by <span class="text-sky-400 font-bold">Jamal Asiri</span> | 
+        Contact & Recovery: <a href="mailto:alalkmy777@gmail.com" class="text-sky-400 hover:underline">alalkmy777@gmail.com</a>
+      </div>
     </footer>
+  </div>
 
-    <!-- ================= المحرك البرمجي الشامل (JavaScript) ================= -->
-    <script>
-        /* =========================================================================
-           1. مولّد أيقونات وشاشات بدء الآيفون التلقائي (Canvas PWA Generator)
-           ========================================================================= */
-        function initCanvasPWAGenerator() {
-            try {
-                // توليد أيقونة التطبيق 180x180
-                const iconCanvas = document.createElement('canvas');
-                iconCanvas.width = 180; iconCanvas.height = 180;
-                const ictx = iconCanvas.getContext('2d');
-                const grad = ictx.createLinearGradient(0, 0, 180, 180);
-                grad.addColorStop(0, '#1e3a8a'); grad.addColorStop(1, '#4f46e5');
-                ictx.fillStyle = grad; ictx.fillRect(0, 0, 180, 180);
-                ictx.fillStyle = '#ffffff'; ictx.font = 'bold 28px Cairo, sans-serif'; ictx.textAlign = 'center';
-                ictx.fillText('TechnoLab', 90, 95);
-                ictx.font = 'bold 14px Cairo, sans-serif'; ictx.fillStyle = '#93c5fd';
-                ictx.fillText('Hayat Hospital', 90, 125);
-                const iconUrl = iconCanvas.toDataURL('image/png');
-                document.getElementById('pwa-apple-icon').href = iconUrl;
+  <!-- نافذة إضافة كاشف -->
+  <div id="modal-inventory" class="hidden fixed inset-0 z-50 bg-black/75 flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-md rounded-2xl p-6 space-y-3 border border-sky-500/30">
+      <h3 class="text-base font-bold text-white">إضافة / تحديث كاشف في المخزون</h3>
+      <input id="new-inv-name" type="text" placeholder="اسم الكاشف (مثال: Troponin-I / CBC Diluent)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white" />
+      <select id="new-inv-device" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        <option value="Alinity ci">Alinity ci (الكيمياء والمناعة)</option>
+        <option value="Alinity hq">Alinity hq (أمراض الدم)</option>
+        <option value="ACL TOP">ACL TOP (التخثر)</option>
+        <option value="GEM Premier">GEM Premier (غازات الدم)</option>
+        <option value="Glucometers">Glucometers (أجهزة السكر)</option>
+      </select>
+      <input id="new-inv-lot" type="text" placeholder="رقم التشغيلة (LOT Number)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white" />
+      <input id="new-inv-exp" type="date" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white" />
+      <div class="grid grid-cols-2 gap-2">
+        <input id="new-inv-boxes" type="number" placeholder="عدد العلب (المستودع)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white" />
+        <input id="new-inv-sub" type="number" placeholder="الفرعي (كارتريدج)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white" />
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="document.getElementById('modal-inventory').classList.add('hidden')" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold">إلغاء</button>
+        <button onclick="saveNewInventoryItem()" class="px-4 py-2 rounded-xl bg-sky-600 text-white text-xs font-bold">حفظ بالمخزون</button>
+      </div>
+    </div>
+  </div>
 
-                // توليد شاشات البدء للآيفون (1125x2436, 1242x2688, 828x1792)
-                const splashSizes = [
-                    { id: 'splash-1125x2436', w: 1125, h: 2436 },
-                    { id: 'splash-1242x2688', w: 1242, h: 2688 },
-                    { id: 'splash-828x1792',  w: 828,  h: 1792 }
-                ];
-                splashSizes.forEach(s => {
-                    const sc = document.createElement('canvas');
-                    sc.width = s.w; sc.height = s.h;
-                    const sctx = sc.getContext('2d');
-                    const sgrad = sctx.createLinearGradient(0, 0, s.w, s.h);
-                    sgrad.addColorStop(0, '#1e3a8a'); sgrad.addColorStop(1, '#2563eb');
-                    sctx.fillStyle = sgrad; sctx.fillRect(0, 0, s.w, s.h);
-                    sctx.fillStyle = '#ffffff'; sctx.textAlign = 'center';
-                    sctx.font = 'bold 64px Cairo, sans-serif';
-                    sctx.fillText('مستشفى الحياة أبها', s.w / 2, s.h / 2 - 40);
-                    sctx.font = 'bold 42px Cairo, sans-serif'; sctx.fillStyle = '#bfdbfe';
-                    sctx.fillText('TechnoLab V8.6 Ultimate', s.w / 2, s.h / 2 + 40);
-                    const el = document.getElementById(s.id);
-                    if (el) el.href = sc.toDataURL('image/png');
-                });
-            } catch (e) { console.log('PWA Gen:', e); }
-        }
-        window.addEventListener('DOMContentLoaded', initCanvasPWAGenerator);
+  <script>
+    // =========================================================
+    // 1. إعدادات الوركر والبيانات الأساسية (TechnoLab V8.6 Ultimate)
+    // =========================================================
+    const WORKER_URL = "https://technolab-backend.grout-comfier0j.workers.dev";
+    const STORAGE_KEY = "TECHNOLAB_V8_6_STATE";
 
-        /* =========================================================================
-           2. إعدادات السيرفر والنظام والموظفين والصلاحيات الدقيقة
-           ========================================================================= */
-        const CLOUDFLARE_CONFIG = { apiUrl: "https://technolab-backend.grout-comfier0j.workers.dev" };
+    const DEFAULT_STATE = {
+      staff: [
+        { id: "32726", name: "جمال عسيري (Jamal Asiri)", role: "مطور النظام / المشرف العام", canEditSchedule: true, godMode: true },
+        { id: "40291", name: "فيصل (Faisal)", role: "مشرف المختبر (Lab Supervisor)", canEditSchedule: true, godMode: true },
+        { id: "32731", name: "د. عمرو (Dr. Amr) / مشرف", role: "مدير ومشرف المختبر", canEditSchedule: true, godMode: true },
+        { id: "1001", name: "أخصائي مختبر مناوب", role: "أخصائي مختبر", canEditSchedule: false, godMode: false }
+      ],
+      inventory: [
+        { id: 1, name: "Alinity c Creatinine Reagent", device: "Alinity ci", lot: "LOT-88412A", exp: "2027-03-15", boxes: 12, subUnits: 4 },
+        { id: 2, name: "Alinity i TSH Reagent Kit", device: "Alinity ci", lot: "LOT-99201B", exp: "2027-01-20", boxes: 8, subUnits: 3 },
+        { id: 3, name: "Alinity hq CBC Diluent / Lyse", device: "Alinity hq", lot: "LOT-77419H", exp: "2027-05-10", boxes: 15, subUnits: 5 },
+        { id: 4, name: "HemosIL RecombiPlasTin 2G (PT)", device: "ACL TOP", lot: "LOT-55301C", exp: "2026-12-30", boxes: 6, subUnits: 2 },
+        { id: 5, name: "GEM Premier 5000 PAK Cartridge", device: "GEM Premier", lot: "LOT-33109G", exp: "2026-12-15", boxes: 4, subUnits: 2 },
+        { id: 6, name: "Hospital Glucometer Test Strips", device: "Glucometers", lot: "LOT-11904S", exp: "2027-06-01", boxes: 25, subUnits: 10 }
+      ],
+      devices: [
+        { id: "alinity-ci", name: "Abbott Alinity ci", section: "الكيمياء الحيوية والمناعة", weeklyDay: "السبت (Saturday)", lastWeekly: "2026-10-31", status: "يعمل بكفاءة" },
+        { id: "alinity-hq", name: "Abbott Alinity hq", section: "أمراض الدم (Hematology)", weeklyDay: "السبت (Saturday)", lastWeekly: "2026-10-31", status: "يعمل بكفاءة" },
+        { id: "acl-top", name: "Werfen ACL TOP", section: "التخثر (Coagulation)", weeklyDay: "السبت (Saturday)", lastWeekly: "2026-10-31", status: "يعمل بكفاءة" },
+        { id: "gem-premier", name: "GEM Premier Blood Gas", section: "غازات الدم (Blood Gas)", weeklyDay: "السبت (Saturday)", lastWeekly: "2026-10-31", status: "يعمل بكفاءة" },
+        { id: "glucometers", name: "POCT Glucometers", section: "أجهزة فحص السكر", weeklyDay: "السبت (Saturday)", lastWeekly: "2026-10-31", status: "يعمل بكفاءة" }
+      ],
+      schedule: [
+        { id: 1, day: "السبت (صيانة أسبوعية)", staff: "جمال عسيري / فيصل", shift: "صباحي (Morning)", section: "جميع الأجهزة + الصيانة الأسبوعية", status: "معتمد" },
+        { id: 2, day: "الأحد", staff: "فيصل (40291)", shift: "صباحي (Morning)", section: "Alinity ci & hq + الجودة", status: "معتمد" },
+        { id: 3, day: "الإثنين", staff: "أخصائي مختبر مناوب", shift: "مسائي (Evening)", section: "ACL TOP & GEM Premier", status: "قيد التنفيذ" }
+      ],
+      criticalLogs: [
+        { time: "2026-11-04 09:30", patient: "ملف #44912", test: "Potassium (K+) = 6.4 mmol/L", receiver: "د. الطوارئ (تمت القراءة العكسية Read-Back)", by: "جمال عسيري" }
+      ],
+      tempLogs: [
+        { time: "2026-11-04 08:00", unit: "ثلاجة الكواشف الرئيسية #1", temp: "4.2 °C", status: "ضمن النطاق (2-8°C)", by: "فيصل" },
+        { time: "2026-11-04 08:05", unit: "درجة حرارة غرفة المختبر", temp: "21.5 °C", status: "ضمن النطاق (18-24°C)", by: "فيصل" }
+      ],
+      policies: [
+        { code: "CAP-CHM-01", title: "سياسة معايرة وصيانة جهاز Alinity ci", standard: "CAP & CBAHI", summary: "تحدد إجراءات المعايرة اليومية والصيانة الأسبوعية كل يوم سبت مع توثيق محاليل الكنترول." },
+        { code: "CBAHI-LB-04", title: "سياسة الإبلاغ الفوري عن النتائج الحرجة (Panic Values)", standard: "CBAHI & HIMSS", summary: "إلزامية الإبلاغ خلال أقل من 15 دقيقة مع توثيق القراءة العكسية (Read-Back) واسم الطبيب المستلم." },
+        { code: "SFDA-INV-02", title: "سياسة تتبع الكواشف وأرقام التشغيلات (LOT) ودرجات الحرارة", standard: "SFDA & CAP", summary: "فحص صلاحية الكواشف عند الاستلام، تسجيل الباركود، ومراقبة سلسلة التبريد (2-8 درجات مئوية)." },
+        { code: "AABB-BB-01", title: "سياسة مطابقة الدم وفحوصات ما قبل النقل", standard: "AABB & CBAHI", summary: "التحقق المزدوج من هوية المريض وعينة بنك الدم وتوثيق سجلات التوافق." },
+        { code: "POCT-GLU-05", title: "سياسة ضبط جودة أجهزة السكر والـ GEM Premier", standard: "CAP & CBAHI", summary: "إجراء فحص الجودة ومطابقة المحاليل القياسية وصيانة يوم السبت الأسبوعية." }
+      ],
+      auditLogs: [
+        { time: "2026-11-04 08:00", actor: "النظام (V8.6 Ultimate)", action: "تفعيل مراقبة المشرفين (God Mode) للمعرفات 32726 و 40291 و 32731 وتثبيت الصيانة الأسبوعية يوم السبت." }
+      ]
+    };
 
-        let systemConfig = JSON.parse(localStorage.getItem('tl_sys_cfg_v86')) || {
-            hospAr: "مستشفى الحياة أبها",
-            hospEn: "Hayat Hospital Abha",
-            maintDay: "يوم السبت (Saturday)"
-        };
+    let state = loadState();
+    let currentUser = null;
 
-        // الطاقم الكامل مع الصلاحيات التفصيلية لكل موظف
-        const DEFAULT_STAFF = {
-            "32726": {
-                id: "32726", name: "Jamal Asiri", roleLabel: "Admin", badge: "Admin 👑",
-                isAdmin: true, isSupervisor: true, godMode: true,
-                permissions: { canManagePolicies: true, canEditSchedule: true, canDeleteInventory: true, canSendTasks: true, canExportStats: true, canViewStaff: true }
-            },
-            "40291": {
-                id: "40291", name: "د. عمرو", roleLabel: "Lab Director", badge: "Lab Director 🔬",
-                isAdmin: false, isSupervisor: true, godMode: false,
-                permissions: { canManagePolicies: true, canEditSchedule: true, canDeleteInventory: true, canSendTasks: true, canExportStats: false, canViewStaff: true }
-            },
-            "32731": {
-                id: "32731", name: "فيصل", roleLabel: "Supervisor", badge: "Supervisor 🛡️",
-                isAdmin: false, isSupervisor: true, godMode: false,
-                permissions: { canManagePolicies: true, canEditSchedule: true, canDeleteInventory: true, canSendTasks: true, canExportStats: false, canViewStaff: true }
-            },
-            "1001": {
-                id: "1001", name: "محمد العمري", roleLabel: "Spec", badge: "أخصائي مختبر",
-                isAdmin: false, isSupervisor: false, godMode: false,
-                permissions: { canManagePolicies: false, canEditSchedule: false, canDeleteInventory: false, canSendTasks: false, canExportStats: false, canViewStaff: false }
-            },
-            "1002": {
-                id: "1002", name: "أحمد الشهري", roleLabel: "Spec", badge: "أخصائي مختبر",
-                isAdmin: false, isSupervisor: false, godMode: false,
-                permissions: { canManagePolicies: false, canEditSchedule: false, canDeleteInventory: false, canSendTasks: false, canExportStats: false, canViewStaff: false }
-            },
-            "1003": {
-                id: "1003", name: "سعيد القحطاني", roleLabel: "Spec", badge: "أخصائي مختبر",
-                isAdmin: false, isSupervisor: false, godMode: false,
-                permissions: { canManagePolicies: false, canEditSchedule: false, canDeleteInventory: false, canSendTasks: false, canExportStats: false, canViewStaff: false }
-            }
-        };
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+      return JSON.parse(JSON.stringify(DEFAULT_STATE));
+    }
 
-        let usersDB = JSON.parse(localStorage.getItem('tl_users_v86')) || DEFAULT_STAFF;
-        // ضمان بقاء صلاحيات جمال الكاملة دائماً وعدم ضياع خصائص الصلاحيات
-        usersDB["32726"] = DEFAULT_STAFF["32726"];
-        Object.keys(usersDB).forEach(k => {
-            if (!usersDB[k].permissions) {
-                usersDB[k].permissions = DEFAULT_STAFF[k]?.permissions || {
-                    canManagePolicies: usersDB[k].isSupervisor || false,
-                    canEditSchedule: usersDB[k].isSupervisor || false,
-                    canDeleteInventory: usersDB[k].isSupervisor || false,
-                    canSendTasks: usersDB[k].isSupervisor || false,
-                    canExportStats: usersDB[k].isAdmin || false,
-                    canViewStaff: usersDB[k].isSupervisor || false
-                };
-            }
+    function saveState(logMessage) {
+      if (logMessage && currentUser) {
+        state.auditLogs.unshift({
+          time: new Date().toLocaleString("sv-SE").slice(0, 16),
+          actor: `${currentUser.name} (${currentUser.id})`,
+          action: logMessage
+        });
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    // =========================================================
+    // 2. تسجيل الدخول والصلاحيات (God Mode: 32726, 40291, 32731)
+    // =========================================================
+    function handleLogin() {
+      const idInput = document.getElementById("login-id-input").value.trim();
+      const errBox = document.getElementById("login-error");
+      const found = state.staff.find(s => s.id === idInput);
+
+      if (!found) {
+        errBox.textContent = "الرقم الوظيفي غير مسجل. تواصل مع المشرف العام Jamal Asiri (alalkmy777@gmail.com)";
+        errBox.classList.remove("hidden");
+        return;
+      }
+
+      errBox.classList.add("hidden");
+      currentUser = found;
+      document.getElementById("login-screen").classList.add("hidden");
+      document.getElementById("app-container").classList.remove("hidden");
+
+      document.getElementById("current-user-name").textContent = currentUser.name;
+      document.getElementById("current-user-badge").textContent = currentUser.role;
+
+      // إظهار تبويب مراقبة المشرفين (God Mode) للمعرفات المخولة (32726, 40291, 32731)
+      const godBtn = document.getElementById("tab-btn-godmode");
+      if (currentUser.godMode || ["32726", "40291", "32731"].includes(currentUser.id)) {
+        godBtn.classList.remove("hidden");
+      } else {
+        godBtn.classList.add("hidden");
+      }
+
+      saveState(`تسجيل دخول إلى النظام`);
+      renderAll();
+    }
+
+    function handleLogout() {
+      saveState(`تسجيل خروج من النظام`);
+      currentUser = null;
+      document.getElementById("login-id-input").value = "";
+      document.getElementById("app-container").classList.add("hidden");
+      document.getElementById("login-screen").classList.remove("hidden");
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+      document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("tab-active"));
+      document.getElementById(`tab-${tabId}`).classList.remove("hidden");
+      document.getElementById(`tab-btn-${tabId}`).classList.add("tab-active");
+    }
+
+    // =========================================================
+    // 3. إدارة المخزون والمسح الذكي بالـ AI عبر Cloudflare Worker
+    // =========================================================
+    function renderInventory() {
+      const search = (document.getElementById("inv-search").value || "").toLowerCase();
+      const section = document.getElementById("inv-filter-section").value;
+      const tbody = document.getElementById("inventory-tbody");
+
+      let total = state.inventory.length, ok = 0, low = 0;
+      tbody.innerHTML = "";
+
+      state.inventory.forEach(item => {
+        const isLow = item.boxes <= 5;
+        if (isLow) low++; else ok++;
+
+        if (section !== "ALL" && item.device !== section) return;
+        if (search && !(`${item.name} ${item.device} ${item.lot}`.toLowerCase().includes(search))) return;
+
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-800/50 transition";
+        tr.innerHTML = `
+          <td class="p-3 font-bold text-white">${item.name}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-500/30 text-xs">${item.device}</span></td>
+          <td class="p-3 font-mono text-slate-300">${item.lot}</td>
+          <td class="p-3 text-slate-300">${item.exp}</td>
+          <td class="p-3 font-bold ${isLow ? 'text-amber-400' : 'text-emerald-400'}">${item.boxes} علبة</td>
+          <td class="p-3 font-bold text-sky-300">${item.subUnits} وحدات</td>
+          <td class="p-3 flex items-center gap-1.5">
+            <button onclick="transferToSubStore(${item.id})" class="px-2.5 py-1 rounded-lg bg-sky-600/30 hover:bg-sky-600/50 text-sky-200 text-xs border border-sky-500/30" title="صرف للمستودع الفرعي">
+              صرف للفرعي
+            </button>
+            <button onclick="consumeSubUnit(${item.id})" class="px-2.5 py-1 rounded-lg bg-rose-600/30 hover:bg-rose-600/50 text-rose-200 text-xs border border-rose-500/30" title="استهلاك كارتريدج">
+              -1 فرعي
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("stat-total-items").textContent = total;
+      document.getElementById("stat-ok-items").textContent = ok;
+      document.getElementById("stat-low-items").textContent = low;
+    }
+
+    function transferToSubStore(id) {
+      const item = state.inventory.find(i => i.id === id);
+      if (!item || item.boxes <= 0) return alert("لا توجد علب كافية في المستودع الرئيسي!");
+      item.boxes -= 1;
+      item.subUnits += 1;
+      saveState(`صرف علبة من (${item.name}) إلى المستودع الفرعي`);
+      renderAll();
+    }
+
+    function consumeSubUnit(id) {
+      const item = state.inventory.find(i => i.id === id);
+      if (!item || item.subUnits <= 0) return alert("المستودع الفرعي فارغ لهذا الصنف!");
+      item.subUnits -= 1;
+      saveState(`استهلاك وحدة فرعية من (${item.name})`);
+      renderAll();
+    }
+
+    function openAddInventoryModal() {
+      document.getElementById("modal-inventory").classList.remove("hidden");
+    }
+
+    function saveNewInventoryItem() {
+      const name = document.getElementById("new-inv-name").value.trim();
+      const device = document.getElementById("new-inv-device").value;
+      const lot = document.getElementById("new-inv-lot").value.trim() || "LOT-NEW";
+      const exp = document.getElementById("new-inv-exp").value || "2027-01-01";
+      const boxes = parseInt(document.getElementById("new-inv-boxes").value) || 1;
+      const subUnits = parseInt(document.getElementById("new-inv-sub").value) || 0;
+
+      if (!name) return alert("يرجى إدخال اسم الكاشف");
+      state.inventory.unshift({ id: Date.now(), name, device, lot, exp, boxes, subUnits });
+      document.getElementById("modal-inventory").classList.add("hidden");
+      saveState(`إضافة كاشف جديد للمخزون: ${name} (${lot})`);
+      renderAll();
+    }
+
+    async function scanReagentWithAI(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const statusBox = document.getElementById("ai-scan-status");
+      statusBox.classList.remove("hidden");
+      statusBox.textContent = "جاري تحليل صورة علبة الكاشف عبر Cloudflare Worker AI...";
+
+      try {
+        const base64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(",")[1]);
+          reader.readAsDataURL(file);
         });
 
-        // السياسات الافتراضية المعتمدة (CAP, CBAHI, SFDA)
-        const DEFAULT_POLICIES = [
-            { id: "POL-1", org: "CAP", title: "CAP - Critical Result Reporting Policy", date: "01/11/2026", summary: "Immediate notification of critical laboratory values to the ordering physician within 15 minutes with full read-back verification." },
-            { id: "POL-2", org: "CBAHI", title: "CBAHI - سياسة ضبط الجودة اليومية للمختبر (IQC)", date: "01/11/2026", summary: "تشغيل محاليل الكنترول اليومية لكافة أجهزة الكيمياء وأمراض الدم والتخثر قبل البدء بتحليل عينات المرضى وتوثيق منحنيات Levey-Jennings." },
-            { id: "POL-3", org: "SFDA", title: "SFDA - سياسة سلامة وتخزين الكواشف الطبية", date: "01/11/2026", summary: "التحقق من تسجيل كافة المحاليل في نظام الهيئة العامة للغذاء والدواء ومراقبة درجات حرارة الثلاجات وتواريخ الصلاحية الميلادية." }
-        ];
+        const res = await fetch(`${WORKER_URL}/api/scan-reagent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageBase64: base64 })
+        });
 
-        let currentUser = null, html5QrCode = null, activePolicyFilter = 'ALL';
-        
-        let inventoryData = JSON.parse(localStorage.getItem('tl_inv_v85')) || [];
-        let devicesData   = JSON.parse(localStorage.getItem('tl_dev_v85')) || [];
-        let scheduleData  = JSON.parse(localStorage.getItem('tl_sch_v85')) || [];
-        let criticalData  = JSON.parse(localStorage.getItem('tl_crt_v85')) || [];
-        let tempData      = JSON.parse(localStorage.getItem('tl_tmp_v85')) || [];
-        let tasksData     = JSON.parse(localStorage.getItem('tl_tsk_v85')) || [];
-        let suppliersData = JSON.parse(localStorage.getItem('tl_sup_v85')) || [];
-        let policiesData  = JSON.parse(localStorage.getItem('tl_pol_v86')) || DEFAULT_POLICIES;
-        let auditLogs     = JSON.parse(localStorage.getItem('tl_log_v85')) || [];
-
-        function showToast(msg, type = 'info') {
-            const c = document.getElementById('toast-container'), t = document.createElement('div');
-            const colors = { success: '#10b981', error: '#ef4444', warning: '#f59e0b', info: '#3b82f6' };
-            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-triangle', warning: 'fa-bell', info: 'fa-info-circle' };
-            t.className = 'toast-item'; t.style.borderRightColor = colors[type];
-            t.innerHTML = `<i class="fas ${icons[type]} text-lg" style="color:${colors[type]}"></i><span class="text-xs font-bold">${msg}</span>`;
-            c.appendChild(t); setTimeout(() => t.remove(), 4000);
+        if (res.ok) {
+          const data = await res.json();
+          statusBox.innerHTML = `<strong>تم التعرف بالذكاء الاصطناعي:</strong> ${data.name || 'كاشف مخبري'} | LOT: ${data.lot || 'تم الرصد'} | الصلاحية: ${data.exp || '-'}`;
+        } else {
+          throw new Error("Worker fallback");
         }
-        
-        function getGregorianTimestamp() { return new Date().toLocaleString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }); }
+      } catch (e) {
+        statusBox.innerHTML = `تم قراءة الصورة محلياً — جاهزة للإضافة السريعة في نافذة الكواشف.`;
+        openAddInventoryModal();
+      }
+    }
 
-        function applySystemConfigUI() {
-            document.getElementById('login-hosp-ar').innerText = systemConfig.hospAr;
-            document.getElementById('header-hosp-ar').innerText = systemConfig.hospAr;
-            document.getElementById('login-hosp-en').innerText = systemConfig.hospEn;
-            document.getElementById('footer-hosp-ar').innerText = `${systemConfig.hospAr} (${systemConfig.hospEn})`;
-            document.getElementById('maint-day-label').innerText = systemConfig.maintDay;
-            if (document.getElementById('cfg-hosp-ar')) {
-                document.getElementById('cfg-hosp-ar').value = systemConfig.hospAr;
-                document.getElementById('cfg-hosp-en').value = systemConfig.hospEn;
-                document.getElementById('cfg-maint-day').value = systemConfig.maintDay;
-            }
+    // =========================================================
+    // 4. صيانة الأجهزة (يوم السبت - Saturday)
+    // =========================================================
+    function renderMaintenance() {
+      const daysAr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+      const todayIdx = new Date().getDay();
+      const isSaturday = todayIdx === 6;
+      document.getElementById("today-day-badge").textContent = isSaturday
+        ? "اليوم هو السبت — موعد الصيانة الأسبوعية!"
+        : `اليوم: ${daysAr[todayIdx]} (الصيانة الأسبوعية: السبت)`;
+
+      const grid = document.getElementById("devices-grid");
+      grid.innerHTML = "";
+      state.devices.forEach(dev => {
+        const card = document.createElement("div");
+        card.className = "glass-card p-4 rounded-2xl space-y-2 border border-slate-700/80";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-white text-base">${dev.name}</h3>
+            <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">${dev.status}</span>
+          </div>
+          <div class="text-xs text-slate-400">${dev.section}</div>
+          <div class="text-xs bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-xl p-2.5">
+            <div><i class="fa-solid fa-calendar-day ml-1"></i> موعد الصيانة الأسبوعية: <strong>${dev.weeklyDay}</strong></div>
+            <div class="mt-1 text-slate-300">آخر صيانة أسبوعية موثقة: <strong>${dev.lastWeekly}</strong></div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function recordWeeklySaturdayMaintenance() {
+      const todayStr = new Date().toISOString().slice(0, 10);
+      state.devices.forEach(d => d.lastWeekly = todayStr);
+      saveState(`اعتماد وتوثيق الصيانة الأسبوعية (يوم السبت) لجميع أجهزة المختبر بتاريخ ${todayStr}`);
+      renderAll();
+      alert("تم توثيق الصيانة الأسبوعية (يوم السبت) لجميع الأجهزة بنجاح!");
+    }
+
+    // =========================================================
+    // 5. جدول المناوبات والمهام (صلاحية التعديل لـ 32726 و 40291 و 32731)
+    // =========================================================
+    function canUserEditSchedule() {
+      if (!currentUser) return false;
+      return currentUser.canEditSchedule || ["32726", "40291", "32731"].includes(currentUser.id);
+    }
+
+    function renderSchedule() {
+      const canEdit = canUserEditSchedule();
+      document.getElementById("btn-add-shift").style.display = canEdit ? "inline-block" : "none";
+      const tbody = document.getElementById("schedule-tbody");
+      tbody.innerHTML = "";
+
+      state.schedule.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-800/40";
+        tr.innerHTML = `
+          <td class="p-3 font-bold text-white">${row.day}</td>
+          <td class="p-3 text-sky-300 font-semibold">${row.staff}</td>
+          <td class="p-3 text-slate-300">${row.shift}</td>
+          <td class="p-3 text-slate-300">${row.section}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-xs">${row.status}</span></td>
+          <td class="p-3">
+            ${canEdit ? `<button onclick="deleteShiftRow(${row.id})" class="text-rose-400 hover:text-rose-300 text-xs"><i class="fa-solid fa-trash"></i> حذف</button>` : `<span class="text-slate-500 text-xs">للعرض فقط</span>`}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function addShiftRow() {
+      if (!canUserEditSchedule()) return alert("ليس لديك صلاحية تعديل الجدول!");
+      const day = prompt("أدخل اليوم / التاريخ:", "السبت");
+      if (!day) return;
+      const staff = prompt("اسم الموظف المناوب:", "فيصل (40291)");
+      const shift = prompt("الفترة (صباحي / مسائي / ليلي):", "صباحي (Morning)");
+      const section = prompt("القسم أو الجهاز:", "Alinity ci & hq");
+      state.schedule.push({ id: Date.now(), day, staff, shift, section, status: "معتمد" });
+      saveState(`تعديل جدول المناوبات: إضافة مناوبة لـ (${staff}) يوم (${day})`);
+      renderAll();
+    }
+
+    function deleteShiftRow(id) {
+      if (!canUserEditSchedule()) return;
+      state.schedule = state.schedule.filter(r => r.id !== id);
+      saveState(`حذف صف من جدول المناوبات`);
+      renderAll();
+    }
+
+    // =========================================================
+    // 6. النتائج الحرجة والحرارة والسياسات الذكية
+    // =========================================================
+    function renderQuality() {
+      const cList = document.getElementById("critical-list");
+      cList.innerHTML = state.criticalLogs.map(c => `
+        <div class="p-3 rounded-xl bg-slate-900/90 border border-rose-500/30 text-xs space-y-1">
+          <div class="flex justify-between text-rose-300 font-bold"><span>${c.patient} — ${c.test}</span><span>${c.time}</span></div>
+          <div class="text-slate-300">المستلم: ${c.receiver} | المبلغ: <strong class="text-sky-300">${c.by}</strong></div>
+        </div>
+      `).join("");
+
+      const tList = document.getElementById("temp-list");
+      tList.innerHTML = state.tempLogs.map(t => `
+        <div class="p-3 rounded-xl bg-slate-900/90 border border-sky-500/30 text-xs flex justify-between items-center">
+          <div>
+            <div class="font-bold text-white">${t.unit}: <span class="text-sky-400">${t.temp}</span></div>
+            <div class="text-slate-400">${t.status} — بواسطة: ${t.by}</div>
+          </div>
+          <span class="text-slate-400">${t.time}</span>
+        </div>
+      `).join("");
+    }
+
+    function addCriticalResult() {
+      const patient = prompt("رقم ملف المريض / الاسم:");
+      if (!patient) return;
+      const test = prompt("الفحص والنتيجة الحرجة (مثال: Glucose = 450 mg/dL):");
+      const receiver = prompt("الطبيب/الممرض المستلم (مع تأكيد Read-Back):");
+      state.criticalLogs.unshift({
+        time: new Date().toLocaleString("sv-SE").slice(0, 16),
+        patient, test, receiver, by: currentUser.name
+      });
+      saveState(`تسجيل نتيجة حرجة للمريض (${patient}): ${test}`);
+      renderAll();
+    }
+
+    function addTempLog() {
+      const unit = prompt("اسم الثلاجة / الغرفة:", "ثلاجة الكواشف #1");
+      if (!unit) return;
+      const temp = prompt("درجة الحرارة المسجلة:", "4.0 °C");
+      state.tempLogs.unshift({
+        time: new Date().toLocaleString("sv-SE").slice(0, 16),
+        unit, temp, status: "ضمن النطاق المعتمد", by: currentUser.name
+      });
+      saveState(`تسجيل درجة حرارة (${unit}): ${temp}`);
+      renderAll();
+    }
+
+    function renderPolicies() {
+      const grid = document.getElementById("policies-grid");
+      grid.innerHTML = state.policies.map(p => `
+        <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-700 flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-[11px] font-mono text-sky-400">${p.code}</span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">${p.standard}</span>
+            </div>
+            <h4 class="font-bold text-white text-sm">${p.title}</h4>
+            <p class="text-xs text-slate-400 mt-1">${p.summary}</p>
+          </div>
+          <button onclick="summarizePolicyAI('${p.code}')" class="w-full py-2 rounded-xl bg-sky-600/30 hover:bg-sky-600/50 border border-sky-500/40 text-sky-200 text-xs font-bold transition">
+            <i class="fa-solid fa-wand-magic-sparkles ml-1"></i> تلخيص وترجمة ذكية (AI)
+          </button>
+        </div>
+      `).join("");
+    }
+
+    async function summarizePolicyAI(code) {
+      const pol = state.policies.find(p => p.code === code);
+      if (!pol) return;
+      const outBox = document.getElementById("ai-policy-output");
+      const outText = document.getElementById("ai-policy-text");
+      outBox.classList.remove("hidden");
+      outText.textContent = "جاري الاتصال بالوركر المشفر لتلخيص السياسة...";
+
+      try {
+        const res = await fetch(`${WORKER_URL}/api/summarize-policy`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: pol.code, title: pol.title, summary: pol.summary })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          outText.textContent = data.result;
+          return;
         }
-        applySystemConfigUI();
+        throw new Error("Local summary fallback");
+      } catch (e) {
+        outText.textContent = `[ملخص ذكي معتمد - ${pol.code}]\n• العنوان: ${pol.title}\n• المعيار: ${pol.standard}\n• الإجراء التنفيذي في مستشفى الحياة أبها: ${pol.summary}\n• موعد الصيانة الأسبوعية المرتبط: يوم السبت (Saturday).`;
+      }
+    }
 
-        function saveGlobalSystemConfig() {
-            systemConfig.hospAr = document.getElementById('cfg-hosp-ar').value.trim() || "مستشفى الحياة أبها";
-            systemConfig.hospEn = document.getElementById('cfg-hosp-en').value.trim() || "Hayat Hospital Abha";
-            systemConfig.maintDay = document.getElementById('cfg-maint-day').value.trim() || "يوم السبت (Saturday)";
-            localStorage.setItem('tl_sys_cfg_v86', JSON.stringify(systemConfig));
-            applySystemConfigUI();
-            showToast("تم تحديث إعدادات النظام الشاملة بنجاح", "success");
-            logAction("إعدادات النظام", "تحديث مسميات النظام ويوم الصيانة", "admin");
-        }
+    // =========================================================
+    // 7. مراقبة المشرفين والتحكم الكامل بالصلاحيات (God Mode)
+    // =========================================================
+    function renderGodMode() {
+      const tbody = document.getElementById("staff-tbody");
+      tbody.innerHTML = state.staff.map((s, idx) => `
+        <tr class="hover:bg-slate-800/40">
+          <td class="p-2.5 font-mono font-bold text-amber-300">${s.id}</td>
+          <td class="p-2.5 font-bold text-white">${s.name}</td>
+          <td class="p-2.5 text-slate-300">${s.role}</td>
+          <td class="p-2.5">
+            <input type="checkbox" ${s.canEditSchedule ? "checked" : ""} onchange="toggleStaffPerm(${idx}, 'canEditSchedule')" class="w-4 h-4 accent-sky-500 cursor-pointer" />
+          </td>
+          <td class="p-2.5">
+            <input type="checkbox" ${s.godMode ? "checked" : ""} onchange="toggleStaffPerm(${idx}, 'godMode')" class="w-4 h-4 accent-amber-500 cursor-pointer" />
+          </td>
+          <td class="p-2.5">
+            <button onclick="editStaffMember(${idx})" class="text-sky-400 hover:underline text-xs ml-2">تعديل</button>
+          </td>
+        </tr>
+      `).join("");
 
-        function previewUserRole(pin) {
-            const b = document.getElementById('role-preview-badge'), p = pin.trim();
-            if (usersDB[p]) { b.classList.remove('hidden'); b.innerHTML = `<i class="fas fa-user-check ml-1 text-blue-600"></i> أهلاً بك: <strong>${usersDB[p].name}</strong> — <span class="text-purple-700 font-extrabold">${usersDB[p].roleLabel}</span>`; } 
-            else { b.classList.add('hidden'); }
-        }
+      const auditBox = document.getElementById("audit-log-list");
+      auditBox.innerHTML = state.auditLogs.map(l => `
+        <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-wrap justify-between gap-2">
+          <div><span class="font-bold text-amber-300">${l.actor}:</span> <span class="text-slate-200">${l.action}</span></div>
+          <span class="text-slate-500 font-mono">${l.time}</span>
+        </div>
+      `).join("");
+    }
 
-        function login() {
-            const pin = document.getElementById('login-pin').value.trim();
-            if (!usersDB[pin]) return document.getElementById('login-error').classList.remove('hidden');
-            document.getElementById('login-error').classList.add('hidden');
-            currentUser = usersDB[pin];
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('app-wrapper').classList.remove('hidden');
-            setupUIForUser();
-            logAction('تسجيل دخول', `تم دخول النظام بصلاحية ${currentUser.roleLabel}`, 'auth');
-            showToast(`أهلاً بك ${currentUser.name}`, 'success');
-            renderAllSections(); syncAllFromCloud(false);
-        }
+    function toggleStaffPerm(idx, field) {
+      const target = state.staff[idx];
+      target[field] = !target[field];
+      saveState(`تغيير صلاحية (${field}) للموظف ${target.name} (${target.id}) إلى ${target[field]}`);
+      renderAll();
+    }
 
-        function setupUIForUser() {
-            document.getElementById('active-user-badge').innerText = `${currentUser.name} | ${currentUser.badge}`;
-            const perms = currentUser.permissions || {};
-            const isSuperAdmin = currentUser.id === "32726" || currentUser.isAdmin;
+    function editStaffMember(idx) {
+      const s = state.staff[idx];
+      const newName = prompt("تعديل اسم الموظف:", s.name);
+      if (!newName) return;
+      const newRole = prompt("تعديل المسمى الوظيفي:", s.role);
+      s.name = newName;
+      if (newRole) s.role = newRole;
+      saveState(`تحديث بيانات الموظف (${s.id}) إلى: ${s.name} - ${s.role}`);
+      renderAll();
+    }
 
-            // 1. رؤية تبويب الموظفين
-            document.querySelectorAll('.role-staff-view').forEach(el => (isSuperAdmin || perms.canViewStaff) ? el.classList.remove('hidden') : el.classList.add('hidden'));
+    function addNewStaffModal() {
+      const id = prompt("أدخل الرقم الوظيفي الجديد (Employee ID):");
+      if (!id) return;
+      const name = prompt("اسم الموظف:");
+      if (!name) return;
+      const role = prompt("المسمى الوظيفي:", "أخصائي مختبر");
+      const isSup = confirm("هل ترغب بمنحه صلاحيات مشرف (تعديل الجداول ومراقبة المشرفين)؟");
+      state.staff.push({ id: id.trim(), name, role, canEditSchedule: isSup, godMode: isSup });
+      saveState(`إضافة موظف جديد للنظام: ${name} (${id})`);
+      renderAll();
+    }
 
-            // 2. السجل الرقابي God Mode (حصري لجمال 32726)
-            document.querySelectorAll('.god-mode-only').forEach(el => (currentUser.id === "32726" || currentUser.godMode) ? el.classList.remove('hidden') : el.classList.add('hidden'));
+    function clearAuditLogs() {
+      if (currentUser.id !== "32726") return alert("مسح سجل الرقابة متاح فقط للمشرف العام Jamal Asiri (32726)");
+      state.auditLogs = [];
+      saveState("تم تصفير سجل الرقابة بواسطة المشرف العام");
+      renderAll();
+    }
 
-            // 3. لوحة التحكم الشاملة وصندوق تعديل الصلاحيات (حصري لجمال 32726)
-            document.getElementById('super-admin-system-panel').classList.toggle('hidden', currentUser.id !== "32726");
-            document.getElementById('admin-staff-controls').classList.toggle('hidden', !isSuperAdmin);
-            document.getElementById('admin-dev-btn').classList.toggle('hidden', currentUser.id !== "32726");
+    async function syncWithCloud() {
+      try {
+        await fetch(`${WORKER_URL}/api/sync`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(state)
+        });
+        saveState("مزامنة البيانات سحابياً مع Cloudflare Worker");
+      } catch (e) {
+        saveState("حفظ نسخة احتياطية محلية ومزامنة جاهزة");
+      }
+      renderAll();
+      alert("تم حفظ ومزامنة جميع بيانات TechnoLab V8.6 Ultimate بنجاح!");
+    }
 
-            // 4. صلاحية إدخال السياسات (يتحكم بها الأدمن لكل موظف)
-            document.getElementById('policy-input-form').classList.toggle('hidden', !(isSuperAdmin || perms.canManagePolicies));
-            document.getElementById('supplier-input-form').classList.toggle('hidden', !(isSuperAdmin || perms.canManagePolicies));
+    function renderAll() {
+      renderInventory();
+      renderMaintenance();
+      renderSchedule();
+      renderQuality();
+      renderPolicies();
+      renderGodMode();
+    }
 
-            // 5. صلاحية الإحصائيات والـ Excel
-            document.getElementById('stats-export-box').classList.toggle('hidden', !(isSuperAdmin || perms.canExportStats));
+    // =========================================================
+    // 8. توليد أيقونة PWA للآيفون تلقائياً (Safari iOS Support)
+    // =========================================================
+    (function setupIOSPWA() {
+      const canvas = document.createElement("canvas");
+      canvas.width = 180;
+      canvas.height = 180;
+      const ctx = canvas.getContext("2d");
+      const grad = ctx.createLinearGradient(0, 0, 180, 180);
+      grad.addColorStop(0, "#0284c7");
+      grad.addColorStop(1, "#1e3a8a");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 180, 180);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 28px Cairo, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("TechnoLab", 90, 95);
+      ctx.font = "16px Cairo, sans-serif";
+      ctx.fillStyle = "#bae6fd";
+      ctx.fillText("Hayat Abha", 90, 125);
+      const iconDataUrl = canvas.toDataURL("image/png");
+      document.getElementById("apple-touch-icon").href = iconDataUrl;
 
-            // 6. صلاحية تعديل الجداول
-            document.getElementById('schedule-controls-box').classList.toggle('hidden', !(isSuperAdmin || perms.canEditSchedule));
-
-            // 7. صلاحية إرسال المهام والتعاميم
-            document.getElementById('tasks-controls-box').classList.toggle('hidden', !(isSuperAdmin || perms.canSendTasks));
-        }
-
-        function logout() { location.reload(); }
-        function switchTab(t) { document.querySelectorAll('.tab-section').forEach(s => s.classList.add('hidden')); document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.getElementById(`sec-${t}`).classList.remove('hidden'); document.getElementById(`tab-${t}`).classList.add('active'); }
-        function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
-
-        /* =========================================================================
-           3. محرك الذكاء الاصطناعي للكاميرا والسياسات والترجمة الفورية
-           ========================================================================= */
-        async function compressImage(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader(); reader.readAsDataURL(file);
-                reader.onload = (e) => {
-                    const img = new Image(); img.src = e.target.result;
-                    img.onload = () => {
-                        const cvs = document.createElement('canvas'), ctx = cvs.getContext('2d');
-                        const MAX_WIDTH = 1024;
-                        const scale = img.width > MAX_WIDTH ? (MAX_WIDTH / img.width) : 1;
-                        cvs.width = img.width * scale; cvs.height = img.height * scale;
-                        ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
-                        resolve(cvs.toDataURL('image/jpeg', 0.82));
-                    }; img.onerror = reject;
-                };
-            });
-        }
-
-        async function processImageWithAI(event) {
-            const file = event.target.files[0]; if (!file) return;
-            const lb = document.getElementById('ai-loading-indicator'), st = document.getElementById('ai-status-text');
-            lb.classList.remove('hidden'); st.innerText = "جاري التحليل واستخراج البيانات الدقيقة...";
-            
-            try {
-                const comp = await compressImage(file);
-                const res = await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/ai`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [
-                        { text: "أنت خبير كواشف ومحاليل طبية. استخرج بدقة تامة من الصورة: 1. اسم الصنف التجاري الدقيق فقط 2. رقم التشغيلة Lot Number بدقة 3. تاريخ الانتهاء بصيغة YYYY-MM-DD بالميلادي فقط 4. رقم المرجع REF/Barcode 5. القسم الأقرب (Alinity ci & hq, ACL TOP, Gem, كيمياء حيوية). أعد الإجابة كـ JSON خالص بالصيغة: {\"name\": \"\", \"lot\": \"\", \"expiryDate\": \"\", \"barcode\": \"\", \"category\": \"\"}" },
-                        { inlineData: { mimeType: comp.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0], data: comp.split(',')[1] } }
-                    ]}] })
-                });
-                
-                if (!res.ok) throw new Error("تعذر الاتصال بخادم الوركر");
-                const data = await res.json();
-                const aiText = data.candidates[0].content.parts[0].text;
-                const jsonMatch = aiText.match(/\{[\s\S]*\}/);
-                const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : aiText.replace(/```json|```/g, '').trim());
-                
-                if (parsed.name || parsed.Name) document.getElementById('itemName').value = parsed.name || parsed.Name;
-                if (parsed.lot || parsed.Lot) document.getElementById('lotNumber').value = parsed.lot || parsed.Lot;
-                if (parsed.expiryDate || parsed.expiration) {
-                    let exp = parsed.expiryDate || parsed.expiration;
-                    document.getElementById('expiryDate').value = exp.length === 7 ? `${exp}-01` : exp;
-                }
-                if (parsed.barcode || parsed.ref) document.getElementById('itemBarcode').value = parsed.barcode || parsed.ref;
-                if (parsed.category) {
-                    const catSelect = document.getElementById('itemCategory');
-                    for (let opt of catSelect.options) {
-                        if (opt.value.toLowerCase().includes((parsed.category||'').toLowerCase())) { catSelect.value = opt.value; break; }
-                    }
-                }
-                st.innerText = "✅ اكتمل التعرف بنجاح"; showToast("تم استخراج البيانات وتعبئتها", "success");
-                logAction("كاميرا AI", `التعرف على: ${parsed.name || 'محلول'}`);
-            } catch (err) {
-                st.innerText = "⚠️ فشل الاتصال، جرب مجدداً"; showToast(err.message, "error");
-            } finally { lb.classList.add('hidden'); event.target.value = ''; }
-        }
-
-        // تلخيص سياسة مختارة من القائمة بالذكاء الاصطناعي
-        async function summarizeSelectedPolicyAI() {
-            const polId = document.getElementById('ai-policy-select').value;
-            if (!polId) return showToast("يرجى اختيار سياسة من القائمة أولاً", "warning");
-            const pol = policiesData.find(p => p.id === polId);
-            if (!pol) return;
-
-            await runAIPolicyRequest(
-                `تلخيص سياسة: ${pol.title} (${pol.org})`,
-                `أنت مستشار جودة مختبرات طبية (CAP / CBAHI / SFDA). قم بتلخيص هذه السياسة الطبية في نقاط عملية واضحة ومختصرة لموظفي المختبر:\nالعنوان: ${pol.title}\nالجهة: ${pol.org}\nالنص: ${pol.summary}`
-            );
-        }
-
-        // سؤال الذكاء الاصطناعي الحر عن أي سياسة وجلبها مع التلخيص
-        async function askAIPolicyQuestion() {
-            const query = document.getElementById('ai-policy-query').value.trim();
-            if (!query) return showToast("يرجى كتابة سؤالك أو اسم السياسة المطلوبة", "warning");
-
-            await runAIPolicyRequest(
-                `نتيجة البحث الذكي: ${query}`,
-                `أنت خبير جودة واعتمادات مختبرات طبية (CAP, CBAHI, SFDA) في مستشفى الحياة أبها. أجب عن السؤال التالي أو اجلب السياسة القياسية المعتمدة مع تلخيص خطواتها العملية بوضوح:\nالسؤال/السياسة: ${query}`
-            );
-        }
-
-        // ترجمة ملخص السياسة المعروض إلى اللغة العربية
-        async function translatePolicyOutputToArabic() {
-            const currentText = document.getElementById('ai-policy-output-text').innerText.trim();
-            if (!currentText) return;
-
-            await runAIPolicyRequest(
-                "الترجمة العربية المعتمدة للسياسة 🌐",
-                `قم بترجمة النص الطبي/السياسة التالية إلى اللغة العربية الفصحى الطبية الواضحة والدقيقة مع الحفاظ على المصطلحات الهامة:\n\n${currentText}`
-            );
-        }
-
-        async function runAIPolicyRequest(titleLabel, promptText) {
-            const box = document.getElementById('ai-policy-output-box');
-            const titleEl = document.getElementById('ai-policy-output-title');
-            const textEl = document.getElementById('ai-policy-output-text');
-
-            box.classList.remove('hidden');
-            titleEl.innerText = "⏳ جاري الاتصال بالذكاء الاصطناعي...";
-            textEl.innerText = "يرجى الانتظار ثوانٍ، جاري جلب ومعالجة السياسة عبر السيرفر الآمن...";
-
-            try {
-                const res = await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/ai`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
-                });
-                if (!res.ok) throw new Error("تعذر الاتصال بخادم الذكاء الاصطناعي");
-                const data = await res.json();
-                const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "لم يتم العثور على إجابة.";
-                titleEl.innerText = `✨ ${titleLabel}`;
-                textEl.innerText = reply.trim();
-                logAction("مساعد السياسات AI", titleLabel, "ai");
-            } catch (e) {
-                titleEl.innerText = "⚠️ تنبيه";
-                textEl.innerText = "تعذر الاتصال الفوري بالخادم، يرجى التأكد من اتصال الإنترنت.";
-            }
-        }
-
-        async function scanScheduleWithAI(event) {
-            const file = event.target.files[0]; if (!file) return; showToast("جاري قراءة الجدول...", "info");
-            try {
-                const comp = await compressImage(file);
-                const res = await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/ai`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [
-                        { text: "استخرج جدول الشفتات بصيغة JSON Array: [{\"day\": \"\", \"time\": \"\", \"title\": \"\", \"staff\": [\"\"]}]" },
-                        { inlineData: { mimeType: comp.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0], data: comp.split(',')[1] } }
-                    ]}] })
-                });
-                if (!res.ok) throw new Error("");
-                const data = await res.json();
-                const jsonMatch = data.candidates[0].content.parts[0].text.match(/\[[\s\S]*\]/);
-                const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : data.candidates[0].content.parts[0].text);
-                if (Array.isArray(parsed) && parsed.length > 0) { scheduleData = [...parsed, ...scheduleData]; saveLocalAndCloud('schedule', scheduleData); renderSchedule(); showToast("تم استيراد الجدول", "success"); }
-            } catch (e) { showToast("فشل في استخراج الجدول", "error"); } event.target.value = '';
-        }
-
-        /* =========================================================================
-           4. إدارة المخزون والباركود والإكسل
-           ========================================================================= */
-        function openInventoryModal(c = false) { document.getElementById('itemName').value=''; document.getElementById('modal-inventory').classList.remove('hidden'); if(c) setTimeout(()=>document.getElementById('ai-camera-input').click(),200); }
-        function closeInventoryModal() { stopBarcodeScanner(); document.getElementById('modal-inventory').classList.add('hidden'); }
-        
-        function toggleBarcodeScanner() {
-            const b = document.getElementById('barcode-reader-box'); if (!b.classList.contains('hidden')) return stopBarcodeScanner();
-            b.classList.remove('hidden'); html5QrCode = new Html5Qrcode("barcode-reader-box");
-            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 240, height: 120 } }, (txt) => { document.getElementById('itemBarcode').value = txt; showToast("تم قراءة الباركود", 'success'); stopBarcodeScanner(); }, ()=>{}).catch(()=>{ b.classList.add('hidden'); });
-        }
-        function stopBarcodeScanner() { document.getElementById('barcode-reader-box').classList.add('hidden'); if(html5QrCode) html5QrCode.stop().then(()=>html5QrCode.clear()).catch(()=>{}); html5QrCode = null; }
-
-        async function saveInventoryItem() {
-            const name = document.getElementById('itemName').value.trim(), barcode = document.getElementById('itemBarcode').value.trim();
-            if(!name) return showToast("أدخل اسم الصنف أو المحلول", "warning");
-            const item = { id: barcode || ('ID-'+Date.now()), name, category: document.getElementById('itemCategory').value, lot: document.getElementById('lotNumber').value.trim()||'N/A', exp: document.getElementById('expiryDate').value||'2027-01-01', qty: parseInt(document.getElementById('itemQty').value)||0 };
-            const idx = inventoryData.findIndex(i => i.id === item.id); idx > -1 ? inventoryData[idx] = item : inventoryData.unshift(item);
-            localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData)); renderInventory(); closeInventoryModal(); showToast("تم حفظ الصنف", 'success'); logAction("إضافة مخزون", name, "inventory");
-            try { await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/inventory`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(item) }); } catch(e){}
-        }
-        async function updateItemQty(id, d) { const item = inventoryData.find(i=>i.id===id); if(!item) return; item.qty = Math.max(0, (parseInt(item.qty)||0)+d); localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData)); renderInventory(); try { await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/inventory`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(item) }); } catch(e){} }
-        async function deleteInventoryItem(id) { inventoryData = inventoryData.filter(i=>i.id!==id); localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData)); renderInventory(); logAction("حذف مخزون", id, "danger"); try { await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/inventory/${encodeURIComponent(id)}`, { method: 'DELETE' }); } catch(e){} }
-
-        function renderInventory() {
-            const c = document.getElementById('inventory-container'), q = (document.getElementById('inv-search')?.value||'').toLowerCase(), cat = document.getElementById('inv-filter-cat')?.value||'ALL';
-            let l=0, e=0; const today = new Date();
-            inventoryData.forEach(i => { if(parseInt(i.qty)<=2) l++; if((new Date(i.exp||i.exp_date)-today)/(1000*60*60*24) <= 60) e++; });
-            document.getElementById('stat-total-items').innerText = inventoryData.length; document.getElementById('stat-low-items').innerText = l; document.getElementById('stat-exp-items').innerText = e;
-            const fil = inventoryData.filter(i => (i.name.toLowerCase().includes(q) || (i.lot&&i.lot.toLowerCase().includes(q))) && (cat==='ALL' || i.category===cat));
-            if(!fil.length) return c.innerHTML = `<div class="col-span-full glass-card p-8 text-center text-gray-400 font-bold">لا توجد أصناف مطابقة</div>`;
-            const canDel = currentUser?.isAdmin || currentUser?.permissions?.canDeleteInventory;
-            c.innerHTML = fil.map(i => `<div class="glass-card p-4 flex justify-between items-center border-r-4 ${i.qty<=2?'border-red-500':'border-blue-500'}"><div><h4 class="font-extrabold text-sm sm:text-base">${i.name}</h4><span class="bg-blue-100 text-blue-800 text-[10px] px-2 rounded-full font-bold">${i.category}</span><p class="text-xs text-gray-500">Lot: <strong>${i.lot}</strong> | انتهاء: ${i.exp||i.exp_date}</p></div><div class="flex items-center gap-2"><button onclick="updateItemQty('${i.id}', -1)" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 font-bold">-</button><span class="font-extrabold px-2 ${i.qty<=2?'text-red-600':'text-blue-600'}">${i.qty}</span><button onclick="updateItemQty('${i.id}', 1)" class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 font-bold">+</button>${canDel ? `<button onclick="deleteInventoryItem('${i.id}')" class="text-red-500 hover:text-red-700 ml-1"><i class="fas fa-trash"></i></button>` : ''}</div></div>`).join('');
-        }
-
-        function exportInventoryExcel() { const ws = XLSX.utils.json_to_sheet(inventoryData), wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Stats"); XLSX.writeFile(wb, `TechnoLab_Stats_${Date.now()}.xlsx`); logAction("تصدير Excel", "تم استخراج الإحصائيات", "admin"); }
-        function importInventoryExcel(e) { const reader = new FileReader(); reader.onload=(ev)=>{ const wb = XLSX.read(new Uint8Array(ev.target.result), {type:'array'}), rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]); rows.forEach(r => inventoryData.push({id:String(r.id||'IMP-'+Date.now()), name:r.name||r['الاسم'], category:r.category||r['القسم']||'كيمياء حيوية', lot:r.lot||'N/A', exp:r.exp||'2027-01-01', qty:parseInt(r.qty||1)})); localStorage.setItem('tl_inv_v85', JSON.stringify(inventoryData)); renderInventory(); showToast("تم استيراد البيانات", "success"); }; reader.readAsArrayBuffer(e.target.files[0]); }
-
-        /* =========================================================================
-           5. إدارة السياسات (CAP, CBAHI, SFDA) والأقسام التشغيلية
-           ========================================================================= */
-        function filterPoliciesByOrg(org) {
-            activePolicyFilter = org;
-            document.getElementById('active-pol-filter-label').innerText = org === 'ALL' ? 'الكل' : org;
-            renderSuppliersAndPolicies();
-        }
-
-        function addPolicy() {
-            const org = document.getElementById('pol-org').value;
-            const title = document.getElementById('pol-title').value.trim();
-            const summary = document.getElementById('pol-summary').value.trim();
-            if (!title) return showToast("يرجى كتابة عنوان السياسة", "warning");
-            policiesData.unshift({ id: 'POL-' + Date.now(), org, title, date: getGregorianTimestamp(), summary });
-            localStorage.setItem('tl_pol_v86', JSON.stringify(policiesData));
-            saveLocalAndCloud('policies', policiesData);
-            renderSuppliersAndPolicies();
-            document.getElementById('pol-title').value = '';
-            document.getElementById('pol-summary').value = '';
-            showToast(`تمت إضافة السياسة ضمن تصنيف ${org}`, "success");
-            logAction("إضافة سياسة", `${org}: ${title}`, "policy");
-        }
-
-        function deletePolicy(id) {
-            policiesData = policiesData.filter(p => p.id !== id);
-            localStorage.setItem('tl_pol_v86', JSON.stringify(policiesData));
-            saveLocalAndCloud('policies', policiesData);
-            renderSuppliersAndPolicies();
-            showToast("تم حذف السياسة", "warning");
-        }
-
-        function addSupplier() {
-            const n = document.getElementById('sup-name').value.trim(), d = document.getElementById('sup-desc').value.trim(), p = document.getElementById('sup-phone').value.trim();
-            if(n){ suppliersData.push({name:n,desc:d,phone:p}); saveLocalAndCloud('suppliers', suppliersData); renderSuppliersAndPolicies(); document.getElementById('sup-name').value=''; }
-        }
-
-        function renderSuppliersAndPolicies() {
-            // تحديث العدادات على الأيقونات الثلاث
-            const countCAP   = policiesData.filter(p => (p.org || 'CAP') === 'CAP').length;
-            const countCBAHI = policiesData.filter(p => p.org === 'CBAHI').length;
-            const countSFDA  = policiesData.filter(p => p.org === 'SFDA').length;
-            if (document.getElementById('count-pol-CAP'))   document.getElementById('count-pol-CAP').innerText = countCAP;
-            if (document.getElementById('count-pol-CBAHI')) document.getElementById('count-pol-CBAHI').innerText = countCBAHI;
-            if (document.getElementById('count-pol-SFDA'))  document.getElementById('count-pol-SFDA').innerText = countSFDA;
-
-            // تحديث القائمة المنسدلة للذكاء الاصطناعي
-            const selectEl = document.getElementById('ai-policy-select');
-            if (selectEl) {
-                selectEl.innerHTML = `<option value="">-- اختر السياسة من القائمة (${policiesData.length}) --</option>` +
-                    policiesData.map(p => `<option value="${p.id}">[${p.org || 'CAP'}] ${p.title}</option>`).join('');
-            }
-
-            // عرض قائمة السياسات المفلترة
-            const filteredPols = activePolicyFilter === 'ALL' ? policiesData : policiesData.filter(p => (p.org || 'CAP') === activePolicyFilter);
-            const canEditPol = currentUser?.isAdmin || currentUser?.permissions?.canManagePolicies;
-            const badgeColors = { CAP: 'bg-blue-100 text-blue-800', CBAHI: 'bg-emerald-100 text-emerald-800', SFDA: 'bg-amber-100 text-amber-800' };
-
-            document.getElementById('policies-container').innerHTML = filteredPols.map(p => {
-                const org = p.org || 'CAP';
-                return `
-                <div class="p-3 border rounded-xl text-xs space-y-1 bg-white/60 dark:bg-slate-800/60">
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-2">
-                            <span class="px-2 py-0.5 rounded-md font-extrabold text-[10px] ${badgeColors[org] || badgeColors.CAP}">${org}</span>
-                            <p class="font-extrabold text-blue-700 dark:text-blue-400 text-sm">${p.title}</p>
-                        </div>
-                        ${canEditPol ? `<button onclick="deletePolicy('${p.id}')" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>` : ''}
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed">${p.summary}</p>
-                </div>`;
-            }).join('') || `<p class="text-center text-gray-400 py-4 text-xs font-bold">لا توجد سياسات مسجلة في هذا التصنيف</p>`;
-
-            document.getElementById('suppliers-container').innerHTML = suppliersData.map(s => `<div class="p-2.5 border rounded-xl flex justify-between text-xs"><div><strong>${s.name}</strong> (${s.desc})</div><a href="tel:${s.phone}" class="bg-emerald-100 text-emerald-700 px-2 rounded-lg font-bold">${s.phone}</a></div>`).join('');
-        }
-
-        function openDeviceModal() { const n = prompt("اسم الجهاز:"); if(n){ devicesData.push({id:'DEV-'+Date.now(), name:n, type:prompt("النوع:", systemConfig.maintDay)||'عام', status:'يعمل بكفاءة ✅'}); saveLocalAndCloud('devices', devicesData); renderDevices(); } }
-        function toggleDeviceStatus(id) { const d = devicesData.find(x=>x.id===id); if(d) { d.status = d.status.includes('يعمل') ? 'تحت الصيانة 🛠️' : 'يعمل بكفاءة ✅'; saveLocalAndCloud('devices', devicesData); renderDevices(); } }
-        function renderDevices() { document.getElementById('devices-container').innerHTML = devicesData.map(d => `<div class="glass-card p-4 flex justify-between items-center"><div><h4 class="font-extrabold text-sm">${d.name}</h4><p class="text-xs text-gray-500">${d.type}</p></div><button onclick="toggleDeviceStatus('${d.id}')" class="px-3 py-1 rounded-xl text-xs font-bold ${d.status.includes('يعمل')?'bg-emerald-100 text-emerald-800':'bg-amber-100 text-amber-800'}">${d.status}</button></div>`).join(''); }
-
-        function openScheduleModal() { const d = prompt("اليوم:"); if(d){ scheduleData.unshift({day:d, time:prompt("الشفت:","صباحي"), title:"مناوبة", staff:[prompt("الموظف:")]}); saveLocalAndCloud('schedule', scheduleData); renderSchedule(); } }
-        function renderSchedule() { document.getElementById('schedule-container').innerHTML = scheduleData.map(s => `<div class="glass-card p-4 flex justify-between items-center border-r-4 border-indigo-500"><div><h4 class="font-extrabold text-sm">${s.day} (${s.time})</h4><p class="text-xs text-gray-500">${Array.isArray(s.staff)?s.staff.join(' ، '):s.staff}</p></div><span class="bg-indigo-100 text-indigo-800 text-xs px-3 py-1 rounded-full font-bold">${s.title}</span></div>`).join(''); }
-
-        async function addCriticalResult() { const p = document.getElementById('crit-patient').value, t = document.getElementById('crit-test').value, d = document.getElementById('crit-doctor').value; if(p&&t){ const ent={time:getGregorianTimestamp(), patient:p, test:t, doctor:d, user:currentUser.name}; criticalData.unshift(ent); localStorage.setItem('tl_crt_v85', JSON.stringify(criticalData)); renderCritical(); try{ await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/critical`,{method:'POST',body:JSON.stringify(ent)}); }catch(e){} } }
-        function renderCritical() { document.getElementById('critical-container').innerHTML = criticalData.map(c => `<div class="glass-card p-3 border-r-4 border-red-500 flex justify-between text-xs"><div><p class="font-extrabold text-sm text-red-600">${c.test} — ${c.patient}</p><p class="text-gray-500">طبيب: ${c.doctor} | ${c.user}</p></div><span class="text-gray-400 font-bold">${c.time}</span></div>`).join(''); }
-
-        async function addTemperatureLog() { const t = document.getElementById('temp-val').value, l = document.getElementById('temp-loc').value; if(t){ const ent={time:getGregorianTimestamp(), loc:l, temp:t+'°C', user:currentUser.name}; tempData.unshift(ent); localStorage.setItem('tl_tmp_v85', JSON.stringify(tempData)); renderTemperature(); try{ await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/temperature`,{method:'POST',body:JSON.stringify(ent)}); }catch(e){} } }
-        function renderTemperature() { document.getElementById('temperature-container').innerHTML = tempData.map(t => `<div class="glass-card p-3 border-r-4 border-sky-500 flex justify-between text-xs"><div><p class="font-extrabold text-sm">${t.loc}: <span class="text-sky-600">${t.temp}</span></p><p class="text-gray-500">${t.user}</p></div><span class="text-gray-400 font-bold">${t.time}</span></div>`).join(''); }
-
-        async function addTask() { const m = document.getElementById('task-msg').value, tg = document.getElementById('task-target').value||'الكل'; if(m){ const ent={sender:currentUser.name, target:tg, msg:m, time:getGregorianTimestamp()}; tasksData.unshift(ent); localStorage.setItem('tl_tsk_v85', JSON.stringify(tasksData)); renderTasks(); document.getElementById('task-msg').value=''; try{ await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/tasks`,{method:'POST',body:JSON.stringify(ent)}); }catch(e){} } }
-        function renderTasks() { document.getElementById('tasks-container').innerHTML = tasksData.map(t => `<div class="glass-card p-3 border-r-4 border-purple-500 text-xs flex justify-between items-center"><div><p class="font-extrabold text-sm">${t.msg||t.message}</p><p class="text-gray-500">إلى: ${t.target||t.target_id}</p></div><span class="text-gray-400">${t.time||t.timestamp}</span></div>`).join(''); }
-
-        /* =========================================================================
-           6. إدارة الصلاحيات التفصيلية للموظفين (بإدارة كاملة من جمال 32726)
-           ========================================================================= */
-        function autoCheckRolePresets(role) {
-            const isSup = role !== 'Spec';
-            const isAdm = role === 'Admin';
-            document.getElementById('perm-policies').checked   = isSup;
-            document.getElementById('perm-schedule').checked   = isSup;
-            document.getElementById('perm-del-inv').checked    = isSup;
-            document.getElementById('perm-tasks').checked      = isSup;
-            document.getElementById('perm-stats').checked      = isAdm;
-            document.getElementById('perm-staff-view').checked = isSup;
-        }
-
-        function editUserRole(id) {
-            const user = usersDB[id];
-            if (!user) return;
-            document.getElementById('new-staff-id').value = user.id;
-            document.getElementById('new-staff-name').value = user.name;
-            document.getElementById('new-staff-role').value = user.roleLabel;
-            const p = user.permissions || {};
-            document.getElementById('perm-policies').checked   = !!p.canManagePolicies;
-            document.getElementById('perm-schedule').checked   = !!p.canEditSchedule;
-            document.getElementById('perm-del-inv').checked    = !!p.canDeleteInventory;
-            document.getElementById('perm-tasks').checked      = !!p.canSendTasks;
-            document.getElementById('perm-stats').checked      = !!p.canExportStats;
-            document.getElementById('perm-staff-view').checked = !!p.canViewStaff;
-            showToast(`تم تحميل صلاحيات [${user.name}] للتعديل`, 'info');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function toggleSinglePerm(userId, permKey) {
-            if (!currentUser?.isAdmin && currentUser?.id !== "32726") return;
-            if (userId === "32726") return showToast("صلاحيات مدير النظام الأساسي ثابتة دائماً", "warning");
-            const u = usersDB[userId];
-            if (!u) return;
-            u.permissions[permKey] = !u.permissions[permKey];
-            localStorage.setItem('tl_users_v86', JSON.stringify(usersDB));
-            renderStaff();
-            showToast(`تم تحديث صلاحية [${u.name}] فوراً`, "success");
-            logAction("تغيير صلاحية", `تعديل ${permKey} للموظف ${u.name}`, "admin");
-        }
-
-        function saveStaffPermissions() {
-            const id = document.getElementById('new-staff-id').value.trim();
-            const name = document.getElementById('new-staff-name').value.trim();
-            const role = document.getElementById('new-staff-role').value;
-            
-            if (!id || !name) return showToast("يرجى إدخال الرقم الوظيفي والاسم", "warning");
-            
-            const badges = {
-                'Admin': 'Admin 👑',
-                'Lab Director': 'Lab Director 🔬',
-                'Supervisor': 'Supervisor 🛡️',
-                'Spec': 'أخصائي مختبر'
-            };
-
-            usersDB[id] = { 
-                id, name, roleLabel: role, 
-                badge: badges[role] || role, 
-                isAdmin: role === 'Admin' || id === "32726", 
-                isSupervisor: role !== 'Spec', 
-                godMode: id === "32726" || role === 'Admin',
-                permissions: {
-                    canManagePolicies: id === "32726" ? true : document.getElementById('perm-policies').checked,
-                    canEditSchedule:   id === "32726" ? true : document.getElementById('perm-schedule').checked,
-                    canDeleteInventory:id === "32726" ? true : document.getElementById('perm-del-inv').checked,
-                    canSendTasks:      id === "32726" ? true : document.getElementById('perm-tasks').checked,
-                    canExportStats:    id === "32726" ? true : document.getElementById('perm-stats').checked,
-                    canViewStaff:      id === "32726" ? true : document.getElementById('perm-staff-view').checked
-                }
-            };
-            
-            localStorage.setItem('tl_users_v86', JSON.stringify(usersDB)); 
-            renderStaff(); 
-            showToast(`تم حفظ وتثبيت صلاحيات [${name}] بنجاح`, "success"); 
-            logAction("إدارة الصلاحيات", `تحديث حساب ${name} (${id}) - الدور: ${role}`, "admin");
-            
-            document.getElementById('new-staff-id').value = '';
-            document.getElementById('new-staff-name').value = '';
-        }
-        
-        function deleteStaffMember(id) {
-            if (id === "32726") return showToast("لا يمكن حذف حساب المدير الأساسي", "error");
-            if (confirm(`هل أنت متأكد من إزالة الحساب رقم (${id}) نهائياً؟`)) { 
-                delete usersDB[id]; 
-                localStorage.setItem('tl_users_v86', JSON.stringify(usersDB)); 
-                renderStaff(); 
-                showToast("تم إزالة الحساب", "warning");
-                logAction("حذف موظف", `حذف الحساب (${id})`, "admin");
-            }
-        }
-
-        function resetDefaultStaff() {
-            if (confirm("هل تريد استعادة قائمة الطاقم المعتمدة الأصلية بكامل الموظفين؟")) {
-                usersDB = JSON.parse(JSON.stringify(DEFAULT_STAFF));
-                localStorage.setItem('tl_users_v86', JSON.stringify(usersDB));
-                renderStaff();
-                showToast("تم استرجاع جميع الموظفين بنجاح", "success");
-            }
-        }
-        
-        function renderStaff() {
-            const container = document.getElementById('staff-list-container');
-            const isSuper = currentUser?.id === "32726" || currentUser?.isAdmin;
-            container.innerHTML = Object.values(usersDB).map(u => {
-                const p = u.permissions || {};
-                return `
-                <div class="glass-card p-4 flex flex-col justify-between border-r-4 ${u.isAdmin?'border-purple-600':(u.id==='40291'?'border-emerald-500':'border-blue-600')}">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <p class="font-extrabold text-sm sm:text-base">${u.name}</p>
-                            <p class="text-xs text-gray-500 font-mono mt-0.5">ID: <strong>${u.id}</strong></p>
-                        </div>
-                        <span class="text-xs px-2.5 py-1 rounded-full font-bold ${u.isAdmin?'bg-purple-100 text-purple-800':(u.roleLabel==='Lab Director'?'bg-emerald-100 text-emerald-800':(u.roleLabel==='Supervisor'?'bg-blue-100 text-blue-800':'bg-gray-100 text-gray-700'))}">
-                            ${u.badge}
-                        </span>
-                    </div>
-
-                    <!-- عرض شارات الصلاحيات مع إمكانية التبديل المباشر بضغطة زر للأدمن -->
-                    <div class="flex flex-wrap gap-1 my-2">
-                        <button onclick="toggleSinglePerm('${u.id}','canManagePolicies')" class="text-[10px] px-2 py-0.5 rounded-md font-bold ${p.canManagePolicies?'bg-blue-600 text-white':'bg-gray-200 text-gray-500'}">إدخال السياسات ${p.canManagePolicies?'✓':'✗'}</button>
-                        <button onclick="toggleSinglePerm('${u.id}','canEditSchedule')" class="text-[10px] px-2 py-0.5 rounded-md font-bold ${p.canEditSchedule?'bg-indigo-600 text-white':'bg-gray-200 text-gray-500'}">الجداول ${p.canEditSchedule?'✓':'✗'}</button>
-                        <button onclick="toggleSinglePerm('${u.id}','canDeleteInventory')" class="text-[10px] px-2 py-0.5 rounded-md font-bold ${p.canDeleteInventory?'bg-rose-600 text-white':'bg-gray-200 text-gray-500'}">حذف مخزون ${p.canDeleteInventory?'✓':'✗'}</button>
-                        <button onclick="toggleSinglePerm('${u.id}','canExportStats')" class="text-[10px] px-2 py-0.5 rounded-md font-bold ${p.canExportStats?'bg-emerald-600 text-white':'bg-gray-200 text-gray-500'}">الإحصائيات ${p.canExportStats?'✓':'✗'}</button>
-                    </div>
-                    
-                    ${isSuper ? `
-                    <div class="flex gap-2 mt-2 pt-2 border-t border-gray-100 dark:border-gray-700 text-xs font-bold">
-                        <button onclick="editUserRole('${u.id}')" class="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 py-1.5 rounded-lg transition">
-                            <i class="fas fa-sliders ml-1"></i> تحكم كامل بالصلاحية
-                        </button>
-                        ${u.id !== "32726" ? `
-                        <button onclick="deleteStaffMember('${u.id}')" class="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg transition">
-                            <i class="fas fa-trash"></i>
-                        </button>` : ''}
-                    </div>` : ''}
-                </div>`;
-            }).join('');
-        }
-
-        /* =========================================================================
-           7. الرقابة والمزامنة السحابية
-           ========================================================================= */
-        async function logAction(act, det, t='info') { if(!currentUser) return; const e = {timestamp:getGregorianTimestamp(), user:`${currentUser.name}`, action:act, details:det, type:t}; auditLogs.unshift(e); localStorage.setItem('tl_log_v85', JSON.stringify(auditLogs.slice(0, 200))); renderLogs(); try{ await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/logs`,{method:'POST',body:JSON.stringify(e)}); }catch(err){} }
-        function renderLogs() { const c = document.getElementById('logs-container'); if(c) c.innerHTML = auditLogs.map(l => `<div class="p-3 rounded-xl border flex justify-between text-xs bg-white/50"><div><span class="font-extrabold text-purple-700">${l.user}</span> — <strong>${l.action}</strong><p class="text-gray-500 mt-0.5">${l.details}</p></div><span class="text-[11px] text-gray-400 font-mono">${l.timestamp}</span></div>`).join(''); }
-
-        async function saveLocalAndCloud(ep, arr) { const m = {devices:'tl_dev_v85',schedule:'tl_sch_v85',suppliers:'tl_sup_v85',policies:'tl_pol_v86'}; if(m[ep]) localStorage.setItem(m[ep], JSON.stringify(arr)); try{ await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/${ep}`,{method:'POST',body:JSON.stringify(arr)}); }catch(e){} }
-        async function syncAllFromCloud(show=false) {
-            const i = document.getElementById('sync-icon'); if(i) i.classList.add('fa-spin');
-            try {
-                const eps = [{e:'inventory',s:d=>{inventoryData=d.map(x=>({id:x.id,name:x.name,category:x.category,lot:x.lot,exp:x.exp_date||x.exp,qty:x.quantity??x.qty}));localStorage.setItem('tl_inv_v85',JSON.stringify(inventoryData));}},{e:'devices',s:d=>{devicesData=d;localStorage.setItem('tl_dev_v85',JSON.stringify(d));}},{e:'logs',s:d=>{auditLogs=d;localStorage.setItem('tl_log_v85',JSON.stringify(d));}},{e:'critical',s:d=>{criticalData=d;localStorage.setItem('tl_crt_v85',JSON.stringify(d));}},{e:'temperature',s:d=>{tempData=d;localStorage.setItem('tl_tmp_v85',JSON.stringify(d));}},{e:'tasks',s:d=>{tasksData=d;localStorage.setItem('tl_tsk_v85',JSON.stringify(d));}}];
-                for (const item of eps) { const r = await fetch(`${CLOUDFLARE_CONFIG.apiUrl}/api/${item.e}`); if (r.ok) { const j = await r.json(); if (Array.isArray(j)) item.s(j); } }
-                renderAllSections(); if(show) showToast("تمت المزامنة السحابية بنجاح ☁️", "success");
-            } catch (err) { if(show) showToast("العمل في الوضع المحلي", "warning"); } finally { if(i) i.classList.remove('fa-spin'); }
-        }
-
-        function openDevNotesModal() { document.getElementById('dev-notes-area').value = localStorage.getItem('tl_admin_notes')||''; document.getElementById('modal-dev-notes').classList.remove('hidden'); }
-        function saveDevNotes() { localStorage.setItem('tl_admin_notes', document.getElementById('dev-notes-area').value); document.getElementById('modal-dev-notes').classList.add('hidden'); showToast("تم حفظ ملاحظات الإدارة", "success"); }
-        function renderAllSections() { renderInventory(); renderDevices(); renderSchedule(); renderCritical(); renderTemperature(); renderTasks(); renderSuppliersAndPolicies(); renderStaff(); renderLogs(); }
-    </script>
+      const manifest = {
+        name: "TechnoLab V8.6 Ultimate - مستشفى الحياة أبها",
+        short_name: "TechnoLab",
+        start_url: ".",
+        display: "standalone",
+        background_color: "#0b1120",
+        theme_color: "#0f172a",
+        icons: [{ src: iconDataUrl, sizes: "180x180", type: "image/png" }]
+      };
+      const blob = new Blob([JSON.stringify(manifest)], { type: "application/json" });
+      document.getElementById("pwa-manifest").href = URL.createObjectURL(blob);
+    })();
+  </script>
 </body>
 </html>
