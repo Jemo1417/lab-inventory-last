@@ -24,7 +24,7 @@
       font-family: 'Cairo', sans-serif;
       background-color: #f4f7fb;
       color: #1e293b;
-      transition: all 0.2s ease;
+      transition: background-color 0.25s, color 0.25s;
     }
     html.dark body { background-color: #0b1120; color: #f1f5f9; }
     html.dark .bg-white { background-color: #1e293b !important; color: #f1f5f9 !important; border-color: #334155 !important; }
@@ -35,7 +35,7 @@
       color: #0284c7 !important;
       border-bottom: 3px solid #0284c7 !important;
       font-weight: 900 !important;
-      background: rgba(2, 132, 199, 0.04);
+      background: rgba(2, 132, 199, 0.06);
     }
     .modal-backdrop {
       background: rgba(15, 23, 42, 0.65);
@@ -47,9 +47,9 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between pb-14">
+<body class="min-h-screen flex flex-col justify-between pb-16">
 
-  <!-- 1. الشريط العلوي لتسليم الشفت (Handover Bar) -->
+  <!-- 1. الشريط العلوي لتسليم الشفت (Handover Top Bar) -->
   <div class="bg-gradient-to-l from-indigo-700 via-purple-700 to-indigo-800 text-white px-4 py-2 shadow-sm no-print">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
       <div class="flex items-center gap-2 font-bold">
@@ -57,7 +57,7 @@
           <i class="fa-solid fa-bullhorn text-amber-300"></i>
           <span>تسليم الشفت</span>
         </span>
-        <span id="topHandoverText" class="text-purple-100 font-semibold truncate max-w-[230px] sm:max-w-xl">
+        <span id="topHandoverText" class="text-purple-100 font-semibold truncate max-w-[220px] sm:max-w-xl">
           لا توجد ملاحظات شفت معلقة
         </span>
       </div>
@@ -76,16 +76,16 @@
   <!-- 2. الهيدر الرئيسي بشعار TechnoLab المعتمد -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm no-print">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3">
-      <!-- شعار TechnoLab -->
+      <!-- الشعار الرسمي TechnoLab -->
       <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-b from-sky-400 to-blue-600 flex flex-col items-center justify-center text-white shadow-md shadow-sky-500/25 border border-sky-300/40">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-b from-sky-400 to-blue-600 flex flex-col items-center justify-center text-white shadow-md shadow-sky-500/25 border border-sky-300/40">
           <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M7 3h10M7 21h10M8 3v4l4 5 4-5V3M8 21v-4l4-5 4 5v4" />
           </svg>
           <span class="text-[7px] font-black tracking-widest uppercase leading-none mt-0.5">TechnoLab</span>
         </div>
         <div class="leading-tight">
-          <div class="flex items-center gap-1.5">
+          <div class="flex items-center gap-1.5 flex-wrap">
             <h1 class="text-lg sm:text-xl font-black text-slate-800 tracking-tight">TechnoLab</h1>
             <span id="roleBadgeHeader" class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-black border border-amber-300">Admin 👑</span>
           </div>
@@ -93,7 +93,7 @@
         </div>
       </div>
 
-      <!-- أزرار الهيدر العلوية المطابقة للصورة 26 -->
+      <!-- شريط أزرار التحكم السريعة في الهيدر -->
       <div class="flex items-center flex-wrap gap-1.5 text-xs font-bold">
         <!-- الإشعارات -->
         <button onclick="openModal('notificationsModal')" class="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 flex items-center gap-1.5 transition">
@@ -103,41 +103,47 @@
         </button>
 
         <!-- متصل سحابياً -->
-        <button onclick="syncWithCloud(true)" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 transition">
+        <button onclick="syncWithCloud(true)" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 transition" title="مزامنة فورية مع Cloudflare Worker">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
           <span>متصل سحابياً</span>
           <i class="fa-solid fa-cloud text-emerald-500"></i>
         </button>
 
-        <!-- مفتاح تبديل الصلاحيات/المستخدم السريع -->
-        <button onclick="openModal('roleSwitcherModal')" class="w-8 h-8 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-600 border border-amber-200 flex items-center justify-center transition" title="تغيير المستخدم / الصلاحيات (Admin / Director / Supervisor)">
+        <!-- مفتاح تبديل الصلاحيات (جمال Admin / د.عمرو Director / فيصل Supervisor) -->
+        <button onclick="openModal('roleSwitcherModal')" class="w-8 h-8 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-600 border border-amber-200 flex items-center justify-center transition" title="تبديل الصلاحيات (Admin / Director / Supervisor)">
           <i class="fa-solid fa-key"></i>
         </button>
 
-        <!-- بطاقة المستخدم النشط -->
-        <button onclick="openModal('identityModal')" class="px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 flex items-center gap-1.5 font-extrabold transition">
+        <!-- بطاقة المستخدم النشط وتعريف الموظف (CBAHI) -->
+        <button onclick="openModal('identityModal')" class="px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 flex items-center gap-1.5 font-extrabold transition" title="تعريف الموظف لتوثيق الجودة (CBAHI)">
           <i class="fa-solid fa-user text-sky-600"></i>
-          <span id="headerActiveUser">Jamal 👑</span>
+          <span id="headerActiveUser">Jamal 👑 (32726)</span>
         </button>
 
-        <!-- التاسكات -->
+        <!-- التاسكات والمهام الخاصة -->
         <button onclick="openModal('tasksModal')" class="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 flex items-center gap-1.5 transition">
           <i class="fa-solid fa-list-check"></i>
           <span>التاسكات</span>
+          <span id="tasksCountBadge" class="hidden px-1.5 rounded-full bg-purple-600 text-white text-[10px]">0</span>
         </button>
 
         <!-- الوضع الليلي -->
-        <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 flex items-center justify-center transition" title="الوضع الليلي">
+        <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 flex items-center justify-center transition" title="الوضع الليلي / النهاري">
           <i class="fa-solid fa-moon"></i>
         </button>
 
-        <!-- الموظفين -->
+        <!-- واتساب سريع -->
+        <button onclick="shareQuickWhatsApp()" class="w-8 h-8 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 flex items-center justify-center transition" title="إرسال ملخص عبر واتساب">
+          <i class="fa-brands fa-whatsapp text-sm"></i>
+        </button>
+
+        <!-- إدارة الموظفين وقاعدة البيانات (17 موظفاً) -->
         <button onclick="openModal('staffModal')" class="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 flex items-center gap-1.5 transition">
           <i class="fa-solid fa-users"></i>
           <span>الموظفين (<span id="staffTotalBadge">17</span>)</span>
         </button>
 
-        <!-- السجل (Audit Log) -->
+        <!-- السجل الشامل (CBAHI Audit Log) -->
         <button onclick="openModal('auditModal')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 flex items-center gap-1.5 transition">
           <i class="fa-solid fa-clock-rotate-left text-sky-600"></i>
           <span>السجل</span>
@@ -145,7 +151,7 @@
       </div>
     </div>
 
-    <!-- 3. شريط النوافذ والتبويبات الكامل (10 تبويبات شاملة) -->
+    <!-- 3. شريط النوافذ العشرة الكاملة -->
     <nav class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center gap-1 sm:gap-2 overflow-x-auto border-t border-slate-100 text-xs font-bold text-slate-500">
       <button onclick="switchTab('inventory')" id="tabBtn-inventory" class="py-2.5 px-3 whitespace-nowrap flex items-center gap-1.5 nav-tab-active">
         <i class="fa-solid fa-flask"></i>
@@ -183,8 +189,8 @@
         <i class="fa-solid fa-folder-open"></i>
         <span>السياسات</span>
       </button>
-      <!-- التبويب الحصري للأدمن جمال عسيري -->
-      <button onclick="switchTab('adminReports')" id="tabBtn-adminReports" class="py-2.5 px-3 whitespace-nowrap flex items-center gap-1.5 text-amber-700 bg-amber-50/70 hover:bg-amber-100 rounded-t-lg">
+      <!-- البوابة الحصرية للأدمن جمال عسيري -->
+      <button onclick="switchTab('adminReports')" id="tabBtn-adminReports" class="py-2.5 px-3 whitespace-nowrap flex items-center gap-1.5 text-amber-700 bg-amber-50/80 hover:bg-amber-100 rounded-t-lg">
         <i class="fa-solid fa-crown text-amber-500"></i>
         <span>التقارير الشاملة (Admin)</span>
       </button>
@@ -194,32 +200,32 @@
   <!-- المحتوى الرئيسي -->
   <main class="max-w-7xl mx-auto w-full px-3 sm:px-6 py-4 space-y-5 flex-grow">
 
-    <!-- تنبيه صيانة السبت الأسبوعية وتحضير كال conCC والكونترولات -->
-    <div id="saturdayAlertBanner" class="bg-gradient-to-l from-amber-500 via-orange-500 to-amber-600 text-white rounded-2xl p-3.5 shadow-md flex flex-wrap items-center justify-between gap-3 no-print">
+    <!-- شريط تنبيه صيانة يوم السبت الأسبوعية وتحضير كال conCC والكونترولات -->
+    <div class="bg-gradient-to-l from-amber-500 via-orange-500 to-amber-600 text-white rounded-2xl p-3.5 shadow-md flex flex-wrap items-center justify-between gap-3 no-print">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl shrink-0">
           <i class="fa-solid fa-screwdriver-wrench"></i>
         </div>
         <div class="text-xs sm:text-sm">
-          <div class="font-black flex items-center gap-2">
+          <div class="font-black flex items-center gap-2 flex-wrap">
             <span>تنبيه الصيانة الأسبوعية (يوم السبت) وتحضير الكاليبريتور والكونترولات</span>
-            <span class="px-2 py-0.5 rounded-full bg-white text-amber-700 text-[10px] font-black">السبت</span>
+            <span class="px-2 py-0.5 rounded-full bg-white text-amber-700 text-[10px] font-black">موعد السبت الأسبوعي</span>
           </div>
           <p class="text-amber-50 text-xs mt-0.5">
-            تذكير هام: يرجى تنفيذ صيانة السبت الأسبوعية للأجهزة وتحضير كال جديد (<strong>conCC</strong>) والكونترولات المعتمدة وتوثيقها في قسم الأجهزة والصيانة.
+            تذكير معتمد: يجب تنفيذ صيانة السبت الأسبوعية للأجهزة وتحضير كال جديد (<strong>conCC</strong>) والكونترولات المضافة وتوثيقها في سجل الأجهزة.
           </p>
         </div>
       </div>
       <div class="flex items-center gap-2">
         <button onclick="switchTab('devices')" class="px-3.5 py-1.5 rounded-xl bg-white text-amber-700 font-black text-xs shadow hover:bg-amber-50 transition">
-          فتح الصيانة والكونترولات
+          إدارة صيانة السبت و conCC
         </button>
       </div>
     </div>
 
-    <!-- 4. البطاقات الإحصائية الأربع المطابقة للصورة 26 -->
+    <!-- 4. البطاقات الإحصائية الأربع -->
     <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 no-print">
-      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center space-y-1">
+      <div onclick="setInvStatusFilter('all')" class="cursor-pointer bg-white rounded-2xl p-4 shadow-sm border border-slate-100 hover:border-blue-300 flex flex-col items-center justify-center text-center space-y-1 transition">
         <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg">
           <i class="fa-solid fa-vial"></i>
         </div>
@@ -248,24 +254,23 @@
           <i class="fa-solid fa-cart-shopping"></i>
         </div>
         <p class="text-xs font-bold text-slate-600">طلبية الشراء (PO)</p>
-        <p class="text-xs font-black text-sky-600">استخراج PDF</p>
+        <p class="text-xs font-black text-sky-600">توليد تلقائي للنواقص / PDF</p>
       </div>
     </section>
 
     <!-- ========================================================= -->
-    <!-- النافذة 1: المخزون (Inventory) - مطابقة للصورة 26 -->
+    <!-- النافذة 1: المخزون (Inventory) -->
     <!-- ========================================================= -->
     <section id="tabContent-inventory" class="space-y-4">
       <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-100 space-y-3">
-        <!-- شريط البحث والأزرار الثلاثة العريضة -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-center">
           <div class="lg:col-span-5 flex items-center gap-2">
-            <button onclick="scanBarcodePrompt()" class="w-11 h-10 rounded-xl bg-slate-800 text-white flex items-center justify-center hover:bg-slate-700 shrink-0" title="مسح باركود بالكاميرا">
+            <button onclick="scanBarcodePrompt()" class="w-11 h-10 rounded-xl bg-slate-800 text-white flex items-center justify-center hover:bg-slate-700 shrink-0" title="مسح الباركود بالكاميرا">
               <i class="fa-solid fa-barcode"></i>
             </button>
             <div class="relative flex-1">
               <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-              <input id="invSearchInput" oninput="renderInventory()" type="text" placeholder="بحث بالاسم، الباركود، التشغيلة..."
+              <input id="invSearchInput" oninput="renderInventory()" type="text" placeholder="بحث بالاسم، الباركود، الشركة، أو رقم التشغيلة (Lot)..."
                 class="w-full rounded-xl border border-slate-200 pr-9 pl-3 py-2 text-xs font-bold focus:outline-none focus:border-sky-500" />
             </div>
           </div>
@@ -289,7 +294,7 @@
           </div>
         </div>
 
-        <!-- فلاتر الأقسام البيضاوية المطابقة للصورة 26 -->
+        <!-- فلاتر الأقسام -->
         <div id="invCategoryPills" class="flex items-center gap-2 overflow-x-auto pt-1 text-xs font-bold"></div>
       </div>
 
@@ -297,23 +302,22 @@
     </section>
 
     <!-- ========================================================= -->
-    <!-- النافذة 2: الأجهزة والصيانة (صيانة السبت + conCC + AI) -->
+    <!-- النافذة 2: الأجهزة والصيانة (يوم السبت + conCC + AI) -->
     <!-- ========================================================= -->
     <section id="tabContent-devices" class="hidden space-y-4">
-      <!-- لوحة إدارة تحضير الكاليبريتور conCC والكونترولات المضافة -->
       <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 class="text-base sm:text-lg font-black text-slate-800 flex items-center gap-2">
               <i class="fa-solid fa-microscope text-indigo-600"></i>
-              <span>أجهزة المختبر، صيانة السبت الأسبوعية، وتحضير الكال (conCC) والكونترولات</span>
+              <span>أجهزة المختبر والكونترولات اليومية وصيانة يوم السبت الأسبوعية</span>
             </h2>
-            <p class="text-xs text-slate-500">إدارة كل جهاز بالتعرف الذكي بالـ AI، توثيق صيانة يوم السبت، وتحضير الكاليبريتور (conCC) والكونترولات اليومية</p>
+            <p class="text-xs text-slate-500">إدارة كل جهاز منفصل بالتعرف الذكي بالـ AI، محاليله المتوفرة، تحضير كال جديد (conCC) والكونترولات، وصيانة السبت الأسبوعية</p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <button onclick="openModal('controlAddModal')" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black text-xs flex items-center gap-1.5 shadow-sm">
               <i class="fa-solid fa-vial-circle-check"></i>
-              <span>+ إضافة كونترول / كال جديد (conCC)</span>
+              <span>+ تحضير / إضافة كال (conCC) أو كونترول</span>
             </button>
             <button onclick="exportDevicesCSV()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5 shadow-sm">
               <i class="fa-solid fa-file-pdf"></i>
@@ -326,25 +330,24 @@
           </div>
         </div>
 
-        <!-- قائمة الكاليبريتور (conCC) والكونترولات النشطة -->
+        <!-- لوحة الكاليبريتور (conCC) والكونترولات المضافة -->
         <div class="rounded-2xl bg-amber-50/70 border border-amber-200 p-4 space-y-2">
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between flex-wrap gap-2">
             <span class="text-xs font-black text-amber-900 flex items-center gap-1.5">
               <i class="fa-solid fa-flask-vial text-amber-600"></i>
-              <span>سجل تحضير الكاليبريتور (conCC) والكونترولات المعتمدة:</span>
+              <span>سجل تحضير الكال الجديد (conCC) والكونترولات اليومية والأسبوعية:</span>
             </span>
-            <span class="text-[11px] font-bold text-amber-700">موعد الصيانة الأسبوعية المعتمد: كل يوم سبت</span>
+            <span class="text-[11px] font-bold text-amber-700">تحديث وإشراف: جمال عسيري (Admin) وفيصل يحيى (Supervisor)</span>
           </div>
           <div id="controlsListContainer" class="grid grid-cols-1 md:grid-cols-3 gap-2.5 pt-1"></div>
         </div>
       </div>
 
-      <!-- بطاقات الأجهزة المسجلة -->
       <div id="devicesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
     </section>
 
     <!-- ========================================================= -->
-    <!-- النافذة 3: النتائج الحرجة (Critical / Panic Results) -->
+    <!-- النافذة 3: النتائج الحرجة (Critical Results - CBAHI) -->
     <!-- ========================================================= -->
     <section id="tabContent-critical" class="hidden space-y-4">
       <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
@@ -352,13 +355,13 @@
           <div>
             <h2 class="text-lg font-black text-slate-800 flex items-center gap-2">
               <i class="fa-solid fa-bell-concierge text-rose-600"></i>
-              <span>سجل تبليغ النتائج الحرجة (Critical Results Reporting - CBAHI)</span>
+              <span>سجل تبليغ النتائج الحرجة (Panic Values Reporting - CBAHI / CAP)</span>
             </h2>
-            <p class="text-xs text-slate-500">توثيق فوري لبيانات المريض، الفحص الحرج، وقت التبليغ، واسم الطبيب/التمريض المستلم (Read-Back Policy)</p>
+            <p class="text-xs text-slate-500">توثيق بيانات المريض، القسم، النتيجة الحرجة، وقت الإبلاغ، واسم الطبيب/التمريض المستلم مع تأكيد Read-Back</p>
           </div>
           <button onclick="openModal('criticalModal')" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs flex items-center gap-1.5">
             <i class="fa-solid fa-plus"></i>
-            <span>تسجيل نتيجة حرجة جديدة</span>
+            <span>+ تسجيل نتيجة حرجة جديدة</span>
           </button>
         </div>
         <div id="criticalListContainer" class="space-y-2.5"></div>
@@ -366,7 +369,7 @@
     </section>
 
     <!-- ========================================================= -->
-    <!-- النافذة 4: الجرد الذكي (Smart Inventory Stocktaking) -->
+    <!-- النافذة 4: الجرد الذكي (Smart Audit) -->
     <!-- ========================================================= -->
     <section id="tabContent-smartAudit" class="hidden space-y-4">
       <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
@@ -374,9 +377,9 @@
           <div>
             <h2 class="text-lg font-black text-slate-800 flex items-center gap-2">
               <i class="fa-solid fa-barcode text-sky-600"></i>
-              <span>الجرد الذكي ومطابقة المخزون الفعلي (Smart Audit)</span>
+              <span>الجرد الذكي ومطابقة أرصدة المختبر والمستودع العام</span>
             </h2>
-            <p class="text-xs text-slate-500">مقارنة فورية بين رصيد النظام والرصيد الفعلي في المختبر والمستودع العام واعتماد الفروقات</p>
+            <p class="text-xs text-slate-500">مقارنة فورية بين رصيد النظام والعد الفعلي بالكارتلج واعتماد المطابقة في سجل الجودة</p>
           </div>
           <button onclick="approveSmartAuditAll()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5">
             <i class="fa-solid fa-check-double"></i>
@@ -395,16 +398,16 @@
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 class="text-lg font-black text-slate-800">دليل القيم المرجعية والنطاقات الطبيعية والحرجة</h2>
-            <p class="text-xs text-slate-500">مرجع معتمد لفحوصات الكيمياء، الهرمونات، أمراض الدم، التخثر، وغازات الدم</p>
+            <p class="text-xs text-slate-500">مرجع معتمد لفحوصات الكيمياء الحيوية، الهرمونات، أمراض الدم، التخثر، وبنك الدم</p>
           </div>
-          <button onclick="addRefRangePrompt()" class="px-4 py-2 rounded-xl bg-sky-500 text-white font-black text-xs">+ إضافة فحص مرجعي</button>
+          <button onclick="addRefRangePrompt()" class="px-4 py-2 rounded-xl bg-sky-500 text-white font-black text-xs">+ إضافة قيمة مرجعية</button>
         </div>
         <div id="refRangesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
       </div>
     </section>
 
     <!-- ========================================================= -->
-    <!-- النافذة 6: الثلاجات (Refrigerators & Temp Monitoring) -->
+    <!-- النافذة 6: الثلاجات (Refrigerators & Freezers Temp Log) -->
     <!-- ========================================================= -->
     <section id="tabContent-fridges" class="hidden space-y-4">
       <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
@@ -414,16 +417,16 @@
               <i class="fa-solid fa-temperature-low text-cyan-600"></i>
               <span>مراقبة درجات حرارة الثلاجات والفريزرات (Core Lab & Blood Bank)</span>
             </h2>
-            <p class="text-xs text-slate-500">توثيق درجات الحرارة اليومية لثلاجات المحاليل وثلاجات بنك الدم والفريزرات البلازمية</p>
+            <p class="text-xs text-slate-500">تسجيل درجات الحرارة اليومية لثلاجات المحاليل وثلاجات وحدات الدم وفريزرات البلازما</p>
           </div>
-          <button onclick="addFridgePrompt()" class="px-4 py-2 rounded-xl bg-cyan-600 text-white font-black text-xs">+ إضافة ثلاجة / تسجيل حرارة</button>
+          <button onclick="addFridgePrompt()" class="px-4 py-2 rounded-xl bg-cyan-600 text-white font-black text-xs">+ إضافة ثلاجة / قراءة جديدة</button>
         </div>
         <div id="fridgesGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
       </div>
     </section>
 
     <!-- ========================================================= -->
-    <!-- النافذة 7: الموردين (Suppliers & Vendors) -->
+    <!-- النافذة 7: الموردين (Suppliers) -->
     <!-- ========================================================= -->
     <section id="tabContent-suppliers" class="hidden space-y-4">
       <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
@@ -431,9 +434,9 @@
           <div>
             <h2 class="text-lg font-black text-slate-800 flex items-center gap-2">
               <i class="fa-solid fa-truck-fast text-indigo-600"></i>
-              <span>دليل الشركات الموردة والوكلاء المعتمدين</span>
+              <span>دليل الشركات الموردة ومهندسي الصيانة</span>
             </h2>
-            <p class="text-xs text-slate-500">التواصل المباشر مع مندوبي الشركات ومهندسي الصيانة وإرسال طلبيات الشراء</p>
+            <p class="text-xs text-slate-500">بيانات التواصل مع الشركات الموردة للمحاليل والأجهزة وطلبات الصيانة</p>
           </div>
           <button onclick="addSupplierPrompt()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-black text-xs">+ إضافة مورد جديد</button>
         </div>
@@ -448,8 +451,8 @@
       <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 class="text-lg font-black text-slate-800">جدول الشفتات وتوزيع الموظفين (Core Lab & Blood Bank)</h2>
-            <p class="text-xs text-slate-500">إدارة أوقات الشفتات، الاعتماد الإداري، التصدير الشهري (PDF / Excel / Word)، ومسح صورة الجدول بالـ AI</p>
+            <h2 class="text-lg font-black text-slate-800">جدول الشفتات وتوزيع الموظفين والمهام (Core Lab & Blood Bank)</h2>
+            <p class="text-xs text-slate-500">إدارة أوقات الشفتات، التوقيت (من وإلى)، والتحميل الشهري PDF/Excel/Word أو الاستيراد بالـ AI (تاريخ ميلادي)</p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <button onclick="openModal('shiftModal')" class="px-3.5 py-2 rounded-xl bg-sky-500 text-white font-black text-xs flex items-center gap-1.5">
@@ -487,10 +490,10 @@
               <tr>
                 <th class="py-3 px-3">الموظف / المجموعة</th>
                 <th class="py-3 px-3">الرقم الوظيفي</th>
-                <th class="py-3 px-3">الشفت والأوقات</th>
+                <th class="py-3 px-3">الشفت والأوقات (من - إلى)</th>
                 <th class="py-3 px-3">القسم المكلف به</th>
                 <th class="py-3 px-3">الأيام</th>
-                <th class="py-3 px-3 text-center no-print">إجراءات</th>
+                <th class="py-3 px-3 text-center no-print">الإجراءات</th>
               </tr>
             </thead>
             <tbody id="shiftsTableBody" class="divide-y divide-slate-100 font-bold"></tbody>
@@ -500,14 +503,14 @@
     </section>
 
     <!-- ========================================================= -->
-    <!-- النافذة 9: السياسات والجودة (Policies - CBAHI/CAP/AABB/SFDA) -->
+    <!-- النافذة 9: السياسات والاعتماد (Policies - CBAHI/CAP/AABB/SFDA) -->
     <!-- ========================================================= -->
     <section id="tabContent-policies" class="hidden space-y-4">
       <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 class="text-lg font-black text-slate-800">السياسات والإجراءات وملفات الاعتماد (CBAHI / CAP / AABB / SFDA / HIMSS)</h2>
-            <p class="text-xs text-slate-500">مكتبة السياسات المعتمدة وأدلة العمل القياسية (SOPs) لمختبر وبنك دم مستشفى الحياة أبها</p>
+            <p class="text-xs text-slate-500">ملفات الجودة المعتمدة وأدلة العمل القياسية (SOPs) لمختبر وبنك دم مستشفى الحياة أبها</p>
           </div>
           <button onclick="addPolicyPrompt()" class="px-4 py-2 rounded-xl bg-sky-600 text-white font-black text-xs">+ إضافة سياسة / ملف اعتماد</button>
         </div>
@@ -524,7 +527,7 @@
 
   </main>
 
-  <!-- الفوتر الرسمي بحقوق Technolabs.online -->
+  <!-- الفوتر الرسمي المعتمد بحقوق Technolabs.online -->
   <footer class="bg-white border-t border-slate-200 py-4 px-4 mt-8 text-center space-y-2 no-print">
     <p class="text-xs font-bold text-slate-600">
       جميع الحقوق محفوظة © <a href="https://www.technolabs.online" class="text-sky-600 font-black hover:underline">Technolabs.online</a> — TechnoLab مستشفى الحياة أبها -
@@ -535,21 +538,21 @@
         الإصدار المعتمد الشامل V7.0 (ميلادي)
       </span>
       <span class="px-3 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-black">
-        Done by Jamal Asiri (Admin)
+        Done by Jamal Asiri
       </span>
     </div>
   </footer>
 
-  <!-- زر الذكاء الاصطناعي العائم -->
+  <!-- زر المساعد الذكي العائم (أسفل اليسار) -->
   <button onclick="openAIAssistant()" class="fixed bottom-5 left-5 z-40 w-12 h-12 rounded-full bg-purple-600 hover:bg-purple-700 text-white shadow-xl flex items-center justify-center transition transform hover:scale-105 no-print" title="المساعد الذكي TechnoLab AI">
     <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
   </button>
 
   <!-- ================================================================= -->
-  <!-- النوافذ المنبثقة (Modals) -->
+  <!-- جميع النوافذ المنبثقة (Modals) -->
   <!-- ================================================================= -->
 
-  <!-- 1. نافذة إضافة محلول جديد (AI + مختبر + مستودع عام) -->
+  <!-- 1. نافذة إضافة محلول جديد (شاملة الذكاء الاصطناعي + المختبر + المستودع العام) -->
   <div id="reagentModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-3xl max-w-lg w-full p-5 shadow-2xl border border-slate-100 my-8 space-y-4 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -565,7 +568,7 @@
           </div>
           <p class="text-[11px] text-purple-600">صوّر علبة المحلول أو النشرة لتعبئة الحقول تلقائياً</p>
         </div>
-        <label class="cursor-pointer px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center gap-1.5 shrink-0">
+        <label class="cursor-pointer px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center gap-1.5 shrink-0 shadow">
           <i class="fa-solid fa-camera"></i>
           <span>تصوير العلبة</span>
           <input type="file" accept="image/*" capture="environment" class="hidden" onchange="aiScanReagentBox(event)" />
@@ -575,19 +578,19 @@
       <form onsubmit="saveReagent(event)" class="space-y-3 text-xs">
         <div>
           <label class="block font-bold mb-1">اسم المحلول *</label>
-          <input id="regName" required type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+          <input id="regName" required type="text" placeholder="مثال: Cobas Glucose HK / CBC Lyse" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
         </div>
         <div>
           <label class="block font-bold mb-1">الباركود *</label>
           <div class="flex gap-2">
-            <input id="regBarcode" required type="text" class="flex-1 rounded-xl border border-slate-200 px-3 py-2" />
-            <button type="button" onclick="document.getElementById('regBarcode').value='628'+Math.floor(10000000+Math.random()*90000000)" class="px-3 rounded-xl bg-slate-100 border border-slate-200"><i class="fa-solid fa-camera"></i></button>
+            <input id="regBarcode" required type="text" placeholder="امسح أو أدخل الباركود" class="flex-1 rounded-xl border border-slate-200 px-3 py-2" />
+            <button type="button" onclick="document.getElementById('regBarcode').value='628'+Math.floor(10000000+Math.random()*90000000)" class="px-3.5 rounded-xl bg-slate-100 border border-slate-200" title="مسح الباركود بالكاميرا"><i class="fa-solid fa-camera"></i></button>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block font-bold mb-1">الشركة المصنعة *</label>
-            <input id="regCompany" required type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+            <input id="regCompany" required type="text" placeholder="مثال: Roche / Sysmex / Abbott" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
           </div>
           <div>
             <label class="block font-bold mb-1">القسم</label>
@@ -604,7 +607,7 @@
         <div class="grid grid-cols-3 gap-2">
           <div>
             <label class="block font-bold mb-1">رقم التشغيلة (Lot) *</label>
-            <input id="regLot" required type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+            <input id="regLot" required type="text" placeholder="LOT-XXXX" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
           </div>
           <div>
             <label class="block font-bold mb-1">تاريخ الصلاحية *</label>
@@ -669,7 +672,7 @@
             <i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i>
             <span>التعرف على الجهاز من خلال صورة بالـ AI</span>
           </div>
-          <p class="text-[11px] text-indigo-700">صوّر الجهاز أو الرقم التسلسلي ليقوم الذكاء الاصطناعي بتعبئة بيانات الجهاز والكونترول تلقائياً</p>
+          <p class="text-[11px] text-indigo-700">صوّر الجهاز أو الملصق التعريفي ليقوم الذكاء الاصطناعي بتعبئة بيانات الجهاز وصيانة السبت وكال conCC تلقائياً</p>
         </div>
         <label class="cursor-pointer px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs flex items-center gap-1.5 shrink-0 shadow">
           <i class="fa-solid fa-camera"></i>
@@ -704,7 +707,7 @@
           <div>
             <label class="block font-bold mb-1">صيانة يوم السبت الأسبوعية</label>
             <select id="devSaturdayMaint" class="w-full rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 font-black text-amber-900">
-              <option value="مجدولة ليوم السبت + تحضير conCC">مجدولة ليوم السبت + تحضير conCC</option>
+              <option value="مجدولة ليوم السبت + تحضير كال جديد conCC">مجدولة ليوم السبت + تحضير كال جديد conCC</option>
               <option value="تمت صيانة السبت وتحضير conCC ✓">تمت صيانة السبت وتحضير conCC ✓</option>
               <option value="تحتاج مراجعة مهندس الصيانة">تحتاج مراجعة مهندس الصيانة</option>
             </select>
@@ -713,8 +716,8 @@
 
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-bold mb-1">حالة كال (conCC) والكونترول</label>
-            <input id="devCalControl" type="text" value="conCC جاهز + QC Level 1 & 2 مقبول" class="w-full rounded-xl border border-slate-200 px-3 py-2 font-bold" />
+            <label class="block font-bold mb-1">حالة كال (conCC) والكونترولات</label>
+            <input id="devCalControl" type="text" value="تحضير كال جديد conCC + الكونترولات المعتمدة" class="w-full rounded-xl border border-slate-200 px-3 py-2 font-bold" />
           </div>
           <div>
             <label class="block font-bold mb-1">المحاليل المرتبطة بالجهاز</label>
@@ -730,11 +733,11 @@
     </div>
   </div>
 
-  <!-- 3. نافذة إضافة كال (conCC) أو كونترولات جديدة لاحقاً -->
+  <!-- 3. نافذة تحضير كال (conCC) أو إضافة كونترولات جديدة لاحقاً -->
   <div id="controlAddModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-100 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 class="text-base font-black text-amber-800">إضافة / تحضير كال (conCC) أو كونترول جديد</h3>
+        <h3 class="text-base font-black text-amber-800">تحضير / إضافة كال (conCC) أو كونترول جديد</h3>
         <button onclick="closeModal('controlAddModal')" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
       </div>
       <form onsubmit="saveCustomControl(event)" class="space-y-3 text-xs">
@@ -744,7 +747,7 @@
         </div>
         <div>
           <label class="block font-bold mb-1">الجهاز / القسم المرتبط *</label>
-          <input id="ctrlDevice" required type="text" placeholder="مثال: Cobas c311 - الكيمياء" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+          <input id="ctrlDevice" required type="text" placeholder="مثال: Cobas c311 - الكيمياء الحيوية" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
@@ -752,11 +755,11 @@
             <input id="ctrlLot" type="text" placeholder="LOT-XXXX" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
           </div>
           <div>
-            <label class="block font-bold mb-1">تاريخ التحضير (السبت)</label>
+            <label class="block font-bold mb-1">تاريخ التحضير (يوم السبت)</label>
             <input id="ctrlDate" type="date" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
           </div>
         </div>
-        <button type="submit" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black">حفظ وتفعيل التنبيه</button>
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black">حفظ وتفعيل التنبيه الأسبوعي</button>
       </form>
     </div>
   </div>
@@ -792,11 +795,11 @@
               <tr>
                 <th class="py-2.5 px-3">الاسم</th>
                 <th class="py-2.5 px-3">الرقم الوظيفي</th>
-                <th class="py-2.5 px-3">الجوال</th>
+                <th class="py-2.5 px-3">رقم الجوال</th>
                 <th class="py-2.5 px-3">تاريخ التعيين</th>
                 <th class="py-2.5 px-3">البريد الإلكتروني</th>
                 <th class="py-2.5 px-3">القسم / الصلاحية</th>
-                <th class="py-2.5 px-3 text-center">إجراءات</th>
+                <th class="py-2.5 px-3 text-center">الإجراءات</th>
               </tr>
             </thead>
             <tbody id="fullStaffTableBody" class="divide-y divide-slate-100 font-bold"></tbody>
@@ -806,7 +809,7 @@
     </div>
   </div>
 
-  <!-- 5. نافذة تبديل الصلاحيات السريع (Jamal Admin / Dr. Amr Director / Faisal Supervisor / Staff) -->
+  <!-- 5. نافذة تبديل الصلاحيات السريع (Jamal Admin / Dr. Amr Director / Faisal Supervisor) -->
   <div id="roleSwitcherModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-100 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -828,7 +831,7 @@
         <div onclick="switchActiveAccount('DR. AMR', '30001', 'director')" class="cursor-pointer p-3.5 rounded-2xl border border-purple-200 bg-purple-50/50 hover:bg-purple-100/60 flex items-center justify-between">
           <div>
             <p class="font-black text-sm text-slate-800">🏛️ د. عمرو (30001) — DIRECTOR</p>
-            <p class="text-[11px] text-purple-800">مدير المختبر: اعتماد الجداول النهائية، اعتماد طلبيات الشراء (PO)، والتوجيه الإداري</p>
+            <p class="text-[11px] text-purple-800">مدير المختبر: الاعتماد النهائي لجدول الشفتات، اعتماد طلبيات الشراء (PO)، والتوجيه الإداري</p>
           </div>
           <i class="fa-solid fa-chevron-left text-purple-600"></i>
         </div>
@@ -844,32 +847,50 @@
     </div>
   </div>
 
-  <!-- 6. نافذة تعريف الموظف (CBAHI) -->
+  <!-- 6. نافذة تعريف الموظف لمرة واحدة (مطابقة للصورة 22) -->
   <div id="identityModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-t-4 border-t-sky-500 text-center space-y-4">
-      <h3 class="text-lg font-black text-slate-800">تعريف الموظف لتوثيق سجل الجودة (CBAHI)</h3>
+      <div class="w-12 h-12 rounded-full bg-sky-50 text-sky-500 mx-auto flex items-center justify-center text-xl">
+        <i class="fa-solid fa-id-badge"></i>
+      </div>
+      <div>
+        <h3 class="text-lg font-black text-slate-800">تعريف الموظف (لمرة واحدة)</h3>
+        <p class="text-xs text-slate-500">تُحفظ بياناتك نهائياً في جهازك لتوثيق العمليات في سجل الجودة (CBAHI)</p>
+      </div>
       <form onsubmit="saveIdentityForm(event)" class="space-y-3 text-right text-xs">
         <div>
-          <label class="block font-bold mb-1">اختر اسمك من القائمة المعتمدة *</label>
-          <select id="idSelectStaff" class="w-full rounded-xl border border-slate-200 px-3 py-2.5 font-bold"></select>
+          <label class="block font-bold mb-1">اختر الموظف من القائمة المعتمدة *</label>
+          <select id="idSelectStaff" onchange="fillIdentityInputs()" class="w-full rounded-xl border border-slate-200 px-3 py-2 font-bold"></select>
         </div>
-        <button type="submit" class="w-full py-3 rounded-xl bg-sky-500 text-white font-black">تفعيل الدخول والتوثيق</button>
+        <div>
+          <label class="block font-bold mb-1">اسم الموظف الثلاثي *</label>
+          <input id="idManualName" required type="text" value="Jamal Asiri" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-center font-bold" />
+        </div>
+        <div>
+          <label class="block font-bold mb-1">الرقم الوظيفي *</label>
+          <input id="idManualEmpId" required type="text" value="32726" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-center font-bold" />
+        </div>
+        <div>
+          <label class="block font-bold mb-1">البريد الإلكتروني الشخصي *</label>
+          <input id="idManualEmail" required type="email" value="alalkmy777@gmail.com" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-center font-bold" />
+        </div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-sky-500 text-white font-black">حفظ وتفعيل الدخول الدائم</button>
       </form>
     </div>
   </div>
 
-  <!-- 7. نافذة التاسكات والمهام الخاصة -->
+  <!-- 7. نافذة التاسكات والمهام الخاصة (مع الردود) -->
   <div id="tasksModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-100">
       <div class="bg-gradient-to-l from-purple-700 to-indigo-600 text-white px-5 py-4 flex items-center justify-between">
         <span class="font-black">إدارة التاسكات والمهام الخاصة</span>
         <button onclick="closeModal('tasksModal')" class="text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
       </div>
-      <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+      <div class="p-5 space-y-4 max-h-[78vh] overflow-y-auto text-xs">
         <form onsubmit="addTask(event)" class="space-y-2.5 bg-purple-50/50 p-3.5 rounded-2xl border border-purple-100">
-          <label class="block font-bold">المستهدف (الاسم والرقم الوظيفي):</label>
+          <label class="block font-bold">المستهدف (الاسم والرقم الوظيفي فقط):</label>
           <select id="taskTarget" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 font-bold"></select>
-          <textarea id="taskText" required rows="2" placeholder="اكتب تفاصيل التاسك أو التعميم..." class="w-full rounded-xl border border-slate-200 bg-white p-2.5"></textarea>
+          <textarea id="taskText" required rows="2" placeholder="اكتب تفاصيل التاسك أو الملاحظة..." class="w-full rounded-xl border border-slate-200 bg-white p-2.5"></textarea>
           <button type="submit" class="px-5 py-2 rounded-xl bg-purple-600 text-white font-black">إرسال التاسك الآن</button>
         </form>
         <div id="tasksList" class="space-y-2"></div>
@@ -916,7 +937,7 @@
     </div>
   </div>
 
-  <!-- 10. نوافذ الإشعارات، تسليم الشفت، طلبية الشراء، والسجل -->
+  <!-- 10. نافذة مركز الإشعارات والتنبيهات الموجهة -->
   <div id="notificationsModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl">
       <div class="bg-amber-500 text-white px-5 py-3.5 flex justify-between items-center font-black">
@@ -924,9 +945,14 @@
         <button onclick="closeModal('notificationsModal')"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div id="notifModalBody" class="p-4 space-y-2.5 max-h-80 overflow-y-auto text-xs"></div>
+      <div class="px-5 py-3 bg-slate-50 border-t flex justify-between items-center text-xs">
+        <button onclick="markAllNotifsRead()" class="font-black text-sky-600 hover:underline">تعليم الكل مقروء</button>
+        <button onclick="closeModal('notificationsModal')" class="px-4 py-1.5 rounded-xl border bg-white font-bold">إغلاق</button>
+      </div>
     </div>
   </div>
 
+  <!-- 11. نافذة تسليم الشفت -->
   <div id="handoverModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-3 text-xs">
       <div class="flex justify-between items-center border-b pb-2">
@@ -941,6 +967,7 @@
     </div>
   </div>
 
+  <!-- 12. نافذة طلبية الشراء (PO) -->
   <div id="poModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-lg w-full p-5 shadow-2xl space-y-3 text-xs">
       <div class="flex justify-between items-center border-b pb-2">
@@ -948,13 +975,14 @@
         <button onclick="closeModal('poModal')"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <div id="poModalList" class="space-y-2 max-h-64 overflow-y-auto"></div>
-      <div class="flex gap-2 pt-2 border-t">
+      <div class="flex flex-wrap gap-2 pt-2 border-t">
         <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-sky-500 text-white font-black">استخراج PDF</button>
         <button onclick="approvePORoleCheck()" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-black">اعتماد الطلبية (Admin / د.عمرو)</button>
       </div>
     </div>
   </div>
 
+  <!-- 13. نافذة السجل الشامل (CBAHI Audit Log) -->
   <div id="auditModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-5 shadow-2xl space-y-3 text-xs">
       <div class="flex justify-between items-center border-b pb-2">
@@ -971,32 +999,29 @@
   <script>
     const CLOUD_API = "https://api.technolabs.online";
 
-    // القائمة الكاملة لجميع موظفي المختبر الأساسي وبنك الدم والإدارة (17 موظفاً)
+    // جميع الموظفين من النسخ القديمة والحديثة (17 موظفاً: الإدارة + Core Lab + Blood Bank)
     const ALL_STAFF_DEFAULT = [
-      // الإدارة والإشراف
-      { id: 1, name: "Jamal Asiri", emp_id: "32726", phone: "0505610803", hiring: "02-11-2024", email: "alalkmy777@gmail.com", section: "ADMINISTRATION", role: "admin", title: "Admin 👑 | مدير النظام ومشرف الجودة" },
-      { id: 2, name: "DR. AMR", emp_id: "30001", phone: "0500000000", hiring: "01-01-2024", email: "amr@technolabs.online", section: "ADMINISTRATION", role: "director", title: "Director 🏛️ | مدير المختبر" },
-      { id: 3, name: "FAISAL YAHYA", emp_id: "32731", phone: "0541156185", hiring: "02-11-2024", email: "Fasial.foxy1@gmail.com", section: "CORE LAB", role: "supervisor", title: "Supervisor 🛡️ | مشرف المختبر" },
-      // HNH ABHA CORE LAB STAFF
-      { id: 4, name: "ABDULLA ALSHARIF", emp_id: "30129", phone: "0535459126", hiring: "29-05-2025", email: "alsharif30129@gmail.com", section: "CORE LAB", role: "staff", title: "أخصائي مختبر - Core Lab" },
-      { id: 5, name: "REEM ALI", emp_id: "30927", phone: "0559204026", hiring: "16-10-2024", email: "reeeeo.1413@gmail.com", section: "CORE LAB", role: "staff", title: "أخصائية مختبر - Core Lab" },
-      { id: 6, name: "OMER TAHIR", emp_id: "32728", phone: "0502494505", hiring: "02-11-2024", email: "omermohtahir@gmail.com", section: "CORE LAB", role: "staff", title: "أخصائي مختبر - Core Lab" },
-      { id: 7, name: "SAQER ALI", emp_id: "34198", phone: "0550174018", hiring: "21-04-2025", email: "sqqr1818@gmail.com", section: "CORE LAB", role: "staff", title: "أخصائي مختبر - Core Lab" },
-      { id: 8, name: "RAGHAD QASEM", emp_id: "34197", phone: "0509358950", hiring: "20-04-2025", email: "raaghadqasem@gmail.com", section: "CORE LAB", role: "staff", title: "أخصائية مختبر - Core Lab" },
-      { id: 9, name: "QARAN SAEED", emp_id: "36911", phone: "0531274418", hiring: "29-12-2025", email: "Qaran.aldail@gmail.com", section: "CORE LAB", role: "staff", title: "أخصائي مختبر - Core Lab" },
-      { id: 10, name: "BUSHRA SAEED", emp_id: "37234", phone: "0502775505", hiring: "05-01-2026", email: "Bushrasaeedali@hotmail.com", section: "CORE LAB", role: "staff", title: "أخصائية مختبر - Core Lab" },
-      { id: 11, name: "ABDULMAJEED MUSHABAB", emp_id: "37242", phone: "0567680810", hiring: "05-01-2026", email: "alasiri.ab7@gmail.com", section: "CORE LAB", role: "staff", title: "أخصائي مختبر - Core Lab" },
-      { id: 12, name: "Dr. walla rabie", emp_id: "37520", phone: "0557876987", hiring: "01-02-2026", email: "-", section: "CORE LAB", role: "staff", title: "طبيب مختبر - Core Lab" },
-      // HNH ABHA BLOOD BANK STAFF
-      { id: 13, name: "AMJAD YAHYA", emp_id: "32693", phone: "0568282318", hiring: "02-11-2024", email: "Amjad10231@gmail.com", section: "BLOOD BANK", role: "staff", title: "أخصائي بنك الدم - Blood Bank" },
-      { id: 14, name: "ABDU ALAYAFI", emp_id: "36246", phone: "0557737061", hiring: "16-11-2025", email: "Abdoaliabdallh1416@gmail.com", section: "BLOOD BANK", role: "staff", title: "أخصائي بنك الدم - Blood Bank" },
-      { id: 15, name: "RAWAN ALARAFJI", emp_id: "36248", phone: "0592662323", hiring: "28-10-2025", email: "rawanabdullah56@gmail.com", section: "BLOOD BANK", role: "staff", title: "أخصائية بنك الدم - Blood Bank" },
-      { id: 16, name: "KAWTHAR ASSIRI", emp_id: "36250", phone: "0532443539", hiring: "28-10-2025", email: "iikrii303@gmail.com", section: "BLOOD BANK", role: "staff", title: "أخصائية بنك الدم - Blood Bank" },
-      { id: 17, name: "Dr.mustafa yahya", emp_id: "37525", phone: "0509854263", hiring: "01-02-2026", email: "-", section: "BLOOD BANK", role: "staff", title: "طبيب بنك الدم - Blood Bank" }
+      { id: 1, name: "Jamal Asiri", emp_id: "32726", phone: "0505610803", hiring: "02-11-2024", email: "alalkmy777@gmail.com", section: "ADMINISTRATION", role: "admin" },
+      { id: 2, name: "DR. AMR", emp_id: "30001", phone: "0500000000", hiring: "01-01-2024", email: "amr@technolabs.online", section: "ADMINISTRATION", role: "director" },
+      { id: 3, name: "FAISAL YAHYA", emp_id: "32731", phone: "0541156185", hiring: "02-11-2024", email: "Fasial.foxy1@gmail.com", section: "CORE LAB", role: "supervisor" },
+      { id: 4, name: "ABDULLA ALSHARIF", emp_id: "30129", phone: "0535459126", hiring: "29-05-2025", email: "alsharif30129@gmail.com", section: "CORE LAB", role: "staff" },
+      { id: 5, name: "REEM ALI", emp_id: "30927", phone: "0559204026", hiring: "16-10-2024", email: "reeeeo.1413@gmail.com", section: "CORE LAB", role: "staff" },
+      { id: 6, name: "OMER TAHIR", emp_id: "32728", phone: "0502494505", hiring: "02-11-2024", email: "omermohtahir@gmail.com", section: "CORE LAB", role: "staff" },
+      { id: 7, name: "SAQER ALI", emp_id: "34198", phone: "0550174018", hiring: "21-04-2025", email: "sqqr1818@gmail.com", section: "CORE LAB", role: "staff" },
+      { id: 8, name: "RAGHAD QASEM", emp_id: "34197", phone: "0509358950", hiring: "20-04-2025", email: "raaghadqasem@gmail.com", section: "CORE LAB", role: "staff" },
+      { id: 9, name: "QARAN SAEED", emp_id: "36911", phone: "0531274418", hiring: "29-12-2025", email: "Qaran.aldail@gmail.com", section: "CORE LAB", role: "staff" },
+      { id: 10, name: "BUSHRA SAEED", emp_id: "37234", phone: "0502775505", hiring: "05-01-2026", email: "Bushrasaeedali@hotmail.com", section: "CORE LAB", role: "staff" },
+      { id: 11, name: "ABDULMAJEED MUSHABAB", emp_id: "37242", phone: "0567680810", hiring: "05-01-2026", email: "alasiri.ab7@gmail.com", section: "CORE LAB", role: "staff" },
+      { id: 12, name: "Dr. walla rabie", emp_id: "37520", phone: "0557876987", hiring: "01-02-2026", email: "-", section: "CORE LAB", role: "staff" },
+      { id: 13, name: "AMJAD YAHYA", emp_id: "32693", phone: "0568282318", hiring: "02-11-2024", email: "Amjad10231@gmail.com", section: "BLOOD BANK", role: "staff" },
+      { id: 14, name: "ABDU ALAYAFI", emp_id: "36246", phone: "0557737061", hiring: "16-11-2025", email: "Abdoaliabdallh1416@gmail.com", section: "BLOOD BANK", role: "staff" },
+      { id: 15, name: "RAWAN ALARAFJI", emp_id: "36248", phone: "0592662323", hiring: "28-10-2025", email: "rawanabdullah56@gmail.com", section: "BLOOD BANK", role: "staff" },
+      { id: 16, name: "KAWTHAR ASSIRI", emp_id: "36250", phone: "0532443539", hiring: "28-10-2025", email: "iikrii303@gmail.com", section: "BLOOD BANK", role: "staff" },
+      { id: 17, name: "Dr.mustafa yahya", emp_id: "37525", phone: "0509854263", hiring: "01-02-2026", email: "-", section: "BLOOD BANK", role: "staff" }
     ];
 
     const DEFAULT_CONTROLS = [
-      { id: 1, name: "conCC (كاليبريتور الكيمياء الجديد)", device: "Cobas c311 - الكيمياء الحيوية", lot: "LOT-CC2026", date: "يوم السبت (أسبوعي)", status: "مفعل ومجدول ليوم السبت" },
+      { id: 1, name: "conCC (كاليبريتور الكيمياء الجديد)", device: "Cobas c311 - الكيمياء الحيوية", lot: "LOT-CC2026", date: "كل يوم سبت (أسبوعي)", status: "تنبيه التحضير مفعل ✓" },
       { id: 2, name: "PreciControl ClinChem Multi 1 & 2", device: "الكيمياء الحيوية", lot: "LOT-QC102", date: "يومي + صيانة السبت", status: "مقبول (Pass)" }
     ];
 
@@ -1014,41 +1039,4 @@
 
     const DEFAULT_POLICIES = [
       { id: 1, code: "CBAHI-LB.1", title: "سياسة إدارة المخزون وتنبيه الكارتلج الواحد (<=1)", standard: "CBAHI / CAP", owner: "Jamal Asiri" },
-      { id: 2, code: "CBAHI-LB.12", title: "بروتوكول صيانة يوم السبت الأسبوعية وتحضير كال conCC", standard: "CBAHI / SFDA", owner: "Jamal Asiri & Faisal" },
-      { id: 3, code: "AABB-BB.4", title: "سياسة حفظ وصرف وحدات الدم ومراقبة الثلاجات", standard: "AABB / CBAHI", owner: "Dr. Amr & Jamal Asiri" }
-    ];
-
-    const DEFAULT_REF_RANGES = [
-      { id: 1, test: "Glucose (Fasting)", normal: "70 - 105 mg/dL", panic: "< 45 or > 450 mg/dL", dept: "كيمياء حيوية" },
-      { id: 2, test: "Potassium (K+)", normal: "3.5 - 5.1 mmol/L", panic: "< 2.8 or > 6.2 mmol/L", dept: "كيمياء حيوية" },
-      { id: 3, test: "Hemoglobin (Hb)", normal: "13.0 - 17.0 g/dL", panic: "< 7.0 or > 20.0 g/dL", dept: "أمراض دم" },
-      { id: 4, test: "Troponin I (High Sensitive)", normal: "< 0.04 ng/mL", panic: "> 0.50 ng/mL", dept: "الهرمونات" }
-    ];
-
-    let state = JSON.parse(localStorage.getItem("technolab_v7_full")) || {
-      activeUser: { name: "Jamal Asiri", emp_id: "32726", role: "admin" },
-      staff: ALL_STAFF_DEFAULT,
-      inventory: [],
-      devices: [],
-      controls: DEFAULT_CONTROLS,
-      criticalResults: [],
-      fridges: DEFAULT_FRIDGES,
-      suppliers: DEFAULT_SUPPLIERS,
-      shifts: [],
-      policies: DEFAULT_POLICIES,
-      refRanges: DEFAULT_REF_RANGES,
-      comprehensiveReports: [
-        {
-          id: 1,
-          title: "التقرير الشامل لجودة المختبر وبنك الدم وصيانة السبت (CBAHI / CAP)",
-          period: "نوفمبر 2026",
-          summary: "تم استيفاء جميع معايير الجودة، جدولة صيانة السبت وتحضير كال conCC، ومطابقة مخزون الكارتلج.",
-          issuedBy: "Jamal Asiri (32726) - Admin 👑",
-          date: "2026-11-07"
-        }
-      ],
-      tasks: [],
-      handovers: [],
-      notifications: [
-        { id: 1, title: "تنبيه صيانة السبت الأسبوعية وتحضير كال conCC", text: "يرجى التأكد من تنفيذ صيانة يوم السبت وتحضير كال جديد (conCC) والكونترولات.", date: "السبت" },
-        { id: 2, title: "اكتمال قاعدة بيانات الموظفين (17 موظفاً)", text: "تم إدراج جميع موظفي Core Lab و Bl
+      { id: 2, code: "CBAHI-LB.12", title: "بروتوكول صيانة يوم السبت الأسبوعية وتحضير كال conCC", standard: "CBAHI / SFDA", own
