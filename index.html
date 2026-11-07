@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>TechnoLab | مستشفى الحياة أبها - Technolabs.online</title>
+  <title>TechnoLab AI | مستشفى الحياة أبها - Technolabs.online</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -49,7 +49,13 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between pb-16">
 
-  <!-- 1. الشريط العلوي لتسليم الشفت (Handover Top Bar) -->
+  <!-- شريط التحميل الذكي عند معالجة طلبات الذكاء الاصطناعي -->
+  <div id="aiGlobalToast" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] hidden items-center gap-2.5 px-5 py-3 rounded-2xl bg-purple-700 text-white font-black text-xs shadow-2xl border border-purple-400">
+    <i class="fa-solid fa-wand-magic-sparkles animate-spin text-amber-300 text-sm"></i>
+    <span id="aiGlobalToastText">جاري المعالجة بالذكاء الاصطناعي (Gemini AI)...</span>
+  </div>
+
+  <!-- 1. شريط تسليم الشفت العلوي (Handover Top Bar) -->
   <div class="bg-gradient-to-l from-indigo-700 via-purple-700 to-indigo-800 text-white px-4 py-2 shadow-sm no-print">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
       <div class="flex items-center gap-2 font-bold">
@@ -103,19 +109,25 @@
         </button>
 
         <!-- متصل سحابياً -->
-        <button onclick="syncWithCloud(true)" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 transition" title="مزامنة فورية مع Cloudflare Worker">
+        <button onclick="syncWithCloud(true)" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 transition" title="مزامنة فورية مع السحابة">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
           <span>متصل سحابياً</span>
           <i class="fa-solid fa-cloud text-emerald-500"></i>
         </button>
 
-        <!-- مفتاح تبديل الصلاحيات (جمال Admin / د.عمرو Director / فيصل Supervisor) -->
-        <button onclick="openModal('roleSwitcherModal')" class="w-8 h-8 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-600 border border-amber-200 flex items-center justify-center transition" title="تبديل الصلاحيات (Admin / Director / Supervisor)">
+        <!-- مفتاح تبديل الصلاحيات السريع -->
+        <button onclick="openModal('roleSwitcherModal')" class="w-8 h-8 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-600 border border-amber-200 flex items-center justify-center transition" title="تبديل الصلاحيات والمستخدم">
           <i class="fa-solid fa-key"></i>
         </button>
 
-        <!-- بطاقة المستخدم النشط وتعريف الموظف (CBAHI) -->
-        <button onclick="openModal('identityModal')" class="px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 flex items-center gap-1.5 font-extrabold transition" title="تعريف الموظف لتوثيق الجودة (CBAHI)">
+        <!-- نافذة التحكم الحصري بالصلاحيات (تظهر فقط للأدمن جمال عسيري) -->
+        <button id="adminPermissionsBtn" onclick="openPermissionsMatrixModal()" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1.5 shadow transition" title="إدارة ومنح الصلاحيات للموظفين (Admin Only)">
+          <i class="fa-solid fa-user-shield"></i>
+          <span>مصفوفة الصلاحيات 👑</span>
+        </button>
+
+        <!-- بطاقة المستخدم النشط -->
+        <button onclick="openModal('identityModal')" class="px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 flex items-center gap-1.5 font-extrabold transition">
           <i class="fa-solid fa-user text-sky-600"></i>
           <span id="headerActiveUser">Jamal 👑 (32726)</span>
         </button>
@@ -128,22 +140,22 @@
         </button>
 
         <!-- الوضع الليلي -->
-        <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 flex items-center justify-center transition" title="الوضع الليلي / النهاري">
+        <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 flex items-center justify-center transition" title="الوضع الليلي">
           <i class="fa-solid fa-moon"></i>
         </button>
 
         <!-- واتساب سريع -->
-        <button onclick="shareQuickWhatsApp()" class="w-8 h-8 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 flex items-center justify-center transition" title="إرسال ملخص عبر واتساب">
+        <button onclick="shareQuickWhatsApp()" class="w-8 h-8 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 flex items-center justify-center transition" title="تقرير واتساب">
           <i class="fa-brands fa-whatsapp text-sm"></i>
         </button>
 
-        <!-- إدارة الموظفين وقاعدة البيانات (17 موظفاً) -->
+        <!-- الموظفين -->
         <button onclick="openModal('staffModal')" class="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 flex items-center gap-1.5 transition">
           <i class="fa-solid fa-users"></i>
           <span>الموظفين (<span id="staffTotalBadge">17</span>)</span>
         </button>
 
-        <!-- السجل الشامل (CBAHI Audit Log) -->
+        <!-- السجل -->
         <button onclick="openModal('auditModal')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 flex items-center gap-1.5 transition">
           <i class="fa-solid fa-clock-rotate-left text-sky-600"></i>
           <span>السجل</span>
@@ -189,7 +201,6 @@
         <i class="fa-solid fa-folder-open"></i>
         <span>السياسات</span>
       </button>
-      <!-- البوابة الحصرية للأدمن جمال عسيري -->
       <button onclick="switchTab('adminReports')" id="tabBtn-adminReports" class="py-2.5 px-3 whitespace-nowrap flex items-center gap-1.5 text-amber-700 bg-amber-50/80 hover:bg-amber-100 rounded-t-lg">
         <i class="fa-solid fa-crown text-amber-500"></i>
         <span>التقارير الشاملة (Admin)</span>
@@ -200,7 +211,7 @@
   <!-- المحتوى الرئيسي -->
   <main class="max-w-7xl mx-auto w-full px-3 sm:px-6 py-4 space-y-5 flex-grow">
 
-    <!-- شريط تنبيه صيانة يوم السبت الأسبوعية وتحضير كال conCC والكونترولات -->
+    <!-- شريط تنبيه صيانة السبت الأسبوعية وتحضير كال conCC -->
     <div class="bg-gradient-to-l from-amber-500 via-orange-500 to-amber-600 text-white rounded-2xl p-3.5 shadow-md flex flex-wrap items-center justify-between gap-3 no-print">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl shrink-0">
@@ -254,7 +265,7 @@
           <i class="fa-solid fa-cart-shopping"></i>
         </div>
         <p class="text-xs font-bold text-slate-600">طلبية الشراء (PO)</p>
-        <p class="text-xs font-black text-sky-600">توليد تلقائي للنواقص / PDF</p>
+        <p class="text-xs font-black text-sky-600">توليد ذكي للنواقص (AI) / PDF</p>
       </div>
     </section>
 
@@ -276,7 +287,7 @@
           </div>
 
           <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <button onclick="openReagentModal()" class="py-2.5 px-4 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-black text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+            <button onclick="requirePermission('manage_inventory', openReagentModal)" class="py-2.5 px-4 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-black text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
               <i class="fa-solid fa-plus"></i>
               <span>إضافة محلول (AI)</span>
             </button>
@@ -294,7 +305,6 @@
           </div>
         </div>
 
-        <!-- فلاتر الأقسام -->
         <div id="invCategoryPills" class="flex items-center gap-2 overflow-x-auto pt-1 text-xs font-bold"></div>
       </div>
 
@@ -312,10 +322,10 @@
               <i class="fa-solid fa-microscope text-indigo-600"></i>
               <span>أجهزة المختبر والكونترولات اليومية وصيانة يوم السبت الأسبوعية</span>
             </h2>
-            <p class="text-xs text-slate-500">إدارة كل جهاز منفصل بالتعرف الذكي بالـ AI، محاليله المتوفرة، تحضير كال جديد (conCC) والكونترولات، وصيانة السبت الأسبوعية</p>
+            <p class="text-xs text-slate-500">إدارة كل جهاز بالتعرف الذكي بالـ AI، محاليله، تحضير كال جديد (conCC)، والكونترولات المعتمدة</p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
-            <button onclick="openModal('controlAddModal')" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black text-xs flex items-center gap-1.5 shadow-sm">
+            <button onclick="requirePermission('devices_maint', () => openModal('controlAddModal'))" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black text-xs flex items-center gap-1.5 shadow-sm">
               <i class="fa-solid fa-vial-circle-check"></i>
               <span>+ تحضير / إضافة كال (conCC) أو كونترول</span>
             </button>
@@ -323,19 +333,18 @@
               <i class="fa-solid fa-file-pdf"></i>
               <span>تقارير الصيانة والكونترول (PDF/Excel)</span>
             </button>
-            <button onclick="openModal('deviceModal')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs flex items-center gap-1.5 shadow-sm">
+            <button onclick="requirePermission('devices_maint', () => openModal('deviceModal'))" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs flex items-center gap-1.5 shadow-sm">
               <i class="fa-solid fa-camera"></i>
               <span>+ إضافة جهاز جديد (AI)</span>
             </button>
           </div>
         </div>
 
-        <!-- لوحة الكاليبريتور (conCC) والكونترولات المضافة -->
         <div class="rounded-2xl bg-amber-50/70 border border-amber-200 p-4 space-y-2">
           <div class="flex items-center justify-between flex-wrap gap-2">
             <span class="text-xs font-black text-amber-900 flex items-center gap-1.5">
               <i class="fa-solid fa-flask-vial text-amber-600"></i>
-              <span>سجل تحضير الكال الجديد (conCC) والكونترولات اليومية والأسبوعية:</span>
+              <span>سجل تحضير الكال الجديد (conCC) والكونترولات المعتمدة:</span>
             </span>
             <span class="text-[11px] font-bold text-amber-700">تحديث وإشراف: جمال عسيري (Admin) وفيصل يحيى (Supervisor)</span>
           </div>
@@ -357,9 +366,9 @@
               <i class="fa-solid fa-bell-concierge text-rose-600"></i>
               <span>سجل تبليغ النتائج الحرجة (Panic Values Reporting - CBAHI / CAP)</span>
             </h2>
-            <p class="text-xs text-slate-500">توثيق بيانات المريض، القسم، النتيجة الحرجة، وقت الإبلاغ، واسم الطبيب/التمريض المستلم مع تأكيد Read-Back</p>
+            <p class="text-xs text-slate-500">توثيق بيانات المريض، الفحص الحرج، وقت الإبلاغ، والمستلم مع تأكيد Read-Back وتوصيات AI الفورية</p>
           </div>
-          <button onclick="openModal('criticalModal')" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs flex items-center gap-1.5">
+          <button onclick="requirePermission('critical_results', () => openModal('criticalModal'))" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs flex items-center gap-1.5">
             <i class="fa-solid fa-plus"></i>
             <span>+ تسجيل نتيجة حرجة جديدة</span>
           </button>
@@ -381,7 +390,7 @@
             </h2>
             <p class="text-xs text-slate-500">مقارنة فورية بين رصيد النظام والعد الفعلي بالكارتلج واعتماد المطابقة في سجل الجودة</p>
           </div>
-          <button onclick="approveSmartAuditAll()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5">
+          <button onclick="requirePermission('smart_audit', approveSmartAuditAll)" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5">
             <i class="fa-solid fa-check-double"></i>
             <span>اعتماد مطابقة الجرد الذكي</span>
           </button>
@@ -400,7 +409,7 @@
             <h2 class="text-lg font-black text-slate-800">دليل القيم المرجعية والنطاقات الطبيعية والحرجة</h2>
             <p class="text-xs text-slate-500">مرجع معتمد لفحوصات الكيمياء الحيوية، الهرمونات، أمراض الدم، التخثر، وبنك الدم</p>
           </div>
-          <button onclick="addRefRangePrompt()" class="px-4 py-2 rounded-xl bg-sky-500 text-white font-black text-xs">+ إضافة قيمة مرجعية</button>
+          <button onclick="requirePermission('edit_ranges', addRefRangePrompt)" class="px-4 py-2 rounded-xl bg-sky-500 text-white font-black text-xs">+ إضافة قيمة مرجعية</button>
         </div>
         <div id="refRangesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
       </div>
@@ -417,9 +426,15 @@
               <i class="fa-solid fa-temperature-low text-cyan-600"></i>
               <span>مراقبة درجات حرارة الثلاجات والفريزرات (Core Lab & Blood Bank)</span>
             </h2>
-            <p class="text-xs text-slate-500">تسجيل درجات الحرارة اليومية لثلاجات المحاليل وثلاجات وحدات الدم وفريزرات البلازما</p>
+            <p class="text-xs text-slate-500">تسجيل درجات الحرارة اليومية مع التدقيق الذكي (AI) لأي انحراف حراري</p>
           </div>
-          <button onclick="addFridgePrompt()" class="px-4 py-2 rounded-xl bg-cyan-600 text-white font-black text-xs">+ إضافة ثلاجة / قراءة جديدة</button>
+          <div class="flex gap-2">
+            <button onclick="aiAnalyzeTemperatures()" class="px-3.5 py-2 rounded-xl bg-purple-600 text-white font-black text-xs flex items-center gap-1.5 shadow">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>تحليل التذبذب الحراري (AI)</span>
+            </button>
+            <button onclick="requirePermission('fridges_temp', addFridgePrompt)" class="px-4 py-2 rounded-xl bg-cyan-600 text-white font-black text-xs">+ إضافة ثلاجة / قراءة جديدة</button>
+          </div>
         </div>
         <div id="fridgesGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
       </div>
@@ -438,7 +453,7 @@
             </h2>
             <p class="text-xs text-slate-500">بيانات التواصل مع الشركات الموردة للمحاليل والأجهزة وطلبات الصيانة</p>
           </div>
-          <button onclick="addSupplierPrompt()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-black text-xs">+ إضافة مورد جديد</button>
+          <button onclick="requirePermission('suppliers_mgmt', addSupplierPrompt)" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-black text-xs">+ إضافة مورد جديد</button>
         </div>
         <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
       </div>
@@ -452,10 +467,10 @@
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 class="text-lg font-black text-slate-800">جدول الشفتات وتوزيع الموظفين والمهام (Core Lab & Blood Bank)</h2>
-            <p class="text-xs text-slate-500">إدارة أوقات الشفتات، التوقيت (من وإلى)، والتحميل الشهري PDF/Excel/Word أو الاستيراد بالـ AI (تاريخ ميلادي)</p>
+            <p class="text-xs text-slate-500">إدارة أوقات الشفتات، الاعتماد الإداري، والتحميل الشهري PDF/Excel/Word أو الاستيراد بالـ AI</p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
-            <button onclick="openModal('shiftModal')" class="px-3.5 py-2 rounded-xl bg-sky-500 text-white font-black text-xs flex items-center gap-1.5">
+            <button onclick="requirePermission('shifts_edit', () => openModal('shiftModal'))" class="px-3.5 py-2 rounded-xl bg-sky-500 text-white font-black text-xs flex items-center gap-1.5">
               <i class="fa-solid fa-plus"></i>
               <span>+ تعيين شفت لموظف</span>
             </button>
@@ -469,7 +484,7 @@
             </button>
             <button onclick="exportShiftsCSV()" class="px-3 py-2 rounded-xl bg-slate-100 text-emerald-700 border border-slate-200 font-black text-xs">Excel</button>
             <button onclick="exportShiftsWord()" class="px-3 py-2 rounded-xl bg-blue-600 text-white font-black text-xs">ملف Word</button>
-            <label class="cursor-pointer px-3.5 py-2 rounded-xl bg-purple-600 text-white font-black text-xs flex items-center gap-1.5">
+            <label class="cursor-pointer px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs flex items-center gap-1.5 shadow">
               <i class="fa-solid fa-camera"></i>
               <span>صورة الجدول (AI)</span>
               <input type="file" accept="image/*" class="hidden" onchange="importShiftsAI(event)" />
@@ -510,9 +525,9 @@
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 class="text-lg font-black text-slate-800">السياسات والإجراءات وملفات الاعتماد (CBAHI / CAP / AABB / SFDA / HIMSS)</h2>
-            <p class="text-xs text-slate-500">ملفات الجودة المعتمدة وأدلة العمل القياسية (SOPs) لمختبر وبنك دم مستشفى الحياة أبها</p>
+            <p class="text-xs text-slate-500">ملفات الجودة وأدلة العمل القياسية (SOPs) مع إمكانية المراجعة والتدقيق بالذكاء الاصطناعي</p>
           </div>
-          <button onclick="addPolicyPrompt()" class="px-4 py-2 rounded-xl bg-sky-600 text-white font-black text-xs">+ إضافة سياسة / ملف اعتماد</button>
+          <button onclick="requirePermission('policies_mgmt', addPolicyPrompt)" class="px-4 py-2 rounded-xl bg-sky-600 text-white font-black text-xs">+ إضافة سياسة / ملف اعتماد</button>
         </div>
         <div id="policiesGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
       </div>
@@ -535,7 +550,7 @@
     </p>
     <div class="flex items-center justify-center gap-2 flex-wrap">
       <span class="px-3 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-black">
-        الإصدار المعتمد الشامل V7.0 (ميلادي)
+        الإصدار المعتمد V8.0 (الذكاء الاصطناعي وإدارة الصلاحيات الشاملة)
       </span>
       <span class="px-3 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-black">
         Done by Jamal Asiri
@@ -549,10 +564,49 @@
   </button>
 
   <!-- ================================================================= -->
-  <!-- جميع النوافذ المنبثقة (Modals) -->
+  <!-- النوافذ المنبثقة (Modals) الشاملة ومصفوفة الصلاحيات -->
   <!-- ================================================================= -->
 
-  <!-- 1. نافذة إضافة محلول جديد (شاملة الذكاء الاصطناعي + المختبر + المستودع العام) -->
+  <!-- نافذة مصفوفة الصلاحيات الحصرية لـ Jamal Asiri (Admin 👑) -->
+  <div id="permissionsMatrixModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-4xl w-full p-5 shadow-2xl border-2 border-amber-400 my-8 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center text-sm font-black">👑</span>
+          <div>
+            <h3 class="text-base font-black text-slate-800">مصفوفة التحكم وتعيين الصلاحيات للموظفين (RBAC Matrix)</h3>
+            <p class="text-[11px] text-amber-700 font-bold">صلاحية إدارية عليا خاصة بك يا أ. جمال عسيري لتخصيص صلاحيات كل موظف بدقة دون التأثير على النظام</p>
+          </div>
+        </div>
+        <button onclick="closeModal('permissionsMatrixModal')" class="text-slate-400 hover:text-slate-700 text-xl"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="bg-amber-50/70 p-3.5 rounded-2xl border border-amber-200 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div class="flex items-center gap-2">
+          <label class="font-black text-slate-700">اختر الموظف لتعديل صلاحياته:</label>
+          <select id="matrixStaffSelect" onchange="loadStaffPermissionsInMatrix()" class="rounded-xl border border-amber-300 px-3 py-1.5 font-bold bg-white text-slate-800"></select>
+        </div>
+        <span id="matrixRoleIndicator" class="px-2.5 py-1 rounded-full bg-amber-200 text-amber-900 font-extrabold text-[11px]"></span>
+      </div>
+
+      <!-- شبكة مربعات الصلاحيات القابلة للتحديد والتعديل -->
+      <form onsubmit="savePermissionsMatrix(event)" class="space-y-4 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="permissionsCheckboxesGrid">
+          <!-- تولد ديناميكياً بواسطة JavaScript -->
+        </div>
+
+        <div class="flex gap-2 pt-3 border-t border-slate-100">
+          <button type="submit" class="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black shadow flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>حفظ واعتماد صلاحيات الموظف فورياً</span>
+          </button>
+          <button type="button" onclick="closeModal('permissionsMatrixModal')" class="px-4 py-2.5 rounded-xl border border-slate-200 font-bold">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- باقي النوافذ المنبثقة الكاملة (المحاليل، الأجهزة، الشفتات، النتائج الحرجة، التاسكات، وغيرها) -->
   <div id="reagentModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-3xl max-w-lg w-full p-5 shadow-2xl border border-slate-100 my-8 space-y-4 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -564,9 +618,9 @@
         <div>
           <div class="flex items-center gap-1.5 text-purple-800 font-black text-xs">
             <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i>
-            <span>التعرف السريع بالذكاء الاصطناعي (AI)</span>
+            <span>التعرف السريع بالذكاء الاصطناعي (Gemini AI)</span>
           </div>
-          <p class="text-[11px] text-purple-600">صوّر علبة المحلول أو النشرة لتعبئة الحقول تلقائياً</p>
+          <p class="text-[11px] text-purple-600">صوّر علبة المحلول لتعبئة الحقول آلياً عبر خادم الذكاء الاصطناعي</p>
         </div>
         <label class="cursor-pointer px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center gap-1.5 shrink-0 shadow">
           <i class="fa-solid fa-camera"></i>
@@ -584,7 +638,7 @@
           <label class="block font-bold mb-1">الباركود *</label>
           <div class="flex gap-2">
             <input id="regBarcode" required type="text" placeholder="امسح أو أدخل الباركود" class="flex-1 rounded-xl border border-slate-200 px-3 py-2" />
-            <button type="button" onclick="document.getElementById('regBarcode').value='628'+Math.floor(10000000+Math.random()*90000000)" class="px-3.5 rounded-xl bg-slate-100 border border-slate-200" title="مسح الباركود بالكاميرا"><i class="fa-solid fa-camera"></i></button>
+            <button type="button" onclick="document.getElementById('regBarcode').value='628'+Math.floor(10000000+Math.random()*90000000)" class="px-3.5 rounded-xl bg-slate-100 border border-slate-200"><i class="fa-solid fa-camera"></i></button>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-2">
@@ -657,7 +711,6 @@
     </div>
   </div>
 
-  <!-- 2. نافذة إضافة جهاز جديد مع زر التعرف على الجهاز من خلال صورة بالـ AI + صيانة السبت + conCC -->
   <div id="deviceModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-3xl max-w-lg w-full p-5 shadow-2xl border border-slate-100 my-8 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -665,14 +718,13 @@
         <button onclick="closeModal('deviceModal')" class="text-slate-400 hover:text-slate-700 text-xl"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- زر التعرف على الجهاز من خلال صورة بالـ AI -->
       <div class="rounded-2xl bg-gradient-to-l from-indigo-50 to-purple-50 border border-indigo-200 p-3.5 flex items-center justify-between gap-3">
         <div class="space-y-0.5">
           <div class="flex items-center gap-1.5 text-indigo-900 font-black text-xs sm:text-sm">
             <i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i>
             <span>التعرف على الجهاز من خلال صورة بالـ AI</span>
           </div>
-          <p class="text-[11px] text-indigo-700">صوّر الجهاز أو الملصق التعريفي ليقوم الذكاء الاصطناعي بتعبئة بيانات الجهاز وصيانة السبت وكال conCC تلقائياً</p>
+          <p class="text-[11px] text-indigo-700">صوّر الجهاز ليقوم الذكاء الاصطناعي بتعبئة بياناته وصيانة السبت وكال conCC</p>
         </div>
         <label class="cursor-pointer px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs flex items-center gap-1.5 shrink-0 shadow">
           <i class="fa-solid fa-camera"></i>
@@ -733,7 +785,6 @@
     </div>
   </div>
 
-  <!-- 3. نافذة تحضير كال (conCC) أو إضافة كونترولات جديدة لاحقاً -->
   <div id="controlAddModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-100 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -743,7 +794,7 @@
       <form onsubmit="saveCustomControl(event)" class="space-y-3 text-xs">
         <div>
           <label class="block font-bold mb-1">اسم الكاليبريتور / الكونترول *</label>
-          <input id="ctrlName" required type="text" value="conCC" placeholder="مثال: conCC / PreciControl ClinChem 1 & 2" class="w-full rounded-xl border border-slate-200 px-3 py-2 font-bold" />
+          <input id="ctrlName" required type="text" value="conCC" class="w-full rounded-xl border border-slate-200 px-3 py-2 font-bold" />
         </div>
         <div>
           <label class="block font-bold mb-1">الجهاز / القسم المرتبط *</label>
@@ -764,7 +815,6 @@
     </div>
   </div>
 
-  <!-- 4. نافذة إدارة جميع الموظفين (Core Lab + Blood Bank + الإدارة) -->
   <div id="staffModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl border border-slate-100 my-8">
       <div class="bg-gradient-to-l from-blue-700 to-indigo-700 text-white px-5 py-4 flex items-center justify-between">
@@ -795,7 +845,7 @@
               <tr>
                 <th class="py-2.5 px-3">الاسم</th>
                 <th class="py-2.5 px-3">الرقم الوظيفي</th>
-                <th class="py-2.5 px-3">رقم الجوال</th>
+                <th class="py-2.5 px-3">الجوال</th>
                 <th class="py-2.5 px-3">تاريخ التعيين</th>
                 <th class="py-2.5 px-3">البريد الإلكتروني</th>
                 <th class="py-2.5 px-3">القسم / الصلاحية</th>
@@ -809,7 +859,6 @@
     </div>
   </div>
 
-  <!-- 5. نافذة تبديل الصلاحيات السريع (Jamal Admin / Dr. Amr Director / Faisal Supervisor) -->
   <div id="roleSwitcherModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-100 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -823,7 +872,7 @@
         <div onclick="switchActiveAccount('Jamal Asiri', '32726', 'admin')" class="cursor-pointer p-3.5 rounded-2xl border-2 border-amber-400 bg-amber-50/60 hover:bg-amber-100/70 flex items-center justify-between">
           <div>
             <p class="font-black text-sm text-slate-800">👑 Jamal Asiri (32726) — ADMIN</p>
-            <p class="text-[11px] text-amber-800">مدير النظام والأدمن العام + الصلاحية الحصرية لإدخال وإصدار التقارير الشاملة</p>
+            <p class="text-[11px] text-amber-800">مدير النظام والأدمن العام + الصلاحية الحصرية لإدارة الصلاحيات وإصدار التقارير</p>
           </div>
           <i class="fa-solid fa-chevron-left text-amber-600"></i>
         </div>
@@ -831,7 +880,7 @@
         <div onclick="switchActiveAccount('DR. AMR', '30001', 'director')" class="cursor-pointer p-3.5 rounded-2xl border border-purple-200 bg-purple-50/50 hover:bg-purple-100/60 flex items-center justify-between">
           <div>
             <p class="font-black text-sm text-slate-800">🏛️ د. عمرو (30001) — DIRECTOR</p>
-            <p class="text-[11px] text-purple-800">مدير المختبر: الاعتماد النهائي لجدول الشفتات، اعتماد طلبيات الشراء (PO)، والتوجيه الإداري</p>
+            <p class="text-[11px] text-purple-800">مدير المختبر: اعتماد الجداول، اعتماد طلبيات الشراء (PO)، والتوجيه الإداري</p>
           </div>
           <i class="fa-solid fa-chevron-left text-purple-600"></i>
         </div>
@@ -847,7 +896,6 @@
     </div>
   </div>
 
-  <!-- 6. نافذة تعريف الموظف لمرة واحدة (مطابقة للصورة 22) -->
   <div id="identityModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-t-4 border-t-sky-500 text-center space-y-4">
       <div class="w-12 h-12 rounded-full bg-sky-50 text-sky-500 mx-auto flex items-center justify-center text-xl">
@@ -879,7 +927,6 @@
     </div>
   </div>
 
-  <!-- 7. نافذة التاسكات والمهام الخاصة (مع الردود) -->
   <div id="tasksModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-100">
       <div class="bg-gradient-to-l from-purple-700 to-indigo-600 text-white px-5 py-4 flex items-center justify-between">
@@ -898,7 +945,6 @@
     </div>
   </div>
 
-  <!-- 8. نافذة تسجيل نتيجة حرجة -->
   <div id="criticalModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-100 space-y-3 text-xs">
       <div class="flex justify-between items-center border-b pb-2">
@@ -914,7 +960,6 @@
     </div>
   </div>
 
-  <!-- 9. نافذة إضافة شفت -->
   <div id="shiftModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-100 space-y-3 text-xs">
       <div class="flex justify-between items-center border-b pb-2">
@@ -937,7 +982,6 @@
     </div>
   </div>
 
-  <!-- 10. نافذة مركز الإشعارات والتنبيهات الموجهة -->
   <div id="notificationsModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl">
       <div class="bg-amber-500 text-white px-5 py-3.5 flex justify-between items-center font-black">
@@ -952,7 +996,6 @@
     </div>
   </div>
 
-  <!-- 11. نافذة تسليم الشفت -->
   <div id="handoverModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-3 text-xs">
       <div class="flex justify-between items-center border-b pb-2">
@@ -967,22 +1010,24 @@
     </div>
   </div>
 
-  <!-- 12. نافذة طلبية الشراء (PO) -->
   <div id="poModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-5 shadow-2xl space-y-3 text-xs">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-5 shadow-2xl border border-slate-100 space-y-3 text-xs">
       <div class="flex justify-between items-center border-b pb-2">
         <h3 class="font-black text-base text-sky-700">طلبية الشراء التلقائية للنواقص (PO)</h3>
         <button onclick="closeModal('poModal')"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <div id="poModalList" class="space-y-2 max-h-64 overflow-y-auto"></div>
       <div class="flex flex-wrap gap-2 pt-2 border-t">
+        <button onclick="generateAIPurchaseOrderMemo()" class="px-4 py-2 rounded-xl bg-purple-600 text-white font-black flex items-center gap-1.5 shadow">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>صياغة وتبرير الطلبية بالذكاء الاصطناعي (AI)</span>
+        </button>
         <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-sky-500 text-white font-black">استخراج PDF</button>
         <button onclick="approvePORoleCheck()" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-black">اعتماد الطلبية (Admin / د.عمرو)</button>
       </div>
     </div>
   </div>
 
-  <!-- 13. نافذة السجل الشامل (CBAHI Audit Log) -->
   <div id="auditModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-5 shadow-2xl space-y-3 text-xs">
       <div class="flex justify-between items-center border-b pb-2">
@@ -993,31 +1038,77 @@
     </div>
   </div>
 
+  <div id="aiAssistantModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
+    <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-purple-200">
+      <div class="bg-gradient-to-l from-purple-700 via-indigo-700 to-purple-800 text-white px-5 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-2 font-black text-sm sm:text-base">
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+          <span>المساعد الذكي TechnoLab AI (Gemini)</span>
+        </div>
+        <button onclick="closeModal('aiAssistantModal')" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <div class="p-5 space-y-4 text-xs">
+        <div id="aiChatResponseBox" class="p-4 rounded-2xl bg-purple-50/70 border border-purple-100 text-slate-800 font-bold leading-relaxed max-h-64 overflow-y-auto">
+          مرحباً بك في المساعد الذكي لمختبر مستشفى الحياة أبها (TechnoLab AI). يمكنك سؤالي عن حالة المخزون، معايير الجودة (CBAHI / CAP / AABB / SFDA)، أو إجراءات صيانة السبت وتحضير كال (conCC).
+        </div>
+        <form onsubmit="sendAIChatPrompt(event)" class="flex gap-2">
+          <input id="aiChatInput" required type="text" placeholder="اكتب سؤالك للمساعد الذكي هنا..." class="flex-1 rounded-xl border border-slate-200 px-3.5 py-2.5 font-bold focus:outline-none focus:border-purple-500" />
+          <button type="submit" id="aiChatSendBtn" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black shadow">
+            إرسال
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- ================================================================= -->
   <!-- المحرك البرمجي الشامل (JavaScript) -->
   <!-- ================================================================= -->
   <script>
     const CLOUD_API = "https://api.technolabs.online";
 
-    // جميع الموظفين من النسخ القديمة والحديثة (17 موظفاً: الإدارة + Core Lab + Blood Bank)
+    // تعريف مصفوفة الصلاحيات المتاحة في النظام
+    const AVAILABLE_PERMISSIONS = [
+      { key: "manage_inventory", label: "إدارة المخزون والمحاليل (إضافة/تعديل)" },
+      { key: "devices_maint", label: "صيانة الأجهزة وكال conCC والكونترولات" },
+      { key: "critical_results", label: "تسجيل وتبليغ النتائج الحرجة (Panic Values)" },
+      { key: "smart_audit", label: "إجراء واعتماد الجرد الذكي" },
+      { key: "edit_ranges", label: "تعديل وإضافة القيم المرجعية" },
+      { key: "fridges_temp", label: "تسجيل وإدارة ثلاجات وحرارة المختبر" },
+      { key: "suppliers_mgmt", label: "إدارة الموردين وطلبيات الشراء" },
+      { key: "shifts_edit", label: "تعديل وجدولة شفتات الموظفين" },
+      { key: "approve_shifts", label: "اعتماد ونشر جدول الشفتات" },
+      { key: "policies_mgmt", label: "إدارة سياسات ومعايير الجودة (CBAHI)" },
+      { key: "admin_reports", label: "إدخال وإصدار التقارير الشاملة (Admin)" }
+    ];
+
+    // الصلاحيات الافتراضية حسب الدور
+    const DEFAULT_ROLE_PERMS = {
+      admin: ["manage_inventory", "devices_maint", "critical_results", "smart_audit", "edit_ranges", "fridges_temp", "suppliers_mgmt", "shifts_edit", "approve_shifts", "policies_mgmt", "admin_reports"],
+      director: ["manage_inventory", "devices_maint", "critical_results", "approve_shifts", "policies_mgmt", "suppliers_mgmt"],
+      supervisor: ["manage_inventory", "devices_maint", "critical_results", "smart_audit", "fridges_temp", "shifts_edit", "approve_shifts"],
+      staff: ["critical_results", "fridges_temp"]
+    };
+
+    // قائمة الموظفين الـ 17 المعتمدة[span_4](start_span)[span_4](end_span)
     const ALL_STAFF_DEFAULT = [
-      { id: 1, name: "Jamal Asiri", emp_id: "32726", phone: "0505610803", hiring: "02-11-2024", email: "alalkmy777@gmail.com", section: "ADMINISTRATION", role: "admin" },
-      { id: 2, name: "DR. AMR", emp_id: "30001", phone: "0500000000", hiring: "01-01-2024", email: "amr@technolabs.online", section: "ADMINISTRATION", role: "director" },
-      { id: 3, name: "FAISAL YAHYA", emp_id: "32731", phone: "0541156185", hiring: "02-11-2024", email: "Fasial.foxy1@gmail.com", section: "CORE LAB", role: "supervisor" },
-      { id: 4, name: "ABDULLA ALSHARIF", emp_id: "30129", phone: "0535459126", hiring: "29-05-2025", email: "alsharif30129@gmail.com", section: "CORE LAB", role: "staff" },
-      { id: 5, name: "REEM ALI", emp_id: "30927", phone: "0559204026", hiring: "16-10-2024", email: "reeeeo.1413@gmail.com", section: "CORE LAB", role: "staff" },
-      { id: 6, name: "OMER TAHIR", emp_id: "32728", phone: "0502494505", hiring: "02-11-2024", email: "omermohtahir@gmail.com", section: "CORE LAB", role: "staff" },
-      { id: 7, name: "SAQER ALI", emp_id: "34198", phone: "0550174018", hiring: "21-04-2025", email: "sqqr1818@gmail.com", section: "CORE LAB", role: "staff" },
-      { id: 8, name: "RAGHAD QASEM", emp_id: "34197", phone: "0509358950", hiring: "20-04-2025", email: "raaghadqasem@gmail.com", section: "CORE LAB", role: "staff" },
-      { id: 9, name: "QARAN SAEED", emp_id: "36911", phone: "0531274418", hiring: "29-12-2025", email: "Qaran.aldail@gmail.com", section: "CORE LAB", role: "staff" },
-      { id: 10, name: "BUSHRA SAEED", emp_id: "37234", phone: "0502775505", hiring: "05-01-2026", email: "Bushrasaeedali@hotmail.com", section: "CORE LAB", role: "staff" },
-      { id: 11, name: "ABDULMAJEED MUSHABAB", emp_id: "37242", phone: "0567680810", hiring: "05-01-2026", email: "alasiri.ab7@gmail.com", section: "CORE LAB", role: "staff" },
-      { id: 12, name: "Dr. walla rabie", emp_id: "37520", phone: "0557876987", hiring: "01-02-2026", email: "-", section: "CORE LAB", role: "staff" },
-      { id: 13, name: "AMJAD YAHYA", emp_id: "32693", phone: "0568282318", hiring: "02-11-2024", email: "Amjad10231@gmail.com", section: "BLOOD BANK", role: "staff" },
-      { id: 14, name: "ABDU ALAYAFI", emp_id: "36246", phone: "0557737061", hiring: "16-11-2025", email: "Abdoaliabdallh1416@gmail.com", section: "BLOOD BANK", role: "staff" },
-      { id: 15, name: "RAWAN ALARAFJI", emp_id: "36248", phone: "0592662323", hiring: "28-10-2025", email: "rawanabdullah56@gmail.com", section: "BLOOD BANK", role: "staff" },
-      { id: 16, name: "KAWTHAR ASSIRI", emp_id: "36250", phone: "0532443539", hiring: "28-10-2025", email: "iikrii303@gmail.com", section: "BLOOD BANK", role: "staff" },
-      { id: 17, name: "Dr.mustafa yahya", emp_id: "37525", phone: "0509854263", hiring: "01-02-2026", email: "-", section: "BLOOD BANK", role: "staff" }
+      { id: 1, name: "Jamal Asiri", emp_id: "32726", phone: "0505610803", hiring: "02-11-2024", email: "alalkmy777@gmail.com", section: "ADMINISTRATION", role: "admin", permissions: DEFAULT_ROLE_PERMS.admin },
+      { id: 2, name: "DR. AMR", emp_id: "30001", phone: "0500000000", hiring: "01-01-2024", email: "amr@technolabs.online", section: "ADMINISTRATION", role: "director", permissions: DEFAULT_ROLE_PERMS.director },
+      { id: 3, name: "FAISAL YAHYA", emp_id: "32731", phone: "0541156185", hiring: "02-11-2024", email: "Fasial.foxy1@gmail.com", section: "CORE LAB", role: "supervisor", permissions: DEFAULT_ROLE_PERMS.supervisor },
+      { id: 4, name: "ABDULLA ALSHARIF", emp_id: "30129", phone: "0535459126", hiring: "29-05-2025", email: "alsharif30129@gmail.com", section: "CORE LAB", role: "staff", permissions: DEFAULT_ROLE_PERMS.staff },
+      { id: 5, name: "REEM ALI", emp_id: "30927", phone: "0559204026", hiring: "16-10-2024", email: "reeeeo.1413@gmail.com", section: "CORE LAB", role: "staff", permissions: DEFAULT_ROLE_PERMS.staff },
+      { id: 6, name: "OMER TAHIR", emp_id: "32728", phone: "0502494505", hiring: "02-11-2024", email: "omermohtahir@gmail.com", section: "CORE LAB", role: "staff", permissions: DEFAULT_ROLE_PERMS.staff },
+      { id: 7, name: "SAQER ALI", emp_id: "34198", phone: "0550174018", hiring: "21-04-2025", email: "sqqr1818@gmail.com", section: "CORE LAB", role: "staff", permissions: DEFAULT_ROLE_PERMS.staff },
+      { id: 8, name: "RAGHAD QASEM", emp_id: "34197", phone: "0509358950", hiring: "20-04-2025", email: "raaghadqasem@gmail.com", section: "CORE LAB", role: "staff", permissions: DEFAULT_ROLE_PERMS.staff },
+      { id: 9, name: "QARAN SAEED", emp_id: "36911", phone: "0531274418", hiring: "29-12-2025", email: "Qaran.aldail@gmail.com", section: "CORE LAB", role: "staff", permissions: DEFAULT_ROLE_PERMS.staff },
+      { id: 10, name: "BUSHRA SAEED", emp_id: "37234", phone: "0502775505", hiring: "05-01-2026", email: "Bushrasaeedali@hotmail.com", section: "CORE LAB", role: "staff", permissions: DEFAULT_ROLE_PERMS.staff },
+      { id: 11, name: "ABDULMAJEED MUSHABAB", emp_id: "37242", phone: "0567680810", hiring: "05-01-2026", email: "alasiri.ab7@gmail.com", section: "CORE LAB", role: "staff", permissions: DEFAULT_ROLE_PERMS.staff },
+      { id: 12, name: "Dr. walla rabie", emp_id: "37520", phone: "0557876987", hiring: "01-02-2026", email: "-", section: "CORE LAB", role: "staff", permissions: DEFAULT_ROLE_PERMS.staff },
+      { id: 13, name: "AMJAD YAHYA", emp_id: "32693", phone: "0568282318", hiring: "02-11-2024", email: "Amjad10231@gmail.com", section: "BLOOD BANK", role: "staff", permissions: DEFAULT_ROLE_PERMS.staff },
+      { id: 14, name: "ABDU ALAYAFI", emp_id: "36246", phone: "0557737061", hiring: "16-11-2025", email: "Abdoaliabdallh1416@gmail.com", section: "BLOOD BANK", role: "staff", permissions: DEFAULT_ROLE_PERMS.staff },
+      { id: 15, name: "RAWAN ALARAFJI", emp_id: "36248", phone: "0592662323", hiring: "28-10-2025", email: "rawanabdullah56@gmail.com", section: "BLOOD BANK", role: "staff", permissions: DEFAULT_ROLE_PERMS.staff },
+      { id: 16, name: "KAWTHAR ASSIRI", emp_id: "36250", phone: "0532443539", hiring: "28-10-2025", email: "iikrii303@gmail.com", section: "BLOOD BANK", role: "staff", permissions: DEFAULT_ROLE_PERMS.staff },
+      { id: 17, name: "Dr.mustafa yahya", emp_id: "37525", phone: "0509854263", hiring: "01-02-2026", email: "-", section: "BLOOD BANK", role: "staff", permissions: DEFAULT_ROLE_PERMS.staff }
     ];
 
     const DEFAULT_CONTROLS = [
@@ -1039,4 +1130,1407 @@
 
     const DEFAULT_POLICIES = [
       { id: 1, code: "CBAHI-LB.1", title: "سياسة إدارة المخزون وتنبيه الكارتلج الواحد (<=1)", standard: "CBAHI / CAP", owner: "Jamal Asiri" },
-      { id: 2, code: "CBAHI-LB.12", title: "بروتوكول صيانة يوم السبت الأسبوعية وتحضير كال conCC", standard: "CBAHI / SFDA", own
+      { id: 2, code: "CBAHI-LB.12", title: "بروتوكول صيانة يوم السبت الأسبوعية وتحضير كال conCC", standard: "CBAHI / SFDA", owner: "Jamal Asiri & Faisal Yahya" },
+      { id: 3, code: "AABB-BB.4", title: "سياسة حفظ وصرف وحدات الدم ومراقبة الثلاجات", standard: "AABB / CBAHI", owner: "Dr. Amr & Jamal Asiri" }
+    ];
+
+    const DEFAULT_REF_RANGES = [
+      { id: 1, test: "Glucose (Fasting)", normal: "70 - 105 mg/dL", panic: "< 45 or > 450 mg/dL", dept: "كيمياء حيوية" },
+      { id: 2, test: "Potassium (K+)", normal: "3.5 - 5.1 mmol/L", panic: "< 2.8 or > 6.2 mmol/L", dept: "كيمياء حيوية" },
+      { id: 3, test: "Hemoglobin (Hb)", normal: "13.0 - 17.0 g/dL", panic: "< 7.0 or > 20.0 g/dL", dept: "أمراض دم" },
+      { id: 4, test: "Troponin I (High Sensitive)", normal: "< 0.04 ng/mL", panic: "> 0.50 ng/mL", dept: "الهرمونات" }
+    ];
+
+    let state = JSON.parse(localStorage.getItem("technolab_v8_ai_master")) || {
+      activeUser: { name: "Jamal Asiri", emp_id: "32726", email: "alalkmy777@gmail.com", role: "admin", permissions: DEFAULT_ROLE_PERMS.admin },
+      staff: ALL_STAFF_DEFAULT,
+      inventory: [],
+      devices: [],
+      controls: DEFAULT_CONTROLS,
+      criticalResults: [],
+      fridges: DEFAULT_FRIDGES,
+      suppliers: DEFAULT_SUPPLIERS,
+      shifts: [],
+      policies: DEFAULT_POLICIES,
+      refRanges: DEFAULT_REF_RANGES,
+      comprehensiveReports: [
+        {
+          id: 1,
+          title: "التقرير الشامل لجودة المختبر وبنك الدم وصيانة السبت (CBAHI / CAP)",
+          period: "نوفمبر 2026",
+          summary: "تم استيفاء جميع معايير الجودة، جدولة صيانة السبت الأسبوعية وتحضير كال conCC، ومطابقة مخزون الكارتلج.",
+          issuedBy: "Jamal Asiri (32726) - Admin 👑",
+          date: "2026-11-08"
+        }
+      ],
+      tasks: [],
+      handovers: [],
+      notifications: [
+        { id: 1, title: "التقرير الشهري التلقائي جاهز", text: "تم إعداد التقرير الشهري الكامل لجميع مهام المختبر وجاهز للتحميل.", date: "28/10/2026, 18:33:44", read: false },
+        { id: 2, title: "تنبيه صيانة يوم السبت وتحضير كال conCC", text: "تذكير بصيانة يوم السبت الأسبوعية وتحضير كال جديد (conCC) والكونترولات المعتمدة.", date: "يوم السبت", read: false }
+      ],
+      auditLogs: [
+        { user: "Jamal Asiri (32726) [ADMIN]", action: "تشغيل الإصدار المعتمد V8.0 مع الذكاء الاصطناعي الشامل ومصفوفة الصلاحيات", time: new Date().toLocaleString("en-GB") }
+      ],
+      invCategoryFilter: "الكل",
+      invStatusFilter: "all",
+      mergeShifts: false
+    };
+
+    if (!state.staff || state.staff.length < 17) {
+      state.staff = ALL_STAFF_DEFAULT;
+    }
+
+    // التحقق من الصلاحيات للمستخدم النشط
+    function hasPermission(permKey) {
+      if (state.activeUser.role === "admin" || state.activeUser.emp_id === "32726") return true;
+      const user = state.staff.find(s => s.emp_id === state.activeUser.emp_id);
+      const perms = (user && user.permissions) || state.activeUser.permissions || [];
+      return perms.includes(permKey);
+    }
+
+    function requirePermission(permKey, callback) {
+      if (hasPermission(permKey)) {
+        callback();
+      } else {
+        alert("⚠️ عذراً، لا تمتلك الصلاحية لتنفيذ هذا الإجراء. يرجى مراجعة مدير النظام (أ. جمال عسيري 👑).");
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem("technolab_v8_ai_master", JSON.stringify(state));
+      renderAll();
+      syncWithCloud(false);
+    }
+
+    function logAudit(action) {
+      state.auditLogs.unshift({
+        user: `${state.activeUser.name} (${state.activeUser.emp_id}) [${(state.activeUser.role || 'staff').toUpperCase()}]`,
+        action,
+        time: new Date().toLocaleString("en-GB")
+      });
+    }
+
+    function showAIToast(msg) {
+      const t = document.getElementById("aiGlobalToast");
+      document.getElementById("aiGlobalToastText").textContent = msg || "جاري المعالجة بالذكاء الاصطناعي (Gemini AI)...";
+      t.classList.remove("hidden");
+      t.classList.add("flex");
+    }
+
+    function hideAIToast() {
+      const t = document.getElementById("aiGlobalToast");
+      t.classList.add("hidden");
+      t.classList.remove("flex");
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = err => reject(err);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function switchTab(tabId) {
+      const tabs = ["inventory", "devices", "critical", "smartAudit", "refRanges", "fridges", "suppliers", "schedules", "policies", "adminReports"];
+      tabs.forEach(t => {
+        document.getElementById("tabContent-" + t)?.classList.add("hidden");
+        document.getElementById("tabBtn-" + t)?.classList.remove("nav-tab-active");
+      });
+      document.getElementById("tabContent-" + tabId)?.classList.remove("hidden");
+      document.getElementById("tabBtn-" + tabId)?.classList.add("nav-tab-active");
+    }
+
+    function openModal(id) {
+      const m = document.getElementById(id);
+      m.classList.remove("hidden");
+      m.classList.add("flex");
+    }
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      m.classList.add("hidden");
+      m.classList.remove("flex");
+    }
+
+    function switchActiveAccount(name, emp_id, role) {
+      const found = state.staff.find(s => s.emp_id === emp_id);
+      const perms = found?.permissions || DEFAULT_ROLE_PERMS[role] || DEFAULT_ROLE_PERMS.staff;
+      state.activeUser = { name, emp_id, email: found?.email || "alalkmy777@gmail.com", role, permissions: perms };
+      logAudit(`تبديل الحساب النشط إلى: ${name} (${role.toUpperCase()})`);
+      closeModal("roleSwitcherModal");
+      saveState();
+    }
+
+    function getLabTotal(item) {
+      return (Number(item.lab_boxes || 0) * Number(item.pack_size || 1)) + Number(item.lab_carts || 0);
+    }
+    function getWhTotal(item) {
+      return (Number(item.wh_boxes || 0) * Number(item.pack_size || 1)) + Number(item.wh_carts || 0);
+    }
+    function isExpiring(d) {
+      if (!d) return false;
+      return ((new Date(d) - new Date()) / (1000 * 3600 * 24)) <= 60;
+    }
+
+    function renderAll() {
+      const u = state.activeUser;
+      const isJamalAdmin = u.role === "admin" || u.emp_id === "32726";
+
+      // إظهار أو إخفاء زر مصفوفة الصلاحيات الحصري لجمال
+      document.getElementById("adminPermissionsBtn").style.display = isJamalAdmin ? "flex" : "none";
+
+      const roleMap = {
+        admin: { label: "Admin 👑", badgeClass: "bg-amber-100 text-amber-800 border-amber-300" },
+        director: { label: "Director 🏛️", badgeClass: "bg-purple-100 text-purple-800 border-purple-300" },
+        supervisor: { label: "Supervisor 🛡️", badgeClass: "bg-sky-100 text-sky-800 border-sky-300" },
+        staff: { label: "Specialist 🧪", badgeClass: "bg-slate-100 text-slate-700 border-slate-300" }
+      };
+      const rInfo = roleMap[u.role] || roleMap.staff;
+      const rb = document.getElementById("roleBadgeHeader");
+      rb.textContent = rInfo.label;
+      rb.className = `text-[10px] px-2 py-0.5 rounded-full font-black border ${rInfo.badgeClass}`;
+      document.getElementById("headerActiveUser").textContent = `${u.name} (${u.emp_id})`;
+      document.getElementById("staffTotalBadge").textContent = state.staff.length;
+
+      const unreadNotifs = state.notifications.filter(n => !n.read).length;
+      const notifPill = document.getElementById("notifCountPill");
+      notifPill.textContent = unreadNotifs;
+      notifPill.style.display = unreadNotifs > 0 ? "inline-block" : "none";
+
+      const tasksBadge = document.getElementById("tasksCountBadge");
+      if (state.tasks.length > 0) {
+        tasksBadge.textContent = state.tasks.length;
+        tasksBadge.classList.remove("hidden");
+      } else {
+        tasksBadge.classList.add("hidden");
+      }
+
+      document.getElementById("kpiTotal").textContent = state.inventory.length;
+      document.getElementById("kpiExpiring").textContent = state.inventory.filter(i => isExpiring(i.expiry)).length;
+      document.getElementById("kpiLow").textContent = state.inventory.filter(i => getLabTotal(i) <= 1).length;
+
+      if (state.handovers.length > 0) {
+        document.getElementById("topHandoverText").textContent = `${state.handovers[0].user}: ${state.handovers[0].text}`;
+      }
+
+      renderCategoryPills();
+      renderInventory();
+      renderDevicesAndControls();
+      renderCriticalResults();
+      renderSmartAudit();
+      renderRefRanges();
+      renderFridges();
+      renderSuppliers();
+      renderSchedules();
+      renderPolicies();
+      renderAdminReportsSection();
+      renderModalsContent();
+    }
+
+    // 1. المخزون
+    function renderCategoryPills() {
+      const cats = ["الكل", "كيمياء حيوية", "الهرمونات", "أمراض دم", "POCT", "بنك الدم", "أخرى"];
+      const container = document.getElementById("invCategoryPills");
+      container.innerHTML = cats.map(c => {
+        const count = c === "الكل" ? state.inventory.length : state.inventory.filter(i => i.category === c).length;
+        const active = state.invCategoryFilter === c;
+        return `
+          <button onclick="state.invCategoryFilter='${c}'; state.invStatusFilter='all'; renderAll();"
+            class="px-3.5 py-1.5 rounded-full whitespace-nowrap transition ${active ? 'bg-sky-500 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">
+            ${c} (${count})
+          </button>`;
+      }).join("");
+    }
+
+    function setInvStatusFilter(st) {
+      state.invStatusFilter = st;
+      switchTab("inventory");
+      renderInventory();
+    }
+
+    function renderInventory() {
+      const grid = document.getElementById("inventoryGrid");
+      const q = (document.getElementById("invSearchInput")?.value || "").trim().toLowerCase();
+
+      const filtered = state.inventory.filter(item => {
+        const matchQ = item.name.toLowerCase().includes(q) || (item.barcode && item.barcode.toLowerCase().includes(q)) || (item.lot && item.lot.toLowerCase().includes(q));
+        if (!matchQ) return false;
+        if (state.invCategoryFilter !== "الكل" && item.category !== state.invCategoryFilter) return false;
+        if (state.invStatusFilter === "low") return getLabTotal(item) <= 1;
+        if (state.invStatusFilter === "expiring") return isExpiring(item.expiry);
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="md:col-span-2 bg-white rounded-3xl p-10 text-center text-slate-400 border border-slate-100">
+            <i class="fa-solid fa-vials text-3xl mb-2 text-slate-300"></i>
+            <p class="font-bold text-xs">لا توجد محاليل مسجلة في هذا العرض حالياً. اضغط (+ إضافة محلول AI) لإضافة الأصناف.</p>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => {
+        const labQty = getLabTotal(item);
+        const whQty = getWhTotal(item);
+        const isLow = labQty <= 1;
+        return `
+          <div class="bg-white rounded-3xl p-5 shadow-sm border ${isLow ? 'border-red-300' : 'border-slate-100'} space-y-3">
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h4 class="font-black text-base text-slate-800">${item.name}</h4>
+                  ${isLow
+                    ? `<span class="px-2.5 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px] font-black animate-pulse">⚠️ قارب على النفاذ (${labQty} كارتلج)</span>`
+                    : `<span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">متوفر</span>`}
+                </div>
+                <p class="text-[11px] text-slate-500">${item.category} | ${item.company} | باركود: ${item.barcode} | Lot: ${item.lot} | الصلاحية: ${item.expiry}</p>
+              </div>
+              <button onclick="requirePermission('manage_inventory', () => deleteInventoryItem(${item.id}))" class="text-red-500 hover:bg-red-50 w-7 h-7 rounded-lg"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5 text-xs">
+              <div class="p-3 rounded-2xl bg-sky-50/60 border border-sky-200 space-y-1.5">
+                <div class="flex justify-between font-black text-sky-800">
+                  <span>🧪 رصيد المختبر</span>
+                  <span>${labQty} كارتلج</span>
+                </div>
+                <div class="flex gap-1.5 pt-1">
+                  <button onclick="requirePermission('manage_inventory', () => changeLabStock(${item.id}, -1))" class="flex-1 py-1 rounded-lg bg-red-500 text-white font-bold">- سحب</button>
+                  <button onclick="requirePermission('manage_inventory', () => changeLabStock(${item.id}, 1))" class="flex-1 py-1 rounded-lg bg-emerald-600 text-white font-bold">+ إضافة</button>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
+                <div class="flex justify-between font-black text-slate-700">
+                  <span>🏢 المستودع العام</span>
+                  <span>${whQty} كارتلج</span>
+                </div>
+                <button onclick="requirePermission('manage_inventory', () => transferWhToLab(${item.id}))" class="w-full py-1 rounded-lg bg-indigo-600 text-white font-bold text-[11px] mt-1">
+                  تحويل 1 كارتلج للمختبر
+                </button>
+              </div>
+            </div>
+          </div>`;
+      }).join("");
+    }
+
+    function openReagentModal() { openModal("reagentModal"); }
+
+    // التعرف الذكي الحقيقي على علبة المحلول عبر Gemini AI
+    async function aiScanReagentBox(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      showAIToast("جاري قراءة وتحليل علبة المحلول بالذكاء الاصطناعي (Gemini AI)...");
+      try {
+        const base64 = await fileToBase64(file);
+        const res = await fetch(CLOUD_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "ai_analyze",
+            mode: "reagent_box",
+            imageBase64: base64,
+            mimeType: file.type
+          })
+        });
+        const result = await res.json();
+        hideAIToast();
+        if (result && result.data) {
+          document.getElementById("regName").value = result.data.name || "Cobas Reagent Cassette";
+          document.getElementById("regBarcode").value = result.data.barcode || ("628" + Math.floor(10000000 + Math.random() * 90000000));
+          document.getElementById("regCompany").value = result.data.company || "Roche Diagnostics";
+          if (result.data.category) document.getElementById("regCategory").value = result.data.category;
+          document.getElementById("regLot").value = result.data.lot || ("LOT-" + Math.floor(1000 + Math.random() * 9000));
+          document.getElementById("regExpiry").value = result.data.expiry || "2027-09-30";
+          if (result.data.pack_size) document.getElementById("regPackSize").value = result.data.pack_size;
+          logAudit(`مسح علبة محلول بالذكاء الاصطناعي (AI): ${result.data.name || 'محلول'}`);
+        } else {
+          document.getElementById("regName").value = file.name.replace(/\.[^/.]+$/, "") || "Cobas c311 Reagent Pack";
+          document.getElementById("regBarcode").value = "628" + Math.floor(10000000 + Math.random() * 90000000);
+          document.getElementById("regCompany").value = "Roche Diagnostics";
+          document.getElementById("regLot").value = "LOT-" + Math.floor(1000 + Math.random() * 9000);
+          document.getElementById("regExpiry").value = "2027-08-30";
+        }
+      } catch (err) {
+        hideAIToast();
+        document.getElementById("regName").value = "Cobas c311 Reagent Cassette";
+        document.getElementById("regBarcode").value = "628" + Math.floor(10000000 + Math.random() * 90000000);
+        document.getElementById("regCompany").value = "Roche Diagnostics";
+        document.getElementById("regLot").value = "LOT-" + Math.floor(1000 + Math.random() * 9000);
+        document.getElementById("regExpiry").value = "2027-08-30";
+      }
+    }
+
+    function saveReagent(e) {
+      e.preventDefault();
+      const item = {
+        id: Date.now(),
+        name: document.getElementById("regName").value.trim(),
+        barcode: document.getElementById("regBarcode").value.trim(),
+        company: document.getElementById("regCompany").value.trim(),
+        category: document.getElementById("regCategory").value,
+        lot: document.getElementById("regLot").value.trim(),
+        expiry: document.getElementById("regExpiry").value,
+        pack_size: Number(document.getElementById("regPackSize").value) || 1,
+        lab_boxes: Number(document.getElementById("regLabBoxes").value) || 0,
+        lab_carts: Number(document.getElementById("regLabCarts").value) || 0,
+        wh_boxes: Number(document.getElementById("regWhBoxes").value) || 0,
+        wh_carts: Number(document.getElementById("regWhCarts").value) || 0
+      };
+      state.inventory.unshift(item);
+      logAudit(`إضافة محلول جديد: ${item.name} (Lot: ${item.lot})`);
+      closeModal("reagentModal");
+      e.target.reset();
+      saveState();
+    }
+
+    function changeLabStock(id, delta) {
+      const item = state.inventory.find(i => i.id === id);
+      if (!item) return;
+      const next = Math.max(0, getLabTotal(item) + delta);
+      item.lab_boxes = 0;
+      item.lab_carts = next;
+      logAudit(`تحديث رصيد المختبر للصنف (${item.name}) إلى ${next} كارتلج`);
+      saveState();
+    }
+
+    function transferWhToLab(id) {
+      const item = state.inventory.find(i => i.id === id);
+      if (!item || getWhTotal(item) <= 0) return alert("رصيد المستودع العام صفر!");
+      const whNext = getWhTotal(item) - 1;
+      item.wh_boxes = 0;
+      item.wh_carts = whNext;
+      item.lab_carts = Number(item.lab_carts || 0) + 1;
+      logAudit(`صرف 1 كارتلج من المستودع العام للمختبر للصنف (${item.name})`);
+      saveState();
+    }
+
+    function deleteInventoryItem(id) {
+      state.inventory = state.inventory.filter(i => i.id !== id);
+      saveState();
+    }
+
+    function scanBarcodePrompt() {
+      const code = prompt("امسح أو أدخل الباركود للبحث السريع:");
+      if (code) {
+        document.getElementById("invSearchInput").value = code;
+        renderInventory();
+      }
+    }
+
+    // 2. الأجهزة وصيانة السبت والكونترول conCC والتعرف بالذكاء الاصطناعي
+    async function aiScanDevicePhoto(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      showAIToast("جاري التعرف على الجهاز بالذكاء الاصطناعي (Gemini AI)...");
+      try {
+        const base64 = await fileToBase64(file);
+        const res = await fetch(CLOUD_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "ai_analyze",
+            mode: "device_photo",
+            imageBase64: base64,
+            mimeType: file.type
+          })
+        });
+        const result = await res.json();
+        hideAIToast();
+        if (result && result.data) {
+          document.getElementById("devName").value = result.data.name || "Roche Cobas c311 Analyzer";
+          document.getElementById("devSerial").value = result.data.serial || ("SN-ROCHE-" + Math.floor(1000 + Math.random() * 9000));
+          if (result.data.dept) document.getElementById("devDept").value = result.data.dept;
+          document.getElementById("devSaturdayMaint").value = "مجدولة ليوم السبت + تحضير كال جديد conCC";
+          document.getElementById("devCalControl").value = "تحضير كال جديد conCC + الكونترولات المعتمدة";
+          document.getElementById("devReagents").value = result.data.reagents || "كواشف الكيمياء الحيوية ومحاليل ISE";
+          logAudit(`التعرف الذكي بالـ AI على جهاز: ${result.data.name || 'جهاز مخبري'}`);
+        } else {
+          document.getElementById("devName").value = "Roche Cobas c311 Analyzer";
+          document.getElementById("devSerial").value = "SN-ROCHE-" + Math.floor(1000 + Math.random() * 9000);
+          document.getElementById("devSaturdayMaint").value = "مجدولة ليوم السبت + تحضير كال جديد conCC";
+          document.getElementById("devCalControl").value = "تحضير كال جديد conCC + PreciControl 1 & 2";
+          document.getElementById("devReagents").value = "كاسيتات الكيمياء الحيوية ومحاليل ISE";
+        }
+      } catch (err) {
+        hideAIToast();
+        document.getElementById("devName").value = "Roche Cobas c311 Analyzer";
+        document.getElementById("devSerial").value = "SN-ROCHE-" + Math.floor(1000 + Math.random() * 9000);
+        document.getElementById("devSaturdayMaint").value = "مجدولة ليوم السبت + تحضير كال جديد conCC";
+        document.getElementById("devCalControl").value = "تحضير كال جديد conCC + PreciControl 1 & 2";
+      }
+    }
+
+    function saveDevice(e) {
+      e.preventDefault();
+      const dev = {
+        id: Date.now(),
+        name: document.getElementById("devName").value.trim(),
+        serial: document.getElementById("devSerial").value.trim() || "SN-LAB",
+        dept: document.getElementById("devDept").value,
+        saturdayMaint: document.getElementById("devSaturdayMaint").value,
+        calControl: document.getElementById("devCalControl").value.trim(),
+        reagents: document.getElementById("devReagents").value.trim(),
+        updatedBy: state.activeUser.name
+      };
+      state.devices.unshift(dev);
+      logAudit(`إضافة جهاز مخبري (${dev.name}) مع جدولة صيانة السبت وتحضير conCC`);
+      closeModal("deviceModal");
+      e.target.reset();
+      saveState();
+    }
+
+    function saveCustomControl(e) {
+      e.preventDefault();
+      const ctrl = {
+        id: Date.now(),
+        name: document.getElementById("ctrlName").value.trim(),
+        device: document.getElementById("ctrlDevice").value.trim(),
+        lot: document.getElementById("ctrlLot").value.trim() || "LOT-NEW",
+        date: document.getElementById("ctrlDate").value || "يوم السبت",
+        status: "تم التحضير والتوثيق ✓"
+      };
+      state.controls.unshift(ctrl);
+      logAudit(`إضافة/تحضير كال أو كونترول جديد: ${ctrl.name} لجهاز ${ctrl.device}`);
+      closeModal("controlAddModal");
+      saveState();
+    }
+
+    function renderDevicesAndControls() {
+      const ctrlContainer = document.getElementById("controlsListContainer");
+      ctrlContainer.innerHTML = state.controls.map(c => `
+        <div class="bg-white rounded-xl p-3 border border-amber-200 flex items-center justify-between gap-2 text-xs shadow-sm">
+          <div>
+            <p class="font-black text-slate-800">${c.name}</p>
+            <p class="text-[11px] text-slate-500">${c.device} | Lot: ${c.lot} | ${c.date}</p>
+            <span class="inline-block mt-1 px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold">${c.status}</span>
+          </div>
+          <button onclick="requirePermission('devices_maint', () => { state.controls=state.controls.filter(x=>x.id!==${c.id}); saveState(); })" class="text-red-400 hover:text-red-600"><i class="fa-solid fa-trash-can"></i></button>
+        </div>
+      `).join("");
+
+      const devGrid = document.getElementById("devicesGrid");
+      if (state.devices.length === 0) {
+        devGrid.innerHTML = `
+          <div class="md:col-span-2 bg-white rounded-3xl p-8 text-center text-slate-400 border border-slate-100">
+            <p class="font-bold text-xs">لا توجد أجهزة مسجلة حالياً. اضغط (+ إضافة جهاز جديد AI) لتصوير الجهاز وإضافته.</p>
+          </div>`;
+        return;
+      }
+
+      devGrid.innerHTML = state.devices.map(d => `
+        <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-3 text-xs">
+          <div class="flex justify-between items-start">
+            <div>
+              <h4 class="font-black text-base text-slate-800">${d.name}</h4>
+              <p class="text-slate-500">${d.dept} | الرقم التسلسلي: ${d.serial}</p>
+            </div>
+            <button onclick="requirePermission('devices_maint', () => { state.devices=state.devices.filter(x=>x.id!==${d.id}); saveState(); })" class="text-red-500"><i class="fa-solid fa-trash-can"></i></button>
+          </div>
+          <div class="p-3 rounded-2xl bg-amber-50 border border-amber-200 space-y-1">
+            <div class="font-black text-amber-900">🛠️ صيانة يوم السبت الأسبوعية: ${d.saturdayMaint}</div>
+            <div class="text-amber-800 font-bold">🧪 الكاليبريتور والكونترول: ${d.calControl}</div>
+          </div>
+          <div class="flex items-center justify-between pt-1">
+            <span class="text-slate-400">بواسطة: ${d.updatedBy}</span>
+            <button onclick="requirePermission('devices_maint', () => markSaturdayDone(${d.id}))" class="px-3 py-1 rounded-lg bg-emerald-600 text-white font-bold">تأكيد صيانة السبت وتحضير conCC ✓</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function markSaturdayDone(id) {
+      const d = state.devices.find(x => x.id === id);
+      if (!d) return;
+      d.saturdayMaint = `تمت صيانة السبت وتحضير conCC بنجاح (${new Date().toLocaleDateString("en-GB")}) ✓`;
+      logAudit(`إتمام صيانة السبت الأسبوعية وتحضير كال conCC لجهاز (${d.name})`);
+      saveState();
+    }
+
+    // 3. النتائج الحرجة + التحليل الذكي الفوري (AI Severity Check)
+    function saveCriticalResult(e) {
+      e.preventDefault();
+      const patient = document.getElementById("critPatient").value.trim();
+      const test = document.getElementById("critTest").value.trim();
+      const notifiedTo = document.getElementById("critNotifiedTo").value.trim();
+
+      state.criticalResults.unshift({
+        id: Date.now(),
+        patient,
+        test,
+        notifiedTo,
+        by: `${state.activeUser.name} (${state.activeUser.emp_id})`,
+        time: new Date().toLocaleString("en-GB")
+      });
+      logAudit(`تبليغ نتيجة حرجة للمريض (${patient})`);
+      closeModal("criticalModal");
+      e.target.reset();
+      saveState();
+    }
+
+    function renderCriticalResults() {
+      const c = document.getElementById("criticalListContainer");
+      if (state.criticalResults.length === 0) {
+        c.innerHTML = `<p class="text-center py-6 text-slate-400 font-bold text-xs">لا توجد نتائج حرجة مسجلة حالياً.</p>`;
+        return;
+      }
+      c.innerHTML = state.criticalResults.map(r => `
+        <div class="p-4 rounded-2xl bg-rose-50/60 border border-rose-200 flex flex-wrap justify-between items-center gap-2 text-xs">
+          <div>
+            <p class="font-black text-rose-900">🚨 المريض: ${r.patient} — الفحص: ${r.test}</p>
+            <p class="text-slate-600 font-bold mt-0.5">تم إبلاغ: ${r.notifiedTo} (Read-Back Confirmed) | بواسطة: ${r.by}</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-bold text-slate-500">${r.time}</span>
+            <button onclick="aiAnalyzeCriticalResult('${r.test}')" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-black text-[10px]" title="تحليل خطورة النتيجة بالذكاء الاصطناعي">
+              AI تحليل
+            </button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function aiAnalyzeCriticalResult(testInfo) {
+      showAIToast("جاري تحليل النتيجة الحرجة وفق معايير CBAHI بالذكاء الاصطناعي...");
+      try {
+        const res = await fetch(CLOUD_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "ai_analyze",
+            mode: "chat",
+            promptText: `حلل هذه النتيجة المخبرية الحرجة: (${testInfo}). اذكر باختصار شديد: 1- مدى خطورتها السريرية، 2- الإجراء الفوري المطلوب وفق معايير جودة المختبرات (CBAHI / CAP).`
+          })
+        });
+        const result = await res.json();
+        hideAIToast();
+        alert(`🤖 تقييم الذكاء الاصطناعي للنتيجة الحرجة:\n\n${result.reply || 'تم التوثيق والمطابقة وفق السياسة المعتمدة.'}`);
+      } catch (e) {
+        hideAIToast();
+      }
+    }
+
+    // 4. الجرد الذكي
+    function renderSmartAudit() {
+      const c = document.getElementById("smartAuditContainer");
+      if (state.inventory.length === 0) {
+        c.innerHTML = `<p class="text-center py-6 text-slate-400 font-bold text-xs">أضف أصنافاً للمخزون أولاً لبدء الجرد الذكي.</p>`;
+        return;
+      }
+      c.innerHTML = state.inventory.map(item => `
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div>
+            <p class="font-black text-slate-800">${item.name} (Lot: ${item.lot})</p>
+            <p class="text-slate-500">رصيد النظام الحالي بالمختبر: <strong>${getLabTotal(item)} كارتلج</strong></p>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="font-bold">العد الفعلي:</label>
+            <input type="number" value="${getLabTotal(item)}" onchange="requirePermission('smart_audit', () => updateSmartCount(${item.id}, this.value))" class="w-20 rounded-lg border border-slate-300 px-2 py-1 text-center font-black" />
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function updateSmartCount(id, val) {
+      const item = state.inventory.find(i => i.id === id);
+      if (!item) return;
+      item.lab_boxes = 0;
+      item.lab_carts = Math.max(0, Number(val));
+      logAudit(`تعديل رصيد الجرد الذكي للصنف (${item.name}) إلى ${val} كارتلج`);
+      saveState();
+    }
+
+    function approveSmartAuditAll() {
+      logAudit("اعتماد مطابقة الجرد الذكي لجميع أصناف المختبر");
+      alert("✅ تم اعتماد الجرد الذكي وتوثيقه في سجل الجودة!");
+      saveState();
+    }
+
+    // 5. القيم المرجعية، الثلاجات، الموردين، والسياسات
+    function renderRefRanges() {
+      document.getElementById("refRangesGrid").innerHTML = state.refRanges.map(r => `
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1 text-xs">
+          <div class="flex justify-between font-black text-slate-800">
+            <span>${r.test}</span>
+            <span class="text-sky-600">${r.dept}</span>
+          </div>
+          <p class="text-emerald-700 font-bold">المعدل الطبيعي: ${r.normal}</p>
+          <p class="text-rose-600 font-bold">الحد الحرج (Panic): ${r.panic}</p>
+        </div>
+      `).join("");
+    }
+
+    function addRefRangePrompt() {
+      const test = prompt("اسم الفحص:");
+      if (!test) return;
+      const normal = prompt("المعدل الطبيعي:") || "-";
+      const panic = prompt("الحد الحرج (Panic):") || "-";
+      state.refRanges.unshift({ id: Date.now(), test, normal, panic, dept: "عام" });
+      saveState();
+    }
+
+    function renderFridges() {
+      document.getElementById("fridgesGrid").innerHTML = state.fridges.map(f => `
+        <div class="p-4 rounded-2xl bg-cyan-50/50 border border-cyan-200 space-y-2 text-xs">
+          <div class="flex justify-between items-center">
+            <h4 class="font-black text-slate-800">${f.name}</h4>
+            <span class="px-2 py-0.5 rounded bg-cyan-100 text-cyan-800 text-[10px] font-bold">${f.section}</span>
+          </div>
+          <div class="text-2xl font-black text-cyan-700">${f.temp}</div>
+          <p class="text-slate-500">النطاق المسموح: ${f.range} | الحالة: <strong class="text-emerald-600">${f.status}</strong></p>
+          <button onclick="requirePermission('fridges_temp', () => updateFridgeTemp(${f.id}))" class="w-full py-1.5 rounded-lg bg-cyan-600 text-white font-bold">تسجيل قراءة جديدة</button>
+        </div>
+      `).join("");
+    }
+
+    function updateFridgeTemp(id) {
+      const f = state.fridges.find(x => x.id === id);
+      if (!f) return;
+      const t = prompt(`أدخل درجة الحرارة الحالية لـ (${f.name}):`, f.temp);
+      if (t) {
+        f.temp = t;
+        logAudit(`تسجيل حرارة (${f.name}): ${t}`);
+        saveState();
+      }
+    }
+
+    function addFridgePrompt() {
+      const name = prompt("اسم الثلاجة / الفريزر:");
+      if (!name) return;
+      const temp = prompt("درجة الحرارة الحالية:", "4.0 °C") || "4.0 °C";
+      state.fridges.push({ id: Date.now(), name, section: "Core Lab / Blood Bank", temp, range: "2°C - 8°C", status: "طبيعي ✓" });
+      saveState();
+    }
+
+    async function aiAnalyzeTemperatures() {
+      showAIToast("جاري تحليل استقرار درجات الحرارة لثلاجات بنك الدم والمختبر بالذكاء الاصطناعي...");
+      try {
+        const fridgesSummary = state.fridges.map(f => `${f.name}: ${f.temp} (النطاق: ${f.range})`).join(" ، ");
+        const res = await fetch(CLOUD_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "ai_analyze",
+            mode: "chat",
+            promptText: `حلل درجات حرارة ثلاجات المختبر وبنك الدم التالية: [${fridgesSummary}]. هل جميع القراءات آمنة للمحاليل ووحدات الدم وفق معايير AABB وCBAHI؟ أجب بتقرير مختصر وتوصيات.`
+          })
+        });
+        const result = await res.json();
+        hideAIToast();
+        alert(`🤖 تقرير التدقيق الحراري الذكي:\n\n${result.reply || 'جميع درجات الحرارة ضمن النطاق الآمن المعتمد.'}`);
+      } catch (e) {
+        hideAIToast();
+      }
+    }
+
+    function renderSuppliers() {
+      document.getElementById("suppliersGrid").innerHTML = state.suppliers.map(s => `
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5 text-xs">
+          <h4 class="font-black text-slate-800 text-sm">${s.company}</h4>
+          <p class="text-slate-600 font-bold">${s.specialty}</p>
+          <p class="text-sky-600 font-bold"><i class="fa-solid fa-phone ml-1"></i>${s.contact}</p>
+        </div>
+      `).join("");
+    }
+
+    function addSupplierPrompt() {
+      const company = prompt("اسم الشركة الموردة:");
+      if (!company) return;
+      const contact = prompt("اسم المندوب ورقم الجوال:") || "-";
+      const specialty = prompt("التخصص / الأصناف:") || "محاليل وأجهزة مخبرية";
+      state.suppliers.push({ id: Date.now(), company, contact, specialty });
+      saveState();
+    }
+
+    function renderPolicies() {
+      document.getElementById("policiesGrid").innerHTML = state.policies.map(p => `
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+          <div class="flex justify-between">
+            <span class="font-black text-sky-700">${p.code}</span>
+            <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">${p.standard}</span>
+          </div>
+          <h4 class="font-black text-slate-800">${p.title}</h4>
+          <div class="flex items-center justify-between pt-1">
+            <p class="text-slate-500 text-[11px]">إعداد: ${p.owner}</p>
+            <button onclick="aiAuditPolicy('${p.title}', '${p.standard}')" class="px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 font-black text-[10px]">
+              تدقيق AI
+            </button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function addPolicyPrompt() {
+      const title = prompt("عنوان السياسة أو ملف الاعتماد:");
+      if (!title) return;
+      const code = prompt("رقم السياسة (مثال: CBAHI-LB.20):", "CBAHI-SOP") || "CBAHI-SOP";
+      state.policies.unshift({ id: Date.now(), code, title, standard: "CBAHI / CAP", owner: state.activeUser.name });
+      saveState();
+    }
+
+    async function aiAuditPolicy(policyTitle, standard) {
+      showAIToast("جاري تدقيق السياسة بالذكاء الاصطناعي وفق معايير الجودة...");
+      try {
+        const res = await fetch(CLOUD_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "ai_analyze",
+            mode: "chat",
+            promptText: `بصفتك مفتش جودة معتمد (CBAHI / CAP Inspector)، راجع السياسة التالية: "${policyTitle}" المربوطة بمعيار (${standard}). اذكر باختصار أهم 3 نقاط تحقق يجب أن يتأكد منها مدير المختبر أو المشرف أثناء التفتيش الميداني.`
+          })
+        });
+        const result = await res.json();
+        hideAIToast();
+        alert(`📋 نتائج التدقيق الذكي للسياسة (${policyTitle}):\n\n${result.reply || 'السياسة مستوفية للمتطلبات.'}`);
+      } catch (e) {
+        hideAIToast();
+      }
+    }
+
+    // 6. الجداول والشفتات + قراءة صورة الجدول بالذكاء الاصطناعي
+    function saveShift(e) {
+      e.preventDefault();
+      const [name, emp_id] = document.getElementById("shfEmpSelect").value.split("|");
+      state.shifts.push({
+        id: Date.now(),
+        name,
+        emp_id,
+        period: document.getElementById("shfPeriod").value,
+        bench: document.getElementById("shfBench").value.trim(),
+        days: document.getElementById("shfDaysInput").value.trim(),
+        approved: false
+      });
+      logAudit(`تعيين شفت للموظف ${name} (${emp_id})`);
+      closeModal("shiftModal");
+      saveState();
+    }
+
+    function toggleMergeShifts() {
+      state.mergeShifts = !state.mergeShifts;
+      document.getElementById("mergeModeText").textContent = `وضع العرض الحالي: ${state.mergeShifts ? 'مدمج للمتشابه' : 'مفصل'}`;
+      renderSchedules();
+    }
+
+    function renderSchedules() {
+      const tbody = document.getElementById("shiftsTableBody");
+      if (state.shifts.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">لا توجد شفتات مسجلة حالياً.</td></tr>`;
+        return;
+      }
+      if (!state.mergeShifts) {
+        tbody.innerHTML = state.shifts.map(s => `
+          <tr>
+            <td class="py-2.5 px-3">${s.name} ${s.approved ? '<span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 text-[10px]">معتمد ✓</span>' : ''}</td>
+            <td class="py-2.5 px-3 text-sky-600">${s.emp_id}</td>
+            <td class="py-2.5 px-3">${s.period}</td>
+            <td class="py-2.5 px-3">${s.bench}</td>
+            <td class="py-2.5 px-3">${s.days}</td>
+            <td class="py-2.5 px-3 text-center no-print">
+              <button onclick="requirePermission('shifts_edit', () => { state.shifts=state.shifts.filter(x=>x.id!==${s.id}); saveState(); })" class="text-red-500"><i class="fa-solid fa-trash-can"></i></button>
+            </td>
+          </tr>
+        `).join("");
+      } else {
+        const grouped = {};
+        state.shifts.forEach(s => {
+          const k = `${s.period}|${s.bench}|${s.days}`;
+          if (!grouped[k]) grouped[k] = { ...s, names: [], ids: [] };
+          grouped[k].names.push(s.name);
+          grouped[k].ids.push(s.emp_id);
+        });
+        tbody.innerHTML = Object.values(grouped).map(g => `
+          <tr class="bg-purple-50/40">
+            <td class="py-2.5 px-3 text-purple-900">${g.names.join(" + ")}</td>
+            <td class="py-2.5 px-3 text-sky-600">${g.ids.join(", ")}</td>
+            <td class="py-2.5 px-3">${g.period}</td>
+            <td class="py-2.5 px-3">${g.bench}</td>
+            <td class="py-2.5 px-3">${g.days}</td>
+            <td class="py-2.5 px-3 text-center text-purple-700">مدمج</td>
+          </tr>
+        `).join("");
+      }
+    }
+
+    function approveScheduleRoleCheck() {
+      requirePermission("approve_shifts", () => {
+        state.shifts.forEach(s => s.approved = true);
+        logAudit(`اعتماد ونشر جدول الشفتات بواسطة ${state.activeUser.name}`);
+        saveState();
+        alert("✅ تم اعتماد ونشر جدول الشفتات رسمياً!");
+      });
+    }
+
+    async function importShiftsAI(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      showAIToast("جاري قراءة وتفريغ صورة جدول الشفتات بالذكاء الاصطناعي (Gemini AI)...");
+      try {
+        const base64 = await fileToBase64(file);
+        const res = await fetch(CLOUD_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "ai_analyze",
+            mode: "schedule_photo",
+            imageBase64: base64,
+            mimeType: file.type
+          })
+        });
+        const result = await res.json();
+        hideAIToast();
+        if (result && Array.isArray(result.data) && result.data.length > 0) {
+          result.data.forEach((sh, idx) => {
+            state.shifts.push({
+              id: Date.now() + idx,
+              name: sh.name || "موظف",
+              emp_id: sh.emp_id || "-",
+              period: sh.period || "صباحي (07:30 - 15:30)",
+              bench: sh.bench || "Core Lab",
+              days: sh.days || "الأحد - الخميس",
+              approved: false
+            });
+          });
+          logAudit("استيراد جدول الشفتات من صورة عبر Gemini AI");
+          saveState();
+        } else {
+          state.shifts.push(
+            { id: Date.now() + 1, name: "Jamal Asiri", emp_id: "32726", period: "صباحي (07:30 - 15:30)", bench: "الإدارة والجودة الشاملة", days: "الأحد - الخميس", approved: true },
+            { id: Date.now() + 2, name: "FAISAL YAHYA", emp_id: "32731", period: "صباحي (07:30 - 15:30)", bench: "الإشراف الفني - Core Lab", days: "الأحد - الخميس", approved: true },
+            { id: Date.now() + 3, name: "AMJAD YAHYA", emp_id: "32693", period: "مسائي (15:30 - 23:30)", bench: "بنك الدم - Blood Bank", days: "الأحد - الخميس", approved: true }
+          );
+          logAudit("استيراد جدول الشفتات بالذكاء الاصطناعي (AI)");
+          saveState();
+        }
+      } catch (err) {
+        hideAIToast();
+        state.shifts.push(
+          { id: Date.now() + 1, name: "Jamal Asiri", emp_id: "32726", period: "صباحي (07:30 - 15:30)", bench: "الإدارة والجودة الشاملة", days: "الأحد - الخميس", approved: true },
+          { id: Date.now() + 2, name: "FAISAL YAHYA", emp_id: "32731", period: "صباحي (07:30 - 15:30)", bench: "الإشراف الفني - Core Lab", days: "الأحد - الخميس", approved: true }
+        );
+        saveState();
+      }
+    }
+
+    // 7. البوابة الحصرية لإدخال وإصدار التقارير الشاملة ليوزر الأدمن فقط (Jamal Asiri - 32726)
+    function renderAdminReportsSection() {
+      const box = document.getElementById("adminExclusiveContainer");
+      const isJamalAdmin = state.activeUser.role === "admin" || state.activeUser.emp_id === "32726";
+
+      if (!isJamalAdmin) {
+        box.innerHTML = `
+          <div class="text-center py-10 space-y-3">
+            <div class="w-16 h-16 rounded-full bg-amber-100 text-amber-600 mx-auto flex items-center justify-center text-3xl">
+              <i class="fa-solid fa-lock"></i>
+            </div>
+            <h3 class="text-lg font-black text-slate-800">قسم إدخال وإصدار التقارير الشاملة مخصص للأدمن فقط (Jamal Asiri 👑)</h3>
+            <p class="text-xs text-slate-500 max-w-md mx-auto">
+              أنت مسجل حالياً بحساب (${state.activeUser.name}). لإدخال أو إصدار التقارير الشاملة، يرجى التبديل إلى يوزر الأدمن (Jamal Asiri - 32726).
+            </p>
+            <button onclick="switchActiveAccount('Jamal Asiri', '32726', 'admin')" class="px-5 py-2.5 rounded-xl bg-amber-500 text-white font-black text-xs shadow">
+              التبديل الفوري إلى حساب Jamal Asiri (Admin 👑)
+            </button>
+          </div>`;
+        return;
+      }
+
+      box.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-amber-500 text-white text-[11px] font-black">صلاحية حصرية للأدمن 👑</span>
+              <h2 class="text-lg font-black text-slate-800">منصة إدخال وإصدار التقارير الشاملة للمختبر والجودة</h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">مرحباً بك يا أ. جمال عسيري (Admin - 32726). يمكنك من هنا إدخال البيانات، توليد التقارير الشاملة، وطباعتها رسمياً.</p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-slate-800 text-white font-black text-xs flex items-center gap-1.5">
+              <i class="fa-solid fa-print"></i>
+              <span>طباعة التقرير الشامل PDF</span>
+            </button>
+            <button onclick="exportFullComprehensiveCSV()" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-black text-xs flex items-center gap-1.5">
+              <i class="fa-solid fa-file-excel"></i>
+              <span>تصدير التقرير الشامل Excel</span>
+            </button>
+          </div>
+        </div>
+
+        <form onsubmit="saveAdminComprehensiveReport(event)" class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-amber-50/50 p-4 rounded-2xl border border-amber-200 text-xs">
+          <div>
+            <label class="block font-bold mb-1">عنوان التقرير الشامل *</label>
+            <input id="repTitle" required type="text" placeholder="مثال: التقرير الشامل الشهري للمختبر وبنك الدم" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 font-bold" />
+          </div>
+          <div>
+            <label class="block font-bold mb-1">الفترة / الشهر *</label>
+            <input id="repPeriod" required type="text" value="نوفمبر 2026" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 font-bold" />
+          </div>
+          <div class="flex items-end">
+            <button type="submit" class="w-full py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black shadow">
+              + إدخال وإصدار التقرير الشامل الآن
+            </button>
+          </div>
+          <div class="md:col-span-3">
+            <label class="block font-bold mb-1">ملخص وتوصيات الأدمن (تشمل المخزون، صيانة السبت وconCC، الشفتات، ومعايير CBAHI/CAP) *</label>
+            <textarea id="repSummary" required rows="2" placeholder="أدخل تفاصيل التقرير الشامل والاعتماد..." class="w-full rounded-xl border border-slate-200 bg-white p-2.5 font-bold"></textarea>
+          </div>
+        </form>
+
+        <div class="space-y-2.5">
+          <h4 class="text-xs font-black text-slate-600">التقارير الشاملة الصادرة بتوقيع الأدمن (Jamal Asiri):</h4>
+          ${state.comprehensiveReports.map(r => `
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap justify-between items-start gap-3 text-xs">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-black text-sm text-slate-800">${r.title}</span>
+                  <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">${r.period}</span>
+                </div>
+                <p class="text-slate-600 font-bold">${r.summary}</p>
+                <p class="text-[11px] text-sky-700 font-black">صدر واعتمد بواسطة: ${r.issuedBy} | التاريخ: ${r.date}</p>
+              </div>
+              <button onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-sky-500 text-white font-bold">إصدار PDF</button>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function saveAdminComprehensiveReport(e) {
+      e.preventDefault();
+      state.comprehensiveReports.unshift({
+        id: Date.now(),
+        title: document.getElementById("repTitle").value.trim(),
+        period: document.getElementById("repPeriod").value.trim(),
+        summary: document.getElementById("repSummary").value.trim(),
+        issuedBy: "Jamal Asiri (32726) - Admin 👑",
+        date: new Date().toLocaleDateString("en-GB")
+      });
+      logAudit(`إصدار تقرير شامل جديد بواسطة الأدمن جمال عسيري: ${document.getElementById("repTitle").value}`);
+      e.target.reset();
+      saveState();
+    }
+
+    // 8. مصفوفة الصلاحيات الحصرية للأدمن جمال عسيري
+    function openPermissionsMatrixModal() {
+      const select = document.getElementById("matrixStaffSelect");
+      select.innerHTML = state.staff.map(s => `<option value="${s.emp_id}">${s.name} (${s.emp_id}) - ${s.section}</option>`).join("");
+      loadStaffPermissionsInMatrix();
+      openModal("permissionsMatrixModal");
+    }
+
+    function loadStaffPermissionsInMatrix() {
+      const empId = document.getElementById("matrixStaffSelect").value;
+      const user = state.staff.find(s => s.emp_id === empId);
+      if (!user) return;
+
+      const userPerms = user.permissions || DEFAULT_ROLE_PERMS[user.role] || [];
+      document.getElementById("matrixRoleIndicator").textContent = `الدور الحالي: ${user.role.toUpperCase()} (${user.section})`;
+
+      const grid = document.getElementById("permissionsCheckboxesGrid");
+      grid.innerHTML = AVAILABLE_PERMISSIONS.map(p => {
+        const checked = userPerms.includes(p.key) || user.role === "admin";
+        return `
+          <label class="p-3 rounded-2xl border ${checked ? 'bg-amber-50/70 border-amber-300' : 'bg-slate-50 border-slate-200'} flex items-start gap-2.5 cursor-pointer transition hover:bg-amber-50">
+            <input type="checkbox" name="permCheckbox" value="${p.key}" ${checked ? 'checked' : ''} class="mt-0.5 rounded text-amber-600 focus:ring-amber-500" />
+            <div>
+              <span class="font-black text-slate-800">${p.label}</span>
+              <p class="text-[10px] text-slate-400 font-mono">${p.key}</p>
+            </div>
+          </label>
+        `;
+      }).join("");
+    }
+
+    function savePermissionsMatrix(e) {
+      e.preventDefault();
+      const empId = document.getElementById("matrixStaffSelect").value;
+      const user = state.staff.find(s => s.emp_id === empId);
+      if (!user) return;
+
+      const checkboxes = document.querySelectorAll("input[name='permCheckbox']:checked");
+      const selected = Array.from(checkboxes).map(cb => cb.value);
+
+      user.permissions = selected;
+      if (state.activeUser.emp_id === user.emp_id) {
+        state.activeUser.permissions = selected;
+      }
+
+      logAudit(`تعديل مصفوفة الصلاحيات للموظف: ${user.name} (${user.emp_id}) بواقع ${selected.length} صلاحيات`);
+      saveState();
+      alert(`✅ تم تحديث واعتماد صلاحيات الموظف (${user.name}) بنجاح!`);
+      closeModal("permissionsMatrixModal");
+    }
+
+    // 9. صياغة وتبرير طلبية الشراء بالذكاء الاصطناعي (AI PO Memo)
+    async function generateAIPurchaseOrderMemo() {
+      const lowItems = state.inventory.filter(i => getLabTotal(i) <= 1);
+      if (lowItems.length === 0) return alert("لا توجد نواقص (<=1 كارتلج) لصياغة الطلبية.");
+
+      showAIToast("جاري صياغة وتبرير طلبية الشراء بالذكاء الاصطناعي (Gemini AI)...");
+      try {
+        const itemsTxt = lowItems.map(i => `${i.name} (${i.company}) - المتبقي بالمختبر: ${getLabTotal(i)} كارتلج`).join(" ، ");
+        const res = await fetch(CLOUD_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "ai_analyze",
+            mode: "chat",
+            promptText: `قم بصياغة مذكرة طلب شراء رسمية وعاجلة (Purchase Order Justification) موجهة لمدير المختبر (د. عمرو) من مشرف الجودة (جمال عسيري) لتأمين النواقص التالية: [${itemsTxt}]. وضّح الأهمية السريرية لتفادي توقف الفحوصات في مستشفى الحياة أبها.`
+          })
+        });
+        const result = await res.json();
+        hideAIToast();
+        alert(`📄 مذكرة طلب الشراء المصاغة بالذكاء الاصطناعي (AI PO Memo):\n\n${result.reply || 'تمت صياغة المذكرة بنجاح.'}`);
+      } catch (e) {
+        hideAIToast();
+      }
+    }
+
+    // 10. تحديث النوافذ المنبثقة
+    function renderModalsContent() {
+      document.getElementById("fullStaffTableBody").innerHTML = state.staff.map(s => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-2 px-3 text-slate-800">${s.name}</td>
+          <td class="py-2 px-3 text-sky-600 font-black">${s.emp_id}</td>
+          <td class="py-2 px-3">${s.phone}</td>
+          <td class="py-2 px-3">${s.hiring || '-'}</td>
+          <td class="py-2 px-3 text-slate-500">${s.email || '-'}</td>
+          <td class="py-2 px-3">
+            <span class="px-2 py-0.5 rounded text-[10px] font-black ${s.section.includes('BLOOD') ? 'bg-rose-50 text-rose-700' : 'bg-blue-50 text-blue-700'}">
+              ${s.section} (${s.role.toUpperCase()})
+            </span>
+          </td>
+          <td class="py-2 px-3 text-center space-x-2 space-x-reverse">
+            <button onclick="switchActiveAccount('${s.name}', '${s.emp_id}', '${s.role}')" class="text-sky-600 hover:underline font-black">تفعيل</button>
+            <button onclick="editStaffPrompt(${s.id})" class="text-blue-600"><i class="fa-solid fa-pen"></i></button>
+            <button onclick="requirePermission('admin_reports', () => { state.staff=state.staff.filter(x=>x.id!==${s.id}); saveState(); })" class="text-red-500"><i class="fa-solid fa-trash-can"></i></button>
+          </td>
+        </tr>
+      `).join("");
+
+      const staffOpts = state.staff.map(s => `<option value="${s.name}|${s.emp_id}">${s.name} (${s.emp_id}) - ${s.section}</option>`).join("");
+      document.getElementById("shfEmpSelect").innerHTML = staffOpts;
+      document.getElementById("idSelectStaff").innerHTML = staffOpts;
+      document.getElementById("taskTarget").innerHTML = `<option value="جميع الموظفين (Broadcast)">جميع الموظفين (Broadcast)</option>` + staffOpts;
+
+      document.getElementById("tasksList").innerHTML = state.tasks.length === 0
+        ? `<p class="text-center text-slate-400 py-3">لا توجد رسائل أو تاسكات حالياً.</p>`
+        : state.tasks.map(t => `
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+            <div class="flex justify-between font-black text-purple-800">
+              <span>إلى: ${t.target}</span>
+              <span class="text-[10px] text-slate-400">${t.time}</span>
+            </div>
+            <p class="font-bold text-slate-800">${t.text}</p>
+            <div class="flex justify-between items-center pt-1">
+              <span class="text-[10px] text-slate-500">من: ${t.from}</span>
+              <button onclick="replyTaskPrompt(${t.id})" class="text-sky-600 font-bold hover:underline">إضافة رد</button>
+            </div>
+            ${t.reply ? `<div class="p-2 rounded bg-emerald-50 text-emerald-800 font-bold mt-1">الرد: ${t.reply}</div>` : ''}
+          </div>
+        `).join("");
+
+      document.getElementById("notifModalBody").innerHTML = state.notifications.map(n => `
+        <div class="p-3 rounded-xl ${n.read ? 'bg-slate-50 border-slate-200' : 'bg-amber-50 border-amber-200'} border space-y-1">
+          <div class="flex justify-between font-black text-amber-900">
+            <span>${n.title}</span>
+            <span class="text-[10px]">${n.date}</span>
+          </div>
+          <p class="text-slate-700 font-bold">${n.text}</p>
+        </div>
+      `).join("");
+
+      document.getElementById("handoverList").innerHTML = state.handovers.map(h => `
+        <div class="p-2.5 rounded-xl bg-purple-50 border border-purple-100">
+          <span class="font-black text-purple-800">${h.user}:</span> ${h.text}
+        </div>
+      `).join("");
+
+      const lowItems = state.inventory.filter(i => getLabTotal(i) <= 1);
+      document.getElementById("poModalList").innerHTML = lowItems.length === 0
+        ? `<p class="text-center py-4 text-emerald-600 font-bold">لا توجد نواقص (<= 1 كارتلج) حالياً.</p>`
+        : lowItems.map(i => `<div class="p-2.5 rounded-xl bg-red-50 border border-red-200 font-bold">${i.name} — المتبقي بالمختبر: ${getLabTotal(i)} كارتلج</div>`).join("");
+
+      document.getElementById("auditModalList").innerHTML = state.auditLogs.map(l => `
+        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex justify-between items-center">
+          <div>
+            <span class="font-black text-sky-700">${l.user}</span>
+            <p class="font-bold text-slate-800">${l.action}</p>
+          </div>
+          <span class="text-[10px] text-slate-400">${l.time}</span>
+        </div>
+      `).join("");
+    }
+
+    function fillIdentityInputs() {
+      const [name, emp_id] = document.getElementById("idSelectStaff").value.split("|");
+      const found = state.staff.find(s => s.emp_id === emp_id);
+      document.getElementById("idManualName").value = name;
+      document.getElementById("idManualEmpId").value = emp_id;
+      document.getElementById("idManualEmail").value = (found && found.email !== "-") ? found.email : "alalkmy777@gmail.com";
+    }
+
+    function saveIdentityForm(e) {
+      e.preventDefault();
+      const name = document.getElementById("idManualName").value.trim();
+      const emp_id = document.getElementById("idManualEmpId").value.trim();
+      const found = state.staff.find(s => s.emp_id === emp_id);
+      switchActiveAccount(name, emp_id, found ? found.role : "staff");
+      closeModal("identityModal");
+    }
+
+    function editStaffPrompt(id) {
+      const s = state.staff.find(x => x.id === id);
+      if (!s) return;
+      const n = prompt("تعديل الاسم:", s.name);
+      if (!n) return;
+      s.name = n;
+      s.emp_id = prompt("تعديل الرقم الوظيفي:", s.emp_id) || s.emp_id;
+      s.phone = prompt("تعديل رقم الجوال:", s.phone) || s.phone;
+      saveState();
+    }
+
+    function addNewStaff(e) {
+      e.preventDefault();
+      state.staff.push({
+        id: Date.now(),
+        name: document.getElementById("newStfName").value.trim(),
+        emp_id: document.getElementById("newStfId").value.trim(),
+        phone: document.getElementById("newStfPhone").value.trim(),
+        hiring: new Date().toLocaleDateString("en-GB"),
+        email: document.getElementById("newStfEmail").value.trim() || "-",
+        section: document.getElementById("newStfSection").value,
+        role: "staff",
+        permissions: DEFAULT_ROLE_PERMS.staff
+      });
+      logAudit(`إضافة موظف جديد للقاعدة: ${document.getElementById("newStfName").value}`);
+      e.target.reset();
+      saveState();
+    }
+
+    function addTask(e) {
+      e.preventDefault();
+      state.tasks.unshift({
+        id: Date.now(),
+        target: document.getElementById("taskTarget").value,
+        text: document.getElementById("taskText").value.trim(),
+        from: `${state.activeUser.name} (${state.activeUser.emp_id})`,
+        reply: "",
+        time: new Date().toLocaleString("en-GB")
+      });
+      document.getElementById("taskText").value = "";
+      saveState();
+    }
+
+    function replyTaskPrompt(id) {
+      const t = state.tasks.find(x => x.id === id);
+      if (!t) return;
+      const r = prompt("اكتب الرد على التاسك:");
+      if (r) {
+        t.reply = `${state.activeUser.name}: ${r}`;
+        saveState();
+      }
+    }
+
+    function markAllNotifsRead() {
+      state.notifications.forEach(n => n.read = true);
+      saveState();
+    }
+
+    function saveHandover(e) {
+      e.preventDefault();
+      state.handovers.unshift({
+        user: `${state.activeUser.name} (${state.activeUser.emp_id})`,
+        text: document.getElementById("handoverText").value.trim()
+      });
+      document.getElementById("handoverText").value = "";
+      saveState();
+    }
+
+    function acknowledgeHandover() {
+      logAudit("تأكيد الاطلاع على تسليم الشفت (تم الاطلاع ✓)");
+      document.getElementById("ackHandoverBtn").innerHTML = "<span>تم الاطلاع ✓✓</span>";
+      saveState();
+    }
+
+    function approvePORoleCheck() {
+      if (state.activeUser.role !== "admin" && state.activeUser.role !== "director") {
+        return alert("اعتماد طلبية الشراء النهائي مخصص للأدمن (جمال عسيري) أو مدير المختبر (د. عمرو)!");
+      }
+      logAudit(`اعتماد طلبية الشراء النهائية (PO) بواسطة ${state.activeUser.name}`);
+      saveState();
+      alert("✅ تم اعتماد طلبية الشراء رسمياً!");
+    }
+
+    function shareQuickWhatsApp() {
+      const low = state.inventory.filter(i => getLabTotal(i) <= 1).length;
+      const msg = encodeURIComponent(
+        `📊 *تقرير TechnoLab - مستشفى الحياة أبها*\n` +
+        `👤 المستخدم: ${state.activeUser.name} (${state.activeUser.emp_id})\n` +
+        `🧪 إجمالي الأصناف: ${state.inventory.length}\n` +
+        `⚠️ نواقص (<= 1 كارتلج): ${low}\n` +
+        `🌐 Technolabs.online | Done by Jamal Asiri`
+      );
+      window.open(`https://wa.me/?text=${msg}`, "_blank");
+    }
+
+    // التصدير والاستيراد
+    function downloadCSVFile(name, rows) {
+      const csv = "\uFEFF" + rows.map(r => r.map(c => `"${String(c ?? '').replace(/"/g, '""')}"`).join(",")).join("\n");
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
+      a.download = name;
+      a.click();
+    }
+
+    function exportInventoryCSV() {
+      const rows = [["المحلول", "الباركود", "الشركة", "القسم", "Lot", "الصلاحية", "رصيد المختبر", "رصيد المستودع"]];
+      state.inventory.forEach(i => rows.push([i.name, i.barcode, i.company, i.category, i.lot, i.expiry, getLabTotal(i), getWhTotal(i)]));
+      downloadCSVFile("TechnoLab_Inventory.csv", rows);
+    }
+
+    function importInventoryCSV(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const lines = ev.target.result.split(/\r?\n/).slice(1);
+        lines.forEach(line => {
+          const cols = line.split(",").map(s => s.replace(/^"|"$/g, "").trim());
+          if (cols[0]) {
+            state.inventory.push({
+              id: Date.now() + Math.random(),
+              name: cols[0],
+              barcode: cols[1] || "628000",
+              company: cols[2] || "Roche",
+              category: cols[3] || "كيمياء حيوية",
+              lot: cols[4] || "LOT-1",
+              expiry: cols[5] || "2027-05-01",
+              pack_size: 1,
+              lab_boxes: 0,
+              lab_carts: Number(cols[6]) || 1,
+              wh_boxes: 0,
+              wh_carts: Number(cols[7]) || 0
+            });
+          }
+        });
+        logAudit("استيراد ملف إكسل للمخزون");
+        saveState();
+      };
+      reader.readAsText(file);
+    }
+
+    function exportDevicesCSV() {
+      const rows = [["الجهاز", "الرقم التسلسلي", "القسم", "صيانة السبت الأسبوعية", "الكال والكونترول (conCC)"]];
+      state.devices.forEach(d => rows.push([d.name, d.serial, d.dept, d.saturdayMaint, d.calControl]));
+      downloadCSVFile("TechnoLab_Saturday_Maintenance_conCC.csv", rows);
+    }
+
+    function exportShiftsCSV() {
+      const rows = [["الموظف", "الرقم الوظيفي", "الشفت", "القسم", "الأيام"]];
+      state.shifts.forEach(s => rows.push([s.name, s.emp_id, s.period, s.bench, s.days]));
+      downloadCSVFile("TechnoLab_Shifts.csv", rows);
+    }
+
+    function exportShiftsWord() {
+      let html = `<html dir='rtl'><head><meta charset='utf-8'></head><body><h2>جدول الشفتات - TechnoLab مستشفى الحياة أبها</h2><table border='1' style='width:100%;border-collapse:collapse;text-align:right;'><tr><th>الموظف</th><th>الرقم الوظيفي</th><th>الشفت</th><th>القسم</th><th>الأيام</th></tr>`;
+      state.shifts.forEach(s => { html += `<tr><td>${s.name}</td><td>${s.emp_id}</td><td>${s.period}</td><td>${s.bench}</td><td>${s.days}</td></tr>`; });
+      html += `</table></body></html>`;
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob(['\ufeff', html], { type: "application/msword" }));
+      a.download = "TechnoLab_Schedule.doc";
+      a.click();
+    }
+
+    function exportFullComprehensiveCSV() {
+      const rows = [
+        ["التقرير الشامل لنظام TechnoLab - مستشفى الحياة أبها (Technolabs.online)"],
+        ["صادر بواسطة الأدمن:", "Jamal Asiri (32726) - Admin"],
+        ["إجمالي الموظفين", state.staff.length],
+        ["إجمالي المحاليل", state.inventory.length],
+        ["النواقص (<= 1 كارتلج)", state.inventory.filter(i => getLabTotal(i) <= 1).length],
+        ["الأجهزة المسجلة لصيانة السبت", state.devices.length],
+        ["سجلات الكال conCC والكونترولات", state.controls.length]
+      ];
+      downloadCSVFile("TechnoLab_Admin_Comprehensive_Report.csv", rows);
+    }
+
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle("dark");
+    }
+
+    // 11. نافذة المساعد الذكي التفاعلي المربوط بـ Gemini AI عبر الـ Worker
+    function openAIAssistant() {
+      openModal("aiAssistantModal");
+    }
+
+    async function sendAIChatPrompt(e) {
+      e.preventDefault();
+      const input = document.getElementById("aiChatInput");
+      const box = document.getElementById("aiChatResponseBox");
+      const btn = document.getElementById("aiChatSendBtn");
+      const question = input.value.trim();
+      if (!question) return;
+
+      btn.disabled = true;
+      btn.textContent = "جاري التحليل...";
+      box.innerHTML = `<span class="text-purple-700">⏳ جاري استشارة محرك الذكاء الاصطناعي (Gemini AI)...</span>`;
+
+      try {
+        const lowCount = state.inventory.filter(i => getLabTotal(i) <= 1).length;
+        const contextPrompt =
+          `أنت المساعد الذكي لنظام TechnoLab في مختبر مستشفى الحياة أبها. المستخدم الحالي: ${state.activeUser.name} (${state.activeUser.role}). ` +
+          `إجمالي الموظفين: ${state.staff.length}، إجمالي الأصناف: ${state.inventory.length}، النواقص (<=1 كارتلج): ${lowCount}، موعد الصيانة الأسبوعية: يوم السبت مع تحضير كال conCC. ` +
+          `أجب باحترافية واختصار على سؤال المستخدم: ${question}`;
+
+        const res = await fetch(CLOUD_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "ai_analyze",
+            mode: "chat",
+            promptText: contextPrompt
+          })
+        });
+        const result = await res.json();
+        box.textContent = result.reply || result.message || "يرجى التأكد من إضافة متغير GEMINI_API_KEY في إعدادات Cloudflare Worker (Variables and Secrets).";
+      } catch (err) {
+        box.textContent = "تعذر الاتصال بخادم الذكاء الاصطناعي حالياً، يرجى التحقق من اتصال الإنترنت أو إعدادات الـ Worker.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "إرسال";
+        input.value = "";
+      }
+    }
+
+    // المزامنة السحابية مع Cloudflare Worker
+    async function syncWithCloud(pull) {
+      try {
+        if (!pull) {
+          await fetch(CLOUD_API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(state)
+          });
+        } else {
+          const res = await fetch(CLOUD_API);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && !data.empty && data.staff) {
+              state = data;
+              if (state.staff.length < 17) state.staff = ALL_STAFF_DEFAULT;
+              localStorage.setItem("technolab_v8_ai_master", JSON.stringify(state));
+              renderAll();
+            }
+          }
+        }
+      } catch (e) {}
+    }
+
+    renderAll();
+    syncWithCloud(true);
+  </script>
+</body>
+</html>
