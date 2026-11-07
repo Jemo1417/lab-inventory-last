@@ -3,27 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>TechnoLab | نظام إدارة مخزون المختبر</title>
-  <!-- خط تجوال العربي الفخم -->
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-  <!-- Tailwind CSS -->
+  <title>TechnoLab | مستشفى الحياة أبها - Technolabs.online</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- أيقونات FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: { sans: ['Tajawal', 'sans-serif'] },
-          colors: {
-            lab: {
-              dark: '#070b14',
-              card: '#111827',
-              accent: '#06b6d4',
-              gold: '#f59e0b'
-            }
-          }
+          fontFamily: { sans: ['Cairo', 'sans-serif'] }
         }
       }
     }
@@ -31,571 +21,1034 @@
 
   <style>
     body {
-      background: radial-gradient(circle at top right, #0f172a, #070b14 70%);
-      color: #f8fafc;
-      min-height: 100vh;
+      font-family: 'Cairo', sans-serif;
+      background-color: #f4f7fb;
+      color: #1e293b;
+      transition: all 0.2s ease;
     }
-    .glass {
-      background: rgba(17, 24, 39, 0.75);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+    html.dark body { background-color: #0b1120; color: #f1f5f9; }
+    html.dark .bg-white { background-color: #1e293b !important; color: #f1f5f9 !important; border-color: #334155 !important; }
+    html.dark .bg-slate-50, html.dark .bg-gray-50 { background-color: #0f172a !important; border-color: #334155 !important; }
+    html.dark .text-slate-800, html.dark .text-slate-700 { color: #f8fafc !important; }
+    html.dark input, html.dark select, html.dark textarea { background-color: #0f172a !important; color: #fff !important; border-color: #334155 !important; }
+    .nav-tab-active {
+      color: #0284c7 !important;
+      border-bottom: 3px solid #0284c7 !important;
+      font-weight: 900 !important;
+      background: rgba(2, 132, 199, 0.04);
     }
-    .glass-active {
-      background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.1));
-      border: 1px solid rgba(6, 182, 212, 0.6);
-      box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
+    .modal-backdrop {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
     }
-    .pulse-warn {
-      animation: pulseWarn 2s infinite;
-    }
-    @keyframes pulseWarn {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
-      50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
-    }
-    .pulse-danger {
-      animation: pulseDanger 2s infinite;
-    }
-    @keyframes pulseDanger {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.45); }
-      50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff !important; }
     }
   </style>
 </head>
-<body class="antialiased selection:bg-cyan-500 selection:text-white flex flex-col justify-between">
+<body class="min-h-screen flex flex-col justify-between pb-14">
 
-  <!-- الشريط العلوي الفخم -->
-  <header class="glass sticky top-0 z-40 border-b border-slate-800/80">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap justify-between items-center gap-4">
-      <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
-          <i class="fa-solid fa-microscope text-2xl text-white"></i>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-2xl font-black tracking-wide bg-gradient-to-l from-white via-cyan-200 to-cyan-400 bg-clip-text text-transparent">
-              TechnoLab
-            </h1>
-            <span class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-bold">
-              PRO v2.5
-            </span>
-          </div>
-          <p class="text-xs text-slate-400 mt-0.5">مستشفى الحياة الوطني — نظام إدارة المخزون والكواشف المخبرية</p>
-        </div>
+  <!-- 1. الشريط العلوي لتسليم الشفت (Handover Bar) -->
+  <div class="bg-gradient-to-l from-indigo-700 via-purple-700 to-indigo-800 text-white px-4 py-2 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
+      <div class="flex items-center gap-2 font-bold">
+        <span class="px-2.5 py-1 rounded-lg bg-white/15 flex items-center gap-1.5">
+          <i class="fa-solid fa-bullhorn text-amber-300"></i>
+          <span>تسليم الشفت</span>
+        </span>
+        <span id="topHandoverText" class="text-purple-100 font-semibold truncate max-w-[230px] sm:max-w-xl">
+          لا توجد ملاحظات شفت معلقة
+        </span>
       </div>
-
-      <!-- حالة الاتصال والمستخدم النشط -->
-      <div class="flex items-center gap-3">
-        <div id="syncBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          <span>متصل بالسحابة</span>
-        </div>
-        <button onclick="openModal()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-500/25 transition flex items-center gap-2">
-          <i class="fa-solid fa-plus"></i>
-          <span>إضافة كارتلج / صنف</span>
+      <div class="flex items-center gap-2 mr-auto">
+        <button onclick="openModal('handoverModal')" class="px-3 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-white font-bold transition">
+          إضافة / عرض الكل
+        </button>
+        <button onclick="acknowledgeHandover()" id="ackHandoverBtn" class="px-3 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-bold flex items-center gap-1 shadow-sm transition">
+          <span>تم الاطلاع</span>
+          <i class="fa-solid fa-check"></i>
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- 2. الهيدر الرئيسي بشعار TechnoLab المعتمد -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3">
+      <!-- شعار TechnoLab -->
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-b from-sky-400 to-blue-600 flex flex-col items-center justify-center text-white shadow-md shadow-sky-500/25 border border-sky-300/40">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7 3h10M7 21h10M8 3v4l4 5 4-5V3M8 21v-4l4-5 4 5v4" />
+          </svg>
+          <span class="text-[7px] font-black tracking-widest uppercase leading-none mt-0.5">TechnoLab</span>
+        </div>
+        <div class="leading-tight">
+          <div class="flex items-center gap-1.5">
+            <h1 class="text-lg sm:text-xl font-black text-slate-800 tracking-tight">TechnoLab</h1>
+            <span id="roleBadgeHeader" class="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-black border border-amber-300">Admin 👑</span>
+          </div>
+          <p class="text-[11px] font-bold text-sky-600">مستشفى الحياة أبها — Technolabs.online</p>
+        </div>
+      </div>
+
+      <!-- أزرار الهيدر العلوية المطابقة للصورة 26 -->
+      <div class="flex items-center flex-wrap gap-1.5 text-xs font-bold">
+        <!-- الإشعارات -->
+        <button onclick="openModal('notificationsModal')" class="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-bell text-amber-500"></i>
+          <span>الإشعارات</span>
+          <span id="notifCountPill" class="px-1.5 py-0.2 rounded-full bg-amber-500 text-white text-[10px]">2</span>
+        </button>
+
+        <!-- متصل سحابياً -->
+        <button onclick="syncWithCloud(true)" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 transition">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+          <span>متصل سحابياً</span>
+          <i class="fa-solid fa-cloud text-emerald-500"></i>
+        </button>
+
+        <!-- مفتاح تبديل الصلاحيات/المستخدم السريع -->
+        <button onclick="openModal('roleSwitcherModal')" class="w-8 h-8 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-600 border border-amber-200 flex items-center justify-center transition" title="تغيير المستخدم / الصلاحيات (Admin / Director / Supervisor)">
+          <i class="fa-solid fa-key"></i>
+        </button>
+
+        <!-- بطاقة المستخدم النشط -->
+        <button onclick="openModal('identityModal')" class="px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 flex items-center gap-1.5 font-extrabold transition">
+          <i class="fa-solid fa-user text-sky-600"></i>
+          <span id="headerActiveUser">Jamal 👑</span>
+        </button>
+
+        <!-- التاسكات -->
+        <button onclick="openModal('tasksModal')" class="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-list-check"></i>
+          <span>التاسكات</span>
+        </button>
+
+        <!-- الوضع الليلي -->
+        <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 flex items-center justify-center transition" title="الوضع الليلي">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+
+        <!-- الموظفين -->
+        <button onclick="openModal('staffModal')" class="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-users"></i>
+          <span>الموظفين (<span id="staffTotalBadge">17</span>)</span>
+        </button>
+
+        <!-- السجل (Audit Log) -->
+        <button onclick="openModal('auditModal')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-clock-rotate-left text-sky-600"></i>
+          <span>السجل</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 3. شريط النوافذ والتبويبات الكامل (10 تبويبات شاملة) -->
+    <nav class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center gap-1 sm:gap-2 overflow-x-auto border-t border-slate-100 text-xs font-bold text-slate-500">
+      <button onclick="switchTab('inventory')" id="tabBtn-inventory" class="py-2.5 px-3 whitespace-nowrap flex items-center gap-1.5 nav-tab-active">
+        <i class="fa-solid fa-flask"></i>
+        <span>المخزون</span>
+      </button>
+      <button onclick="switchTab('devices')" id="tabBtn-devices" class="py-2.5 px-3 whitespace-nowrap flex items-center gap-1.5 hover:text-sky-600">
+        <i class="fa-solid fa-microscope"></i>
+        <span>الأجهزة والصيانة</span>
+      </button>
+      <button onclick="switchTab('critical')" id="tabBtn-critical" class="py-2.5 px-3 whitespace-nowrap flex items-center gap-1.5 hover:text-sky-600">
+        <i class="fa-solid fa-truck-medical text-rose-500"></i>
+        <span>النتائج الحرجة</span>
+      </button>
+      <button onclick="switchTab('smartAudit')" id="tabBtn-smartAudit" class="py-2.5 px-3 whitespace-nowrap flex items-center gap-1.5 hover:text-sky-600">
+        <i class="fa-solid fa-barcode"></i>
+        <span>الجرد الذكي</span>
+      </button>
+      <button onclick="switchTab('refRanges')" id="tabBtn-refRanges" class="py-2.5 px-3 whitespace-nowrap flex items-center gap-1.5 hover:text-sky-600">
+        <i class="fa-solid fa-book-medical"></i>
+        <span>القيم المرجعية</span>
+      </button>
+      <button onclick="switchTab('fridges')" id="tabBtn-fridges" class="py-2.5 px-3 whitespace-nowrap flex items-center gap-1.5 hover:text-sky-600">
+        <i class="fa-solid fa-temperature-low text-cyan-600"></i>
+        <span>الثلاجات</span>
+      </button>
+      <button onclick="switchTab('suppliers')" id="tabBtn-suppliers" class="py-2.5 px-3 whitespace-nowrap flex items-center gap-1.5 hover:text-sky-600">
+        <i class="fa-solid fa-boxes-packing"></i>
+        <span>الموردين</span>
+      </button>
+      <button onclick="switchTab('schedules')" id="tabBtn-schedules" class="py-2.5 px-3 whitespace-nowrap flex items-center gap-1.5 hover:text-sky-600">
+        <i class="fa-solid fa-table-list"></i>
+        <span>الجداول</span>
+      </button>
+      <button onclick="switchTab('policies')" id="tabBtn-policies" class="py-2.5 px-3 whitespace-nowrap flex items-center gap-1.5 hover:text-sky-600">
+        <i class="fa-solid fa-folder-open"></i>
+        <span>السياسات</span>
+      </button>
+      <!-- التبويب الحصري للأدمن جمال عسيري -->
+      <button onclick="switchTab('adminReports')" id="tabBtn-adminReports" class="py-2.5 px-3 whitespace-nowrap flex items-center gap-1.5 text-amber-700 bg-amber-50/70 hover:bg-amber-100 rounded-t-lg">
+        <i class="fa-solid fa-crown text-amber-500"></i>
+        <span>التقارير الشاملة (Admin)</span>
+      </button>
+    </nav>
   </header>
 
   <!-- المحتوى الرئيسي -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-8">
+  <main class="max-w-7xl mx-auto w-full px-3 sm:px-6 py-4 space-y-5 flex-grow">
 
-    <!-- قسم موظفي المختبر (اختيار المستخدم النشط) -->
-    <section>
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-sm font-bold text-slate-400 flex items-center gap-2">
-          <i class="fa-solid fa-user-doctor text-cyan-400"></i>
-          <span>الطاقم الإداري والفني (اختر الموظف المسجل للحركة):</span>
-        </h2>
-        <span id="activeUserIndicator" class="text-xs text-cyan-400 font-bold">المسجل حالياً: جمال عسيري</span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- د. عمرو -->
-        <div onclick="selectStaff('د. عمرو', 'مدير المختبر')" id="staff-د. عمرو" class="staff-card glass rounded-2xl p-4 cursor-pointer transition hover:border-cyan-500/40 flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl font-black">
-            <i class="fa-solid fa-crown"></i>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-center justify-between">
-              <h3 class="font-extrabold text-base text-white">د. عمرو</h3>
-              <span class="text-[11px] px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">الإدارة</span>
-            </div>
-            <p class="text-xs text-slate-400 mt-0.5">مدير المختبر (Laboratory Director)</p>
-          </div>
+    <!-- تنبيه صيانة السبت الأسبوعية وتحضير كال conCC والكونترولات -->
+    <div id="saturdayAlertBanner" class="bg-gradient-to-l from-amber-500 via-orange-500 to-amber-600 text-white rounded-2xl p-3.5 shadow-md flex flex-wrap items-center justify-between gap-3 no-print">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl shrink-0">
+          <i class="fa-solid fa-screwdriver-wrench"></i>
         </div>
-
-        <!-- جمال عسيري -->
-        <div onclick="selectStaff('جمال عسيري', 'مشرف المختبر')" id="staff-جمال عسيري" class="staff-card glass glass-active rounded-2xl p-4 cursor-pointer transition flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-xl font-black">
-            <i class="fa-solid fa-user-shield"></i>
+        <div class="text-xs sm:text-sm">
+          <div class="font-black flex items-center gap-2">
+            <span>تنبيه الصيانة الأسبوعية (يوم السبت) وتحضير الكاليبريتور والكونترولات</span>
+            <span class="px-2 py-0.5 rounded-full bg-white text-amber-700 text-[10px] font-black">السبت</span>
           </div>
-          <div class="flex-1">
-            <div class="flex items-center justify-between">
-              <h3 class="font-extrabold text-base text-white">جمال عسيري</h3>
-              <span class="text-[11px] px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">الإشراف والجودة</span>
-            </div>
-            <p class="text-xs text-slate-400 mt-0.5">مشرف المختبر (Lab Supervisor)</p>
-          </div>
-        </div>
-
-        <!-- فيصل -->
-        <div onclick="selectStaff('فيصل', 'أخصائي مختبر')" id="staff-فيصل" class="staff-card glass rounded-2xl p-4 cursor-pointer transition hover:border-cyan-500/40 flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xl font-black">
-            <i class="fa-solid fa-flask-vial"></i>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-center justify-between">
-              <h3 class="font-extrabold text-base text-white">فيصل</h3>
-              <span class="text-[11px] px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">الفريق الفني</span>
-            </div>
-            <p class="text-xs text-slate-400 mt-0.5">أخصائي مختبر (Lab Specialist)</p>
-          </div>
+          <p class="text-amber-50 text-xs mt-0.5">
+            تذكير هام: يرجى تنفيذ صيانة السبت الأسبوعية للأجهزة وتحضير كال جديد (<strong>conCC</strong>) والكونترولات المعتمدة وتوثيقها في قسم الأجهزة والصيانة.
+          </p>
         </div>
       </div>
-    </section>
-
-    <!-- مؤشرات الأداء والإحصائيات الذكية -->
-    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="glass rounded-2xl p-5 border-r-4 border-r-cyan-500">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs text-slate-400 font-medium">إجمالي الأصناف</p>
-            <h3 id="statTotal" class="text-3xl font-black text-white mt-1">0</h3>
-          </div>
-          <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
-            <i class="fa-solid fa-boxes-stacked"></i>
-          </div>
-        </div>
-      </div>
-
-      <div class="glass rounded-2xl p-5 border-r-4 border-r-emerald-500">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs text-slate-400 font-medium">متوفر (أكثر من 1 كارتلج)</p>
-            <h3 id="statGood" class="text-3xl font-black text-emerald-400 mt-1">0</h3>
-          </div>
-          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-            <i class="fa-solid fa-circle-check"></i>
-          </div>
-        </div>
-      </div>
-
-      <div class="glass rounded-2xl p-5 border-r-4 border-r-amber-500">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs text-amber-300 font-bold">قارب على النفاذ (كارتلج واحد)</p>
-            <h3 id="statLow" class="text-3xl font-black text-amber-400 mt-1">0</h3>
-          </div>
-          <div class="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center text-amber-400">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-          </div>
-        </div>
-      </div>
-
-      <div class="glass rounded-2xl p-5 border-r-4 border-r-rose-500">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs text-rose-300 font-bold">نافذ تماماً (رصيد صفر)</p>
-            <h3 id="statOut" class="text-3xl font-black text-rose-500 mt-1">0</h3>
-          </div>
-          <div class="w-10 h-10 rounded-xl bg-rose-500/15 flex items-center justify-center text-rose-500">
-            <i class="fa-solid fa-bell"></i>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- شريط البحث والفلترة السريعة -->
-    <section class="glass rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4">
-      <div class="relative flex-1 min-w-[240px]">
-        <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-        <input id="searchInput" oninput="renderInventory()" type="text" placeholder="ابحث باسم المحلول، الكارتلج، القسم، أو رقم التشغيلة (Lot)..."
-          class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pr-11 pl-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition" />
-      </div>
-      <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="setFilter('all')" id="flt-all" class="flt-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-cyan-500 text-white transition">الكل</button>
-        <button onclick="setFilter('low')" id="flt-low" class="flt-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 text-amber-400 hover:bg-slate-700 transition">⚠️ قارب على النفاذ (1)</button>
-        <button onclick="setFilter('out')" id="flt-out" class="flt-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-800 text-rose-400 hover:bg-slate-700 transition">🚨 نافذ (0)</button>
-      </div>
-    </section>
-
-    <!-- جدول وبطاقات المخزون + سجل الحركات -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- قائمة الأصناف (ثلثين) -->
-      <div class="lg:col-span-2 space-y-4">
-        <div id="inventoryContainer" class="space-y-3"></div>
-      </div>
-
-      <!-- سجل الحركات المباشر (ثلث) -->
-      <div class="glass rounded-2xl p-5 h-fit sticky top-24">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-          <h3 class="font-bold text-sm flex items-center gap-2 text-cyan-400">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-            <span>سجل حركات الموظفين</span>
-          </h3>
-          <span class="text-[11px] text-slate-400">تحديث فوري</span>
-        </div>
-        <div id="logsContainer" class="space-y-3 max-h-[420px] overflow-y-auto pl-1"></div>
+      <div class="flex items-center gap-2">
+        <button onclick="switchTab('devices')" class="px-3.5 py-1.5 rounded-xl bg-white text-amber-700 font-black text-xs shadow hover:bg-amber-50 transition">
+          فتح الصيانة والكونترولات
+        </button>
       </div>
     </div>
 
-  </main>
-
-  <!-- نافذة إضافة صنف جديد (Modal) -->
-  <div id="addModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="glass rounded-3xl max-w-md w-full p-6 border border-slate-700 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
-          <i class="fa-solid fa-vial-circle-check text-cyan-400"></i>
-          <span>إضافة كارتلج / محلول جديد</span>
-        </h3>
-        <button onclick="closeModal()" class="text-slate-400 hover:text-white">
-          <i class="fa-solid fa-xmark text-xl"></i>
-        </button>
+    <!-- 4. البطاقات الإحصائية الأربع المطابقة للصورة 26 -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 no-print">
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center space-y-1">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-vial"></i>
+        </div>
+        <p class="text-xs font-bold text-slate-400">إجمالي الأصناف</p>
+        <h3 id="kpiTotal" class="text-2xl font-black text-slate-800">0</h3>
       </div>
 
-      <form onsubmit="handleAddItem(event)" class="space-y-3.5 text-sm">
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">اسم الصنف / الكارتلج *</label>
-          <input id="inpName" required type="text" placeholder="مثال: CBC Reagent Cartridge" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:border-cyan-500 focus:outline-none" />
+      <div onclick="setInvStatusFilter('expiring')" class="cursor-pointer bg-white rounded-2xl p-4 shadow-sm border border-slate-100 hover:border-amber-300 flex flex-col items-center justify-center text-center space-y-1 transition">
+        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-calendar-xmark"></i>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs text-slate-400 mb-1">القسم</label>
-            <select id="inpCategory" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white focus:border-cyan-500 focus:outline-none">
-              <option value="أمراض الدم (Hematology)">أمراض الدم (Hematology)</option>
-              <option value="الكيمياء الحيوية (Chemistry)">الكيمياء الحيوية (Chemistry)</option>
-              <option value="غازات الدم (Blood Gas)">غازات الدم (Blood Gas)</option>
-              <option value="التخثر (Coagulation)">التخثر (Coagulation)</option>
-              <option value="الهرمونات والمناعة">الهرمونات والمناعة</option>
-              <option value="بنك الدم (Blood Bank)">بنك الدم (Blood Bank)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs text-slate-400 mb-1">رقم التشغيلة (Lot Number)</label>
-            <input id="inpLot" type="text" placeholder="LOT-XXXX" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:border-cyan-500 focus:outline-none" />
-          </div>
+        <p class="text-xs font-bold text-slate-400">قاربت على الانتهاء</p>
+        <h3 id="kpiExpiring" class="text-2xl font-black text-amber-600">0</h3>
+      </div>
+
+      <div onclick="setInvStatusFilter('low')" class="cursor-pointer bg-white rounded-2xl p-4 shadow-sm border border-slate-100 hover:border-red-300 flex flex-col items-center justify-center text-center space-y-1 transition">
+        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-triangle-exclamation"></i>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs text-slate-400 mb-1">الكمية الحالية *</label>
-            <input id="inpQty" required type="number" min="0" value="1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:border-cyan-500 focus:outline-none" />
+        <p class="text-xs font-bold text-slate-400">نواقص (&lt;= 1)</p>
+        <h3 id="kpiLow" class="text-2xl font-black text-red-600">0</h3>
+      </div>
+
+      <div onclick="openModal('poModal')" class="cursor-pointer bg-sky-50/70 rounded-2xl p-4 shadow-sm border border-sky-200 hover:bg-sky-100/70 flex flex-col items-center justify-center text-center space-y-1 transition">
+        <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center text-lg shadow">
+          <i class="fa-solid fa-cart-shopping"></i>
+        </div>
+        <p class="text-xs font-bold text-slate-600">طلبية الشراء (PO)</p>
+        <p class="text-xs font-black text-sky-600">استخراج PDF</p>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- النافذة 1: المخزون (Inventory) - مطابقة للصورة 26 -->
+    <!-- ========================================================= -->
+    <section id="tabContent-inventory" class="space-y-4">
+      <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-100 space-y-3">
+        <!-- شريط البحث والأزرار الثلاثة العريضة -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-center">
+          <div class="lg:col-span-5 flex items-center gap-2">
+            <button onclick="scanBarcodePrompt()" class="w-11 h-10 rounded-xl bg-slate-800 text-white flex items-center justify-center hover:bg-slate-700 shrink-0" title="مسح باركود بالكاميرا">
+              <i class="fa-solid fa-barcode"></i>
+            </button>
+            <div class="relative flex-1">
+              <i class="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+              <input id="invSearchInput" oninput="renderInventory()" type="text" placeholder="بحث بالاسم، الباركود، التشغيلة..."
+                class="w-full rounded-xl border border-slate-200 pr-9 pl-3 py-2 text-xs font-bold focus:outline-none focus:border-sky-500" />
+            </div>
           </div>
-          <div>
-            <label class="block text-xs text-slate-400 mb-1">تاريخ الصلاحية</label>
-            <input id="inpExpiry" type="date" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white focus:border-cyan-500 focus:outline-none" />
+
+          <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <button onclick="openReagentModal()" class="py-2.5 px-4 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-black text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+              <i class="fa-solid fa-plus"></i>
+              <span>إضافة محلول (AI)</span>
+            </button>
+
+            <label class="cursor-pointer py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+              <i class="fa-solid fa-file-import"></i>
+              <span>استيراد إكسل</span>
+              <input type="file" accept=".csv" class="hidden" onchange="importInventoryCSV(event)" />
+            </label>
+
+            <button onclick="exportInventoryCSV()" class="py-2.5 px-4 rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-black text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+              <i class="fa-solid fa-file-export"></i>
+              <span>تصدير إكسل</span>
+            </button>
           </div>
         </div>
 
-        <div class="pt-3 flex gap-3">
-          <button type="submit" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 font-bold text-white shadow-lg shadow-cyan-500/20">حفظ في المخزون</button>
-          <button type="button" onclick="closeModal()" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-bold">إلغاء</button>
+        <!-- فلاتر الأقسام البيضاوية المطابقة للصورة 26 -->
+        <div id="invCategoryPills" class="flex items-center gap-2 overflow-x-auto pt-1 text-xs font-bold"></div>
+      </div>
+
+      <div id="inventoryGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- النافذة 2: الأجهزة والصيانة (صيانة السبت + conCC + AI) -->
+    <!-- ========================================================= -->
+    <section id="tabContent-devices" class="hidden space-y-4">
+      <!-- لوحة إدارة تحضير الكاليبريتور conCC والكونترولات المضافة -->
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-base sm:text-lg font-black text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-microscope text-indigo-600"></i>
+              <span>أجهزة المختبر، صيانة السبت الأسبوعية، وتحضير الكال (conCC) والكونترولات</span>
+            </h2>
+            <p class="text-xs text-slate-500">إدارة كل جهاز بالتعرف الذكي بالـ AI، توثيق صيانة يوم السبت، وتحضير الكاليبريتور (conCC) والكونترولات اليومية</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="openModal('controlAddModal')" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black text-xs flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-vial-circle-check"></i>
+              <span>+ إضافة كونترول / كال جديد (conCC)</span>
+            </button>
+            <button onclick="exportDevicesCSV()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span>تقارير الصيانة والكونترول (PDF/Excel)</span>
+            </button>
+            <button onclick="openModal('deviceModal')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-camera"></i>
+              <span>+ إضافة جهاز جديد (AI)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- قائمة الكاليبريتور (conCC) والكونترولات النشطة -->
+        <div class="rounded-2xl bg-amber-50/70 border border-amber-200 p-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black text-amber-900 flex items-center gap-1.5">
+              <i class="fa-solid fa-flask-vial text-amber-600"></i>
+              <span>سجل تحضير الكاليبريتور (conCC) والكونترولات المعتمدة:</span>
+            </span>
+            <span class="text-[11px] font-bold text-amber-700">موعد الصيانة الأسبوعية المعتمد: كل يوم سبت</span>
+          </div>
+          <div id="controlsListContainer" class="grid grid-cols-1 md:grid-cols-3 gap-2.5 pt-1"></div>
+        </div>
+      </div>
+
+      <!-- بطاقات الأجهزة المسجلة -->
+      <div id="devicesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- النافذة 3: النتائج الحرجة (Critical / Panic Results) -->
+    <!-- ========================================================= -->
+    <section id="tabContent-critical" class="hidden space-y-4">
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-black text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-bell-concierge text-rose-600"></i>
+              <span>سجل تبليغ النتائج الحرجة (Critical Results Reporting - CBAHI)</span>
+            </h2>
+            <p class="text-xs text-slate-500">توثيق فوري لبيانات المريض، الفحص الحرج، وقت التبليغ، واسم الطبيب/التمريض المستلم (Read-Back Policy)</p>
+          </div>
+          <button onclick="openModal('criticalModal')" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs flex items-center gap-1.5">
+            <i class="fa-solid fa-plus"></i>
+            <span>تسجيل نتيجة حرجة جديدة</span>
+          </button>
+        </div>
+        <div id="criticalListContainer" class="space-y-2.5"></div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- النافذة 4: الجرد الذكي (Smart Inventory Stocktaking) -->
+    <!-- ========================================================= -->
+    <section id="tabContent-smartAudit" class="hidden space-y-4">
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-black text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-barcode text-sky-600"></i>
+              <span>الجرد الذكي ومطابقة المخزون الفعلي (Smart Audit)</span>
+            </h2>
+            <p class="text-xs text-slate-500">مقارنة فورية بين رصيد النظام والرصيد الفعلي في المختبر والمستودع العام واعتماد الفروقات</p>
+          </div>
+          <button onclick="approveSmartAuditAll()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5">
+            <i class="fa-solid fa-check-double"></i>
+            <span>اعتماد مطابقة الجرد الذكي</span>
+          </button>
+        </div>
+        <div id="smartAuditContainer" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- النافذة 5: القيم المرجعية (Reference Ranges) -->
+    <!-- ========================================================= -->
+    <section id="tabContent-refRanges" class="hidden space-y-4">
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-black text-slate-800">دليل القيم المرجعية والنطاقات الطبيعية والحرجة</h2>
+            <p class="text-xs text-slate-500">مرجع معتمد لفحوصات الكيمياء، الهرمونات، أمراض الدم، التخثر، وغازات الدم</p>
+          </div>
+          <button onclick="addRefRangePrompt()" class="px-4 py-2 rounded-xl bg-sky-500 text-white font-black text-xs">+ إضافة فحص مرجعي</button>
+        </div>
+        <div id="refRangesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- النافذة 6: الثلاجات (Refrigerators & Temp Monitoring) -->
+    <!-- ========================================================= -->
+    <section id="tabContent-fridges" class="hidden space-y-4">
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-black text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-temperature-low text-cyan-600"></i>
+              <span>مراقبة درجات حرارة الثلاجات والفريزرات (Core Lab & Blood Bank)</span>
+            </h2>
+            <p class="text-xs text-slate-500">توثيق درجات الحرارة اليومية لثلاجات المحاليل وثلاجات بنك الدم والفريزرات البلازمية</p>
+          </div>
+          <button onclick="addFridgePrompt()" class="px-4 py-2 rounded-xl bg-cyan-600 text-white font-black text-xs">+ إضافة ثلاجة / تسجيل حرارة</button>
+        </div>
+        <div id="fridgesGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- النافذة 7: الموردين (Suppliers & Vendors) -->
+    <!-- ========================================================= -->
+    <section id="tabContent-suppliers" class="hidden space-y-4">
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-black text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-truck-fast text-indigo-600"></i>
+              <span>دليل الشركات الموردة والوكلاء المعتمدين</span>
+            </h2>
+            <p class="text-xs text-slate-500">التواصل المباشر مع مندوبي الشركات ومهندسي الصيانة وإرسال طلبيات الشراء</p>
+          </div>
+          <button onclick="addSupplierPrompt()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-black text-xs">+ إضافة مورد جديد</button>
+        </div>
+        <div id="suppliersGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- النافذة 8: الجداول (Schedules & Staff Shifts) -->
+    <!-- ========================================================= -->
+    <section id="tabContent-schedules" class="hidden space-y-4">
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-black text-slate-800">جدول الشفتات وتوزيع الموظفين (Core Lab & Blood Bank)</h2>
+            <p class="text-xs text-slate-500">إدارة أوقات الشفتات، الاعتماد الإداري، التصدير الشهري (PDF / Excel / Word)، ومسح صورة الجدول بالـ AI</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="openModal('shiftModal')" class="px-3.5 py-2 rounded-xl bg-sky-500 text-white font-black text-xs flex items-center gap-1.5">
+              <i class="fa-solid fa-plus"></i>
+              <span>+ تعيين شفت لموظف</span>
+            </button>
+            <button onclick="approveScheduleRoleCheck()" class="px-3.5 py-2 rounded-xl bg-purple-600 text-white font-black text-xs flex items-center gap-1.5">
+              <i class="fa-solid fa-bullhorn"></i>
+              <span>اعتماد ونشر الجدول</span>
+            </button>
+            <button onclick="window.print()" class="px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-black text-xs flex items-center gap-1.5">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span>تحميل جدول الشهر PDF</span>
+            </button>
+            <button onclick="exportShiftsCSV()" class="px-3 py-2 rounded-xl bg-slate-100 text-emerald-700 border border-slate-200 font-black text-xs">Excel</button>
+            <button onclick="exportShiftsWord()" class="px-3 py-2 rounded-xl bg-blue-600 text-white font-black text-xs">ملف Word</button>
+            <label class="cursor-pointer px-3.5 py-2 rounded-xl bg-purple-600 text-white font-black text-xs flex items-center gap-1.5">
+              <i class="fa-solid fa-camera"></i>
+              <span>صورة الجدول (AI)</span>
+              <input type="file" accept="image/*" class="hidden" onchange="importShiftsAI(event)" />
+            </label>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between px-1">
+          <span id="mergeModeText" class="text-xs font-bold text-slate-500">وضع العرض الحالي: مفصل</span>
+          <button onclick="toggleMergeShifts()" class="px-3 py-1.5 rounded-xl bg-purple-50 text-purple-700 border border-purple-200 text-xs font-black">
+            دمج الشفتات المتشابهة
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-50 text-slate-600 font-black border-b border-slate-200">
+              <tr>
+                <th class="py-3 px-3">الموظف / المجموعة</th>
+                <th class="py-3 px-3">الرقم الوظيفي</th>
+                <th class="py-3 px-3">الشفت والأوقات</th>
+                <th class="py-3 px-3">القسم المكلف به</th>
+                <th class="py-3 px-3">الأيام</th>
+                <th class="py-3 px-3 text-center no-print">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="shiftsTableBody" class="divide-y divide-slate-100 font-bold"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- النافذة 9: السياسات والجودة (Policies - CBAHI/CAP/AABB/SFDA) -->
+    <!-- ========================================================= -->
+    <section id="tabContent-policies" class="hidden space-y-4">
+      <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-black text-slate-800">السياسات والإجراءات وملفات الاعتماد (CBAHI / CAP / AABB / SFDA / HIMSS)</h2>
+            <p class="text-xs text-slate-500">مكتبة السياسات المعتمدة وأدلة العمل القياسية (SOPs) لمختبر وبنك دم مستشفى الحياة أبها</p>
+          </div>
+          <button onclick="addPolicyPrompt()" class="px-4 py-2 rounded-xl bg-sky-600 text-white font-black text-xs">+ إضافة سياسة / ملف اعتماد</button>
+        </div>
+        <div id="policiesGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- النافذة 10: التقارير الشاملة الحصرية للأدمن (Jamal Admin Only) -->
+    <!-- ========================================================= -->
+    <section id="tabContent-adminReports" class="hidden space-y-4">
+      <div id="adminExclusiveContainer" class="bg-white rounded-3xl p-6 shadow-sm border-2 border-amber-300 space-y-5"></div>
+    </section>
+
+  </main>
+
+  <!-- الفوتر الرسمي بحقوق Technolabs.online -->
+  <footer class="bg-white border-t border-slate-200 py-4 px-4 mt-8 text-center space-y-2 no-print">
+    <p class="text-xs font-bold text-slate-600">
+      جميع الحقوق محفوظة © <a href="https://www.technolabs.online" class="text-sky-600 font-black hover:underline">Technolabs.online</a> — TechnoLab مستشفى الحياة أبها -
+      <a href="mailto:alalkmy777@gmail.com" class="text-sky-600 hover:underline">alalkmy777@gmail.com</a>
+    </p>
+    <div class="flex items-center justify-center gap-2 flex-wrap">
+      <span class="px-3 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-black">
+        الإصدار المعتمد الشامل V7.0 (ميلادي)
+      </span>
+      <span class="px-3 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-black">
+        Done by Jamal Asiri (Admin)
+      </span>
+    </div>
+  </footer>
+
+  <!-- زر الذكاء الاصطناعي العائم -->
+  <button onclick="openAIAssistant()" class="fixed bottom-5 left-5 z-40 w-12 h-12 rounded-full bg-purple-600 hover:bg-purple-700 text-white shadow-xl flex items-center justify-center transition transform hover:scale-105 no-print" title="المساعد الذكي TechnoLab AI">
+    <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
+  </button>
+
+  <!-- ================================================================= -->
+  <!-- النوافذ المنبثقة (Modals) -->
+  <!-- ================================================================= -->
+
+  <!-- 1. نافذة إضافة محلول جديد (AI + مختبر + مستودع عام) -->
+  <div id="reagentModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-5 shadow-2xl border border-slate-100 my-8 space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-black text-slate-800">إضافة محلول جديد</h3>
+        <button onclick="closeModal('reagentModal')" class="text-slate-400 hover:text-slate-700 text-xl"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="rounded-2xl bg-purple-50 border border-purple-200 p-3.5 flex items-center justify-between gap-3">
+        <div>
+          <div class="flex items-center gap-1.5 text-purple-800 font-black text-xs">
+            <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i>
+            <span>التعرف السريع بالذكاء الاصطناعي (AI)</span>
+          </div>
+          <p class="text-[11px] text-purple-600">صوّر علبة المحلول أو النشرة لتعبئة الحقول تلقائياً</p>
+        </div>
+        <label class="cursor-pointer px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center gap-1.5 shrink-0">
+          <i class="fa-solid fa-camera"></i>
+          <span>تصوير العلبة</span>
+          <input type="file" accept="image/*" capture="environment" class="hidden" onchange="aiScanReagentBox(event)" />
+        </label>
+      </div>
+
+      <form onsubmit="saveReagent(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold mb-1">اسم المحلول *</label>
+          <input id="regName" required type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+        </div>
+        <div>
+          <label class="block font-bold mb-1">الباركود *</label>
+          <div class="flex gap-2">
+            <input id="regBarcode" required type="text" class="flex-1 rounded-xl border border-slate-200 px-3 py-2" />
+            <button type="button" onclick="document.getElementById('regBarcode').value='628'+Math.floor(10000000+Math.random()*90000000)" class="px-3 rounded-xl bg-slate-100 border border-slate-200"><i class="fa-solid fa-camera"></i></button>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold mb-1">الشركة المصنعة *</label>
+            <input id="regCompany" required type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+          </div>
+          <div>
+            <label class="block font-bold mb-1">القسم</label>
+            <select id="regCategory" class="w-full rounded-xl border border-slate-200 px-3 py-2 font-bold">
+              <option value="كيمياء حيوية">كيمياء حيوية (Biochemistry)</option>
+              <option value="الهرمونات">الهرمونات (Hormones)</option>
+              <option value="أمراض دم">أمراض دم (Hematology)</option>
+              <option value="POCT">POCT</option>
+              <option value="بنك الدم">بنك الدم (Blood Bank)</option>
+              <option value="أخرى">أخرى</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block font-bold mb-1">رقم التشغيلة (Lot) *</label>
+            <input id="regLot" required type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+          </div>
+          <div>
+            <label class="block font-bold mb-1">تاريخ الصلاحية *</label>
+            <input id="regExpiry" required type="date" class="w-full rounded-xl border border-slate-200 px-2 py-2" />
+          </div>
+          <div>
+            <label class="block font-bold mb-1">العدد داخل العلبة</label>
+            <input id="regPackSize" type="number" min="1" value="1" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-center font-bold" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5 pt-1">
+          <div class="rounded-xl bg-sky-50/70 border border-sky-200 p-3 space-y-2">
+            <div class="font-black text-sky-700">🧪 رصيد المختبر</div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] text-slate-500">علب</label>
+                <input id="regLabBoxes" type="number" min="0" value="0" class="w-full rounded-lg border border-slate-200 bg-white px-2 py-1 text-center font-bold" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-500">مفرد (كارتلج)</label>
+                <input id="regLabCarts" type="number" min="0" value="1" class="w-full rounded-lg border border-slate-200 bg-white px-2 py-1 text-center font-bold" />
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-slate-50 border border-slate-200 p-3 space-y-2">
+            <div class="font-black text-slate-700">🏢 رصيد المستودع العام</div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] text-slate-500">علب</label>
+                <input id="regWhBoxes" type="number" min="0" value="0" class="w-full rounded-lg border border-slate-200 bg-white px-2 py-1 text-center font-bold" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-500">مفرد (كارتلج)</label>
+                <input id="regWhCarts" type="number" min="0" value="0" class="w-full rounded-lg border border-slate-200 bg-white px-2 py-1 text-center font-bold" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-sky-500 text-white font-black">حفظ المحلول</button>
+          <button type="button" onclick="closeModal('reagentModal')" class="px-4 py-2.5 rounded-xl border border-slate-200 font-bold">إلغاء</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- التذييل الرسمي (Footer) -->
-  <footer class="glass border-t border-slate-800/80 mt-12 py-5">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
-      <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
-        <span>نظام <strong>TechnoLab</strong> لإدارة المختبرات الطبية — جميع الحقوق محفوظة © 2026</span>
+  <!-- 2. نافذة إضافة جهاز جديد مع زر التعرف على الجهاز من خلال صورة بالـ AI + صيانة السبت + conCC -->
+  <div id="deviceModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-5 shadow-2xl border border-slate-100 my-8 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-black text-slate-800">إضافة جهاز مخبري جديد</h3>
+        <button onclick="closeModal('deviceModal')" class="text-slate-400 hover:text-slate-700 text-xl"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="text-sm font-black tracking-wider bg-gradient-to-r from-cyan-400 to-amber-400 bg-clip-text text-transparent">
-        Done by Jamal Asiri
+
+      <!-- زر التعرف على الجهاز من خلال صورة بالـ AI -->
+      <div class="rounded-2xl bg-gradient-to-l from-indigo-50 to-purple-50 border border-indigo-200 p-3.5 flex items-center justify-between gap-3">
+        <div class="space-y-0.5">
+          <div class="flex items-center gap-1.5 text-indigo-900 font-black text-xs sm:text-sm">
+            <i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i>
+            <span>التعرف على الجهاز من خلال صورة بالـ AI</span>
+          </div>
+          <p class="text-[11px] text-indigo-700">صوّر الجهاز أو الرقم التسلسلي ليقوم الذكاء الاصطناعي بتعبئة بيانات الجهاز والكونترول تلقائياً</p>
+        </div>
+        <label class="cursor-pointer px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs flex items-center gap-1.5 shrink-0 shadow">
+          <i class="fa-solid fa-camera"></i>
+          <span>تصوير الجهاز (AI)</span>
+          <input type="file" accept="image/*" capture="environment" class="hidden" onchange="aiScanDevicePhoto(event)" />
+        </label>
+      </div>
+
+      <form onsubmit="saveDevice(event)" class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold mb-1">اسم وموديل الجهاز *</label>
+            <input id="devName" required type="text" placeholder="مثال: Cobas c311 / Sysmex XN" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+          </div>
+          <div>
+            <label class="block font-bold mb-1">الرقم التسلسلي / الشركة</label>
+            <input id="devSerial" type="text" placeholder="SN-XXXX / Roche" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold mb-1">القسم *</label>
+            <select id="devDept" class="w-full rounded-xl border border-slate-200 px-3 py-2 font-bold">
+              <option value="الكيمياء الحيوية (Core Lab)">الكيمياء الحيوية (Core Lab)</option>
+              <option value="أمراض الدم (Hematology)">أمراض الدم (Hematology)</option>
+              <option value="الهرمونات والمناعة">الهرمونات والمناعة</option>
+              <option value="بنك الدم (Blood Bank)">بنك الدم (Blood Bank)</option>
+              <option value="غازات الدم (POCT)">غازات الدم (POCT)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold mb-1">صيانة يوم السبت الأسبوعية</label>
+            <select id="devSaturdayMaint" class="w-full rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 font-black text-amber-900">
+              <option value="مجدولة ليوم السبت + تحضير conCC">مجدولة ليوم السبت + تحضير conCC</option>
+              <option value="تمت صيانة السبت وتحضير conCC ✓">تمت صيانة السبت وتحضير conCC ✓</option>
+              <option value="تحتاج مراجعة مهندس الصيانة">تحتاج مراجعة مهندس الصيانة</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold mb-1">حالة كال (conCC) والكونترول</label>
+            <input id="devCalControl" type="text" value="conCC جاهز + QC Level 1 & 2 مقبول" class="w-full rounded-xl border border-slate-200 px-3 py-2 font-bold" />
+          </div>
+          <div>
+            <label class="block font-bold mb-1">المحاليل المرتبطة بالجهاز</label>
+            <input id="devReagents" type="text" placeholder="مثال: كواشف الكيمياء العامة" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="submit" class="flex-1 py-2.5 rounded-xl bg-indigo-600 text-white font-black">حفظ الجهاز وجدولة صيانة السبت</button>
+          <button type="button" onclick="closeModal('deviceModal')" class="px-4 py-2.5 rounded-xl border border-slate-200 font-bold">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. نافذة إضافة كال (conCC) أو كونترولات جديدة لاحقاً -->
+  <div id="controlAddModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-100 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-black text-amber-800">إضافة / تحضير كال (conCC) أو كونترول جديد</h3>
+        <button onclick="closeModal('controlAddModal')" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <form onsubmit="saveCustomControl(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold mb-1">اسم الكاليبريتور / الكونترول *</label>
+          <input id="ctrlName" required type="text" value="conCC" placeholder="مثال: conCC / PreciControl ClinChem 1 & 2" class="w-full rounded-xl border border-slate-200 px-3 py-2 font-bold" />
+        </div>
+        <div>
+          <label class="block font-bold mb-1">الجهاز / القسم المرتبط *</label>
+          <input id="ctrlDevice" required type="text" placeholder="مثال: Cobas c311 - الكيمياء" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold mb-1">رقم التشغيلة (Lot)</label>
+            <input id="ctrlLot" type="text" placeholder="LOT-XXXX" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+          </div>
+          <div>
+            <label class="block font-bold mb-1">تاريخ التحضير (السبت)</label>
+            <input id="ctrlDate" type="date" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+          </div>
+        </div>
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black">حفظ وتفعيل التنبيه</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. نافذة إدارة جميع الموظفين (Core Lab + Blood Bank + الإدارة) -->
+  <div id="staffModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl border border-slate-100 my-8">
+      <div class="bg-gradient-to-l from-blue-700 to-indigo-700 text-white px-5 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-2 font-black text-base">
+          <i class="fa-solid fa-users-gear"></i>
+          <span>إدارة الموظفين وقاعدة البيانات الشاملة (Core Lab & Blood Bank)</span>
+        </div>
+        <button onclick="closeModal('staffModal')" class="text-white/80 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="p-5 space-y-4 max-h-[82vh] overflow-y-auto">
+        <form onsubmit="addNewStaff(event)" class="rounded-2xl bg-slate-50 border border-slate-200 p-3.5 grid grid-cols-1 sm:grid-cols-6 gap-2 text-xs">
+          <input id="newStfName" required type="text" placeholder="الاسم الكامل" class="rounded-lg border border-slate-200 px-2.5 py-2" />
+          <input id="newStfId" required type="text" placeholder="الرقم الوظيفي" class="rounded-lg border border-slate-200 px-2.5 py-2" />
+          <input id="newStfPhone" required type="text" placeholder="رقم الجوال" class="rounded-lg border border-slate-200 px-2.5 py-2" />
+          <input id="newStfEmail" type="text" placeholder="البريد الإلكتروني" class="rounded-lg border border-slate-200 px-2.5 py-2" />
+          <select id="newStfSection" class="rounded-lg border border-slate-200 px-2 py-2 font-bold">
+            <option value="CORE LAB">HNH ABHA CORE LAB</option>
+            <option value="BLOOD BANK">HNH ABHA BLOOD BANK</option>
+            <option value="ADMINISTRATION">الإدارة والإشراف</option>
+          </select>
+          <button type="submit" class="rounded-lg bg-blue-600 text-white font-black py-2">+ إضافة موظف</button>
+        </form>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-100 text-slate-600 font-black">
+              <tr>
+                <th class="py-2.5 px-3">الاسم</th>
+                <th class="py-2.5 px-3">الرقم الوظيفي</th>
+                <th class="py-2.5 px-3">الجوال</th>
+                <th class="py-2.5 px-3">تاريخ التعيين</th>
+                <th class="py-2.5 px-3">البريد الإلكتروني</th>
+                <th class="py-2.5 px-3">القسم / الصلاحية</th>
+                <th class="py-2.5 px-3 text-center">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="fullStaffTableBody" class="divide-y divide-slate-100 font-bold"></tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </footer>
+  </div>
 
-  <!-- المنطق البرمجي والاتصال بالباك-إند -->
-  <script>
-    // رابط الـ Worker على نطاقك
-    const API_URL = "https://api.technolabs.online";
-
-    let currentStaff = "جمال عسيري";
-    let currentFilter = "all";
-
-    // بيانات ابتدائية فورية لضمان عمل الواجهة حتى قبل اكتمال استجابة الشبكة
-    const defaultInventory = [
-      { id: 1, item_name: "CBC Reagent Cartridge", category: "أمراض الدم (Hematology)", lot_number: "LOT-8841", expiry_date: "2027-05-15", quantity: 6, unit: "كارتلج", updated_by: "جمال عسيري" },
-      { id: 2, item_name: "Chemistry General Panel", category: "الكيمياء الحيوية (Chemistry)", lot_number: "LOT-9201", expiry_date: "2027-03-20", quantity: 1, unit: "كارتلج", updated_by: "جمال عسيري" },
-      { id: 3, item_name: "Blood Gas i-STAT Cartridge", category: "غازات الدم (Blood Gas)", lot_number: "LOT-4412", expiry_date: "2027-01-10", quantity: 1, unit: "كارتلج", updated_by: "فيصل" },
-      { id: 4, item_name: "Coagulation PT/INR Cartridge", category: "التخثر (Coagulation)", lot_number: "LOT-3109", expiry_date: "2026-12-30", quantity: 0, unit: "كارتلج", updated_by: "فيصل" },
-      { id: 5, item_name: "Troponin I Rapid Cartridge", category: "الطوارئ (Cardiac Markers)", lot_number: "LOT-7750", expiry_date: "2027-08-01", quantity: 4, unit: "كارتلج", updated_by: "د. عمرو" }
-    ];
-
-    const defaultLogs = [
-      { staff_name: "جمال عسيري", action_text: "تفعيل نظام الإنذار المبكر عند تبقي كارتلج واحد (1)", created_at: "الآن" },
-      { staff_name: "د. عمرو", action_text: "اعتماد قوائم الكواشف الأساسية للمختبر", created_at: "اليوم" },
-      { staff_name: "فيصل", action_text: "سحب كارتلج غازات الدم (المتبقي: 1 كارتلج)", created_at: "اليوم" }
-    ];
-
-    let inventoryData = JSON.parse(localStorage.getItem("technolab_inv")) || defaultInventory;
-    let logsData = JSON.parse(localStorage.getItem("technolab_logs")) || defaultLogs;
-
-    function saveLocal() {
-      localStorage.setItem("technolab_inv", JSON.stringify(inventoryData));
-      localStorage.setItem("technolab_logs", JSON.stringify(logsData));
-    }
-
-    // اختيار الموظف النشط
-    function selectStaff(name, role) {
-      currentStaff = name;
-      document.querySelectorAll(".staff-card").forEach(el => el.classList.remove("glass-active"));
-      const activeCard = document.getElementById("staff-" + name);
-      if (activeCard) activeCard.classList.add("glass-active");
-      document.getElementById("activeUserIndicator").textContent = `المسجل حالياً: ${name} (${role})`;
-    }
-
-    // تحديد حالة المخزون بدقة (تحذير قارب على النفاذ عند تبقي كارتلج واحد)
-    function getStockStatus(qty) {
-      const q = Number(qty);
-      if (q <= 0) {
-        return {
-          label: "🚨 نافذ تماماً — يجب الطلب فوراً",
-          badgeClass: "bg-rose-500/20 text-rose-400 border-rose-500/50 pulse-danger",
-          cardBorder: "border-r-4 border-r-rose-500"
-        };
-      }
-      if (q === 1) {
-        return {
-          label: "⚠️ قارب على النفاذ (تبقى كارتلج واحد!)",
-          badgeClass: "bg-amber-500/20 text-amber-300 border-amber-500/50 pulse-warn",
-          cardBorder: "border-r-4 border-r-amber-500"
-        };
-      }
-      return {
-        label: "✅ متوفر بحالة ممتازة",
-        badgeClass: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-        cardBorder: "border-r-4 border-r-emerald-500"
-      };
-    }
-
-    function renderStats() {
-      const total = inventoryData.length;
-      const good = inventoryData.filter(i => Number(i.quantity) > 1).length;
-      const low = inventoryData.filter(i => Number(i.quantity) === 1).length;
-      const out = inventoryData.filter(i => Number(i.quantity) <= 0).length;
-
-      document.getElementById("statTotal").textContent = total;
-      document.getElementById("statGood").textContent = good;
-      document.getElementById("statLow").textContent = low;
-      document.getElementById("statOut").textContent = out;
-    }
-
-    function setFilter(flt) {
-      currentFilter = flt;
-      document.querySelectorAll(".flt-btn").forEach(b => b.classList.remove("ring-2", "ring-cyan-400"));
-      document.getElementById("flt-" + flt).classList.add("ring-2", "ring-cyan-400");
-      renderInventory();
-    }
-
-    function renderInventory() {
-      renderStats();
-      const q = document.getElementById("searchInput").value.trim().toLowerCase();
-      const container = document.getElementById("inventoryContainer");
-
-      const filtered = inventoryData.filter(item => {
-        const matchesSearch =
-          item.item_name.toLowerCase().includes(q) ||
-          (item.category && item.category.toLowerCase().includes(q)) ||
-          (item.lot_number && item.lot_number.toLowerCase().includes(q));
-
-        if (!matchesSearch) return false;
-        if (currentFilter === "low") return Number(item.quantity) === 1;
-        if (currentFilter === "out") return Number(item.quantity) <= 0;
-        return true;
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="glass rounded-2xl p-10 text-center text-slate-400">
-            <i class="fa-solid fa-box-open text-4xl mb-3 text-slate-600"></i>
-            <p class="font-bold">لا توجد أصناف مطابقة للبحث الحالي</p>
-          </div>`;
-        return;
-      }
-
-      container.innerHTML = filtered.map(item => {
-        const st = getStockStatus(item.quantity);
-        return `
-          <div class="glass rounded-2xl p-5 ${st.cardBorder} transition hover:border-slate-600 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div class="space-y-1.5 flex-1">
-              <div class="flex items-center flex-wrap gap-2">
-                <h4 class="font-extrabold text-lg text-white">${item.item_name}</h4>
-                <span class="text-xs px-2.5 py-1 rounded-full border font-bold ${st.badgeClass}">
-                  ${st.label}
-                </span>
-              </div>
-              <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400">
-                <span><i class="fa-solid fa-layer-group text-cyan-400 ml-1"></i>${item.category || 'عام'}</span>
-                <span><i class="fa-solid fa-barcode text-slate-500 ml-1"></i>Lot: ${item.lot_number || '-'}</span>
-                <span><i class="fa-regular fa-calendar-check text-slate-500 ml-1"></i>الصلاحية: ${item.expiry_date || '-'}</span>
-                <span><i class="fa-solid fa-user-check text-cyan-400 ml-1"></i>آخر تحديث: ${item.updated_by || 'جمال عسيري'}</span>
-              </div>
-            </div>
-
-            <!-- أزرار التحكم بالكمية -->
-            <div class="flex items-center gap-3 self-end sm:self-center">
-              <button onclick="changeQty(${item.id}, -1)" class="w-10 h-10 rounded-xl bg-rose-500/15 hover:bg-rose-500/30 border border-rose-500/30 text-rose-400 font-black text-lg transition" title="سحب كارتلج">
-                -
-              </button>
-              <div class="min-w-[70px] text-center bg-slate-900/90 border border-slate-800 rounded-xl py-1.5 px-3">
-                <div class="text-2xl font-black text-white leading-none">${item.quantity}</div>
-                <div class="text-[10px] text-slate-400 mt-0.5">${item.unit || 'كارتلج'}</div>
-              </div>
-              <button onclick="changeQty(${item.id}, 1)" class="w-10 h-10 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-400 font-black text-lg transition" title="إضافة كارتلج">
-                +
-              </button>
-              <button onclick="deleteItem(${item.id})" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-rose-600/20 text-slate-400 hover:text-rose-400 transition mr-1" title="حذف الصنف">
-                <i class="fa-regular fa-trash-can text-sm"></i>
-              </button>
-            </div>
+  <!-- 5. نافذة تبديل الصلاحيات السريع (Jamal Admin / Dr. Amr Director / Faisal Supervisor / Staff) -->
+  <div id="roleSwitcherModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-100 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-key text-amber-500"></i>
+          <span>التبديل بين حسابات وصلاحيات النظام</span>
+        </h3>
+        <button onclick="closeModal('roleSwitcherModal')" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <div class="space-y-2.5 text-xs">
+        <div onclick="switchActiveAccount('Jamal Asiri', '32726', 'admin')" class="cursor-pointer p-3.5 rounded-2xl border-2 border-amber-400 bg-amber-50/60 hover:bg-amber-100/70 flex items-center justify-between">
+          <div>
+            <p class="font-black text-sm text-slate-800">👑 Jamal Asiri (32726) — ADMIN</p>
+            <p class="text-[11px] text-amber-800">مدير النظام والأدمن العام + الصلاحية الحصرية لإدخال وإصدار التقارير الشاملة</p>
           </div>
-        `;
-      }).join("");
-    }
-
-    function renderLogs() {
-      const container = document.getElementById("logsContainer");
-      container.innerHTML = logsData.slice(0, 15).map(l => `
-        <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800/90 text-xs space-y-1">
-          <div class="flex justify-between items-center">
-            <span class="font-extrabold text-cyan-400"><i class="fa-solid fa-user-tag ml-1"></i>${l.staff_name}</span>
-            <span class="text-[10px] text-slate-500">${l.created_at || 'الآن'}</span>
-          </div>
-          <p class="text-slate-300 leading-relaxed">${l.action_text}</p>
+          <i class="fa-solid fa-chevron-left text-amber-600"></i>
         </div>
-      `).join("");
-    }
 
-    async function changeQty(id, diff) {
-      const item = inventoryData.find(i => i.id === id);
-      if (!item) return;
-      const newQty = Math.max(0, Number(item.quantity) + diff);
-      item.quantity = newQty;
-      item.updated_by = currentStaff;
+        <div onclick="switchActiveAccount('DR. AMR', '30001', 'director')" class="cursor-pointer p-3.5 rounded-2xl border border-purple-200 bg-purple-50/50 hover:bg-purple-100/60 flex items-center justify-between">
+          <div>
+            <p class="font-black text-sm text-slate-800">🏛️ د. عمرو (30001) — DIRECTOR</p>
+            <p class="text-[11px] text-purple-800">مدير المختبر: اعتماد الجداول النهائية، اعتماد طلبيات الشراء (PO)، والتوجيه الإداري</p>
+          </div>
+          <i class="fa-solid fa-chevron-left text-purple-600"></i>
+        </div>
 
-      const op = diff > 0 ? `إضافة (+${diff})` : `سحب (${diff})`;
-      logsData.unshift({
-        staff_name: currentStaff,
-        action_text: `قام بـ ${op} على ${item.item_name} — المتبقي: ${newQty} كارتلج`,
-        created_at: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })
-      });
+        <div onclick="switchActiveAccount('FAISAL YAHYA', '32731', 'supervisor')" class="cursor-pointer p-3.5 rounded-2xl border border-sky-200 bg-sky-50/50 hover:bg-sky-100/60 flex items-center justify-between">
+          <div>
+            <p class="font-black text-sm text-slate-800">🛡️ فيصل يحيى (32731) — SUPERVISOR</p>
+            <p class="text-[11px] text-sky-800">مشرف المختبر: الإشراف على الشفتات، المخزون، صيانة السبت وكال conCC، والكونترولات</p>
+          </div>
+          <i class="fa-solid fa-chevron-left text-sky-600"></i>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      saveLocal();
-      renderInventory();
-      renderLogs();
+  <!-- 6. نافذة تعريف الموظف (CBAHI) -->
+  <div id="identityModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-t-4 border-t-sky-500 text-center space-y-4">
+      <h3 class="text-lg font-black text-slate-800">تعريف الموظف لتوثيق سجل الجودة (CBAHI)</h3>
+      <form onsubmit="saveIdentityForm(event)" class="space-y-3 text-right text-xs">
+        <div>
+          <label class="block font-bold mb-1">اختر اسمك من القائمة المعتمدة *</label>
+          <select id="idSelectStaff" class="w-full rounded-xl border border-slate-200 px-3 py-2.5 font-bold"></select>
+        </div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-sky-500 text-white font-black">تفعيل الدخول والتوثيق</button>
+      </form>
+    </div>
+  </div>
 
-      try {
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "update_qty",
-            id: item.id,
-            item_name: item.item_name,
-            new_quantity: newQty,
-            diff,
-            staff_name: currentStaff
-          })
-        });
-      } catch (e) {}
-    }
+  <!-- 7. نافذة التاسكات والمهام الخاصة -->
+  <div id="tasksModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
+    <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-100">
+      <div class="bg-gradient-to-l from-purple-700 to-indigo-600 text-white px-5 py-4 flex items-center justify-between">
+        <span class="font-black">إدارة التاسكات والمهام الخاصة</span>
+        <button onclick="closeModal('tasksModal')" class="text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+        <form onsubmit="addTask(event)" class="space-y-2.5 bg-purple-50/50 p-3.5 rounded-2xl border border-purple-100">
+          <label class="block font-bold">المستهدف (الاسم والرقم الوظيفي):</label>
+          <select id="taskTarget" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 font-bold"></select>
+          <textarea id="taskText" required rows="2" placeholder="اكتب تفاصيل التاسك أو التعميم..." class="w-full rounded-xl border border-slate-200 bg-white p-2.5"></textarea>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-purple-600 text-white font-black">إرسال التاسك الآن</button>
+        </form>
+        <div id="tasksList" class="space-y-2"></div>
+      </div>
+    </div>
+  </div>
 
-    async function handleAddItem(e) {
-      e.preventDefault();
-      const newItem = {
-        id: Date.now(),
-        item_name: document.getElementById("inpName").value.trim(),
-        category: document.getElementById("inpCategory").value,
-        lot_number: document.getElementById("inpLot").value.trim() || "LOT-NEW",
-        quantity: Number(document.getElementById("inpQty").value),
-        expiry_date: document.getElementById("inpExpiry").value || "2027-01-01",
-        unit: "كارتلج",
-        updated_by: currentStaff
-      };
+  <!-- 8. نافذة تسجيل نتيجة حرجة -->
+  <div id="criticalModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-100 space-y-3 text-xs">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-black text-base text-rose-700">تسجيل وتبليغ نتيجة حرجة (Panic Value)</h3>
+        <button onclick="closeModal('criticalModal')"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form onsubmit="saveCriticalResult(event)" class="space-y-2.5">
+        <input id="critPatient" required type="text" placeholder="اسم المريض / رقم الملف الطبي (MRN) *" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+        <input id="critTest" required type="text" placeholder="اسم الفحص والنتيجة الحرجة (مثال: K+ = 6.8 mmol/L) *" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+        <input id="critNotifiedTo" required type="text" placeholder="اسم الطبيب / الممرض المستلم للتبليغ (Read-Back) *" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-rose-600 text-white font-black">حفظ في سجل النتائج الحرجة</button>
+      </form>
+    </div>
+  </div>
 
-      inventoryData.unshift(newItem);
-      logsData.unshift({
-        staff_name: currentStaff,
-        action_text: `أضاف صنف جديد: ${newItem.item_name} (الكمية: ${newItem.quantity})`,
-        created_at: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })
-      });
+  <!-- 9. نافذة إضافة شفت -->
+  <div id="shiftModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-100 space-y-3 text-xs">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-black text-base">تعيين شفت لموظف</h3>
+        <button onclick="closeModal('shiftModal')"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form onsubmit="saveShift(event)" class="space-y-2.5">
+        <select id="shfEmpSelect" class="w-full rounded-xl border border-slate-200 px-3 py-2 font-bold"></select>
+        <div class="grid grid-cols-2 gap-2">
+          <select id="shfPeriod" class="rounded-xl border border-slate-200 px-3 py-2 font-bold">
+            <option value="صباحي (07:30 - 15:30)">صباحي (07:30 - 15:30)</option>
+            <option value="مسائي (15:30 - 23:30)">مسائي (15:30 - 23:30)</option>
+            <option value="ليلي (23:30 - 07:30)">ليلي (23:30 - 07:30)</option>
+          </select>
+          <input id="shfBench" required type="text" placeholder="القسم (مثال: الكيمياء / بنك الدم)" class="rounded-xl border border-slate-200 px-3 py-2" />
+        </div>
+        <input id="shfDaysInput" required type="text" value="الأحد - الخميس" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-sky-500 text-white font-black">حفظ الشفت</button>
+      </form>
+    </div>
+  </div>
 
-      saveLocal();
-      renderInventory();
-      renderLogs();
-      closeModal();
-      e.target.reset();
+  <!-- 10. نوافذ الإشعارات، تسليم الشفت، طلبية الشراء، والسجل -->
+  <div id="notificationsModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
+    <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl">
+      <div class="bg-amber-500 text-white px-5 py-3.5 flex justify-between items-center font-black">
+        <span>🔔 مركز الإشعارات والتنبيهات الموجهة</span>
+        <button onclick="closeModal('notificationsModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="notifModalBody" class="p-4 space-y-2.5 max-h-80 overflow-y-auto text-xs"></div>
+    </div>
+  </div>
 
-      try {
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "add", ...newItem, staff_name: currentStaff })
-        });
-      } catch (err) {}
-    }
+  <div id="handoverModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-3 text-xs">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-black text-base text-purple-800">ملاحظات تسليم الشفت</h3>
+        <button onclick="closeModal('handoverModal')"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form onsubmit="saveHandover(event)" class="space-y-2">
+        <textarea id="handoverText" required rows="2" placeholder="اكتب ملاحظة تسليم الشفت..." class="w-full rounded-xl border border-slate-200 p-2.5"></textarea>
+        <button type="submit" class="px-4 py-2 rounded-xl bg-purple-600 text-white font-black">إضافة ملاحظة</button>
+      </form>
+      <div id="handoverList" class="space-y-2 max-h-56 overflow-y-auto"></div>
+    </div>
+  </div>
 
-    async function deleteItem(id) {
-      const item = inventoryData.find(i => i.id === id);
-      if (!item || !confirm(`هل أنت متأكد من حذف (${item.item_name})؟`)) return;
+  <div id="poModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-5 shadow-2xl space-y-3 text-xs">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-black text-base text-sky-700">طلبية الشراء التلقائية للنواقص (PO)</h3>
+        <button onclick="closeModal('poModal')"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div id="poModalList" class="space-y-2 max-h-64 overflow-y-auto"></div>
+      <div class="flex gap-2 pt-2 border-t">
+        <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-sky-500 text-white font-black">استخراج PDF</button>
+        <button onclick="approvePORoleCheck()" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-black">اعتماد الطلبية (Admin / د.عمرو)</button>
+      </div>
+    </div>
+  </div>
 
-      inventoryData = inventoryData.filter(i => i.id !== id);
-      logsData.unshift({
-        staff_name: currentStaff,
-        action_text: `حذف الصنف: ${item.item_name} من النظام`,
-        created_at: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })
-      });
+  <div id="auditModal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-3">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-5 shadow-2xl space-y-3 text-xs">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-black text-base text-slate-800">📜 السجل الشامل لعمليات المختبر والجودة (CBAHI Audit Log)</h3>
+        <button onclick="closeModal('auditModal')"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div id="auditModalList" class="space-y-2 max-h-[65vh] overflow-y-auto"></div>
+    </div>
+  </div>
 
-      saveLocal();
-      renderInventory();
-      renderLogs();
+  <!-- ================================================================= -->
+  <!-- المحرك البرمجي الشامل (JavaScript) -->
+  <!-- ================================================================= -->
+  <script>
+    const CLOUD_API = "https://api.technolabs.online";
 
-      try {
-        await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "delete", id, item_name: item.item_name, staff_name: currentStaff })
-        });
-      } catch (e) {}
-    }
+    // القائمة الكاملة لجميع موظفي المختبر الأساسي وبنك الدم والإدارة (17 موظفاً)
+    const ALL_STAFF_DEFAULT = [
+      // الإدارة والإشراف
+      { id: 1, name: "Jamal Asiri", emp_id: "32726", phone: "0505610803", hiring: "02-11-2024", email: "alalkmy777@gmail.com", section: "ADMINISTRATION", role: "admin", title: "Admin 👑 | مدير النظام ومشرف الجودة" },
+      { id: 2, name: "DR. AMR", emp_id: "30001", phone: "0500000000", hiring: "01-01-2024", email: "amr@technolabs.online", section: "ADMINISTRATION", role: "director", title: "Director 🏛️ | مدير المختبر" },
+      { id: 3, name: "FAISAL YAHYA", emp_id: "32731", phone: "0541156185", hiring: "02-11-2024", email: "Fasial.foxy1@gmail.com", section: "CORE LAB", role: "supervisor", title: "Supervisor 🛡️ | مشرف المختبر" },
+      // HNH ABHA CORE LAB STAFF
+      { id: 4, name: "ABDULLA ALSHARIF", emp_id: "30129", phone: "0535459126", hiring: "29-05-2025", email: "alsharif30129@gmail.com", section: "CORE LAB", role: "staff", title: "أخصائي مختبر - Core Lab" },
+      { id: 5, name: "REEM ALI", emp_id: "30927", phone: "0559204026", hiring: "16-10-2024", email: "reeeeo.1413@gmail.com", section: "CORE LAB", role: "staff", title: "أخصائية مختبر - Core Lab" },
+      { id: 6, name: "OMER TAHIR", emp_id: "32728", phone: "0502494505", hiring: "02-11-2024", email: "omermohtahir@gmail.com", section: "CORE LAB", role: "staff", title: "أخصائي مختبر - Core Lab" },
+      { id: 7, name: "SAQER ALI", emp_id: "34198", phone: "0550174018", hiring: "21-04-2025", email: "sqqr1818@gmail.com", section: "CORE LAB", role: "staff", title: "أخصائي مختبر - Core Lab" },
+      { id: 8, name: "RAGHAD QASEM", emp_id: "34197", phone: "0509358950", hiring: "20-04-2025", email: "raaghadqasem@gmail.com", section: "CORE LAB", role: "staff", title: "أخصائية مختبر - Core Lab" },
+      { id: 9, name: "QARAN SAEED", emp_id: "36911", phone: "0531274418", hiring: "29-12-2025", email: "Qaran.aldail@gmail.com", section: "CORE LAB", role: "staff", title: "أخصائي مختبر - Core Lab" },
+      { id: 10, name: "BUSHRA SAEED", emp_id: "37234", phone: "0502775505", hiring: "05-01-2026", email: "Bushrasaeedali@hotmail.com", section: "CORE LAB", role: "staff", title: "أخصائية مختبر - Core Lab" },
+      { id: 11, name: "ABDULMAJEED MUSHABAB", emp_id: "37242", phone: "0567680810", hiring: "05-01-2026", email: "alasiri.ab7@gmail.com", section: "CORE LAB", role: "staff", title: "أخصائي مختبر - Core Lab" },
+      { id: 12, name: "Dr. walla rabie", emp_id: "37520", phone: "0557876987", hiring: "01-02-2026", email: "-", section: "CORE LAB", role: "staff", title: "طبيب مختبر - Core Lab" },
+      // HNH ABHA BLOOD BANK STAFF
+      { id: 13, name: "AMJAD YAHYA", emp_id: "32693", phone: "0568282318", hiring: "02-11-2024", email: "Amjad10231@gmail.com", section: "BLOOD BANK", role: "staff", title: "أخصائي بنك الدم - Blood Bank" },
+      { id: 14, name: "ABDU ALAYAFI", emp_id: "36246", phone: "0557737061", hiring: "16-11-2025", email: "Abdoaliabdallh1416@gmail.com", section: "BLOOD BANK", role: "staff", title: "أخصائي بنك الدم - Blood Bank" },
+      { id: 15, name: "RAWAN ALARAFJI", emp_id: "36248", phone: "0592662323", hiring: "28-10-2025", email: "rawanabdullah56@gmail.com", section: "BLOOD BANK", role: "staff", title: "أخصائية بنك الدم - Blood Bank" },
+      { id: 16, name: "KAWTHAR ASSIRI", emp_id: "36250", phone: "0532443539", hiring: "28-10-2025", email: "iikrii303@gmail.com", section: "BLOOD BANK", role: "staff", title: "أخصائية بنك الدم - Blood Bank" },
+      { id: 17, name: "Dr.mustafa yahya", emp_id: "37525", phone: "0509854263", hiring: "01-02-2026", email: "-", section: "BLOOD BANK", role: "staff", title: "طبيب بنك الدم - Blood Bank" }
+    ];
 
-    function openModal() {
-      document.getElementById("addModal").classList.remove("hidden");
-      document.getElementById("addModal").classList.add("flex");
-    }
+    const DEFAULT_CONTROLS = [
+      { id: 1, name: "conCC (كاليبريتور الكيمياء الجديد)", device: "Cobas c311 - الكيمياء الحيوية", lot: "LOT-CC2026", date: "يوم السبت (أسبوعي)", status: "مفعل ومجدول ليوم السبت" },
+      { id: 2, name: "PreciControl ClinChem Multi 1 & 2", device: "الكيمياء الحيوية", lot: "LOT-QC102", date: "يومي + صيانة السبت", status: "مقبول (Pass)" }
+    ];
 
-    function closeModal() {
-      document.getElementById("addModal").classList.add("hidden");
-      document.getElementById("addModal").classList.remove("flex");
-    }
+    const DEFAULT_FRIDGES = [
+      { id: 1, name: "ثلاجة محاليل الكيمياء #1", section: "Core Lab", temp: "4.2 °C", range: "2°C - 8°C", status: "طبيعي ✓" },
+      { id: 2, name: "ثلاجة وحدات الدم (Blood Bank #1)", section: "Blood Bank", temp: "3.8 °C", range: "1°C - 6°C", status: "طبيعي ✓" },
+      { id: 3, name: "فريزر البلازما المجمدة (FFP Freezer)", section: "Blood Bank", temp: "-32.0 °C", range: "أقل من -30°C", status: "طبيعي ✓" }
+    ];
 
-    // مزامنة البيانات عند فتح التطبيق
-    async function syncFromCloud() {
-      try {
-        const res = await fetch(API_URL);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.inventory && data.inventory.length > 0) {
-            inventoryData = data.inventory;
-            logsData = data.logs || logsData;
-            saveLocal();
-            renderInventory();
-            renderLogs();
-          }
+    const DEFAULT_SUPPLIERS = [
+      { id: 1, company: "Roche Diagnostics (روش)", contact: "م. فهد - 0500001122", specialty: "أجهزة ومحاليل الكيمياء والهرمونات (conCC)" },
+      { id: 2, company: "Sysmex / Mindray", contact: "م. خالد - 0550003344", specialty: "أجهزة ومحاليل أمراض الدم (CBC)" },
+      { id: 3, company: "Bio-Rad / Ortho", contact: "م. سلطان - 0540005566", specialty: "محاليل وكروت بنك الدم والكونترولات" }
+    ];
+
+    const DEFAULT_POLICIES = [
+      { id: 1, code: "CBAHI-LB.1", title: "سياسة إدارة المخزون وتنبيه الكارتلج الواحد (<=1)", standard: "CBAHI / CAP", owner: "Jamal Asiri" },
+      { id: 2, code: "CBAHI-LB.12", title: "بروتوكول صيانة يوم السبت الأسبوعية وتحضير كال conCC", standard: "CBAHI / SFDA", owner: "Jamal Asiri & Faisal" },
+      { id: 3, code: "AABB-BB.4", title: "سياسة حفظ وصرف وحدات الدم ومراقبة الثلاجات", standard: "AABB / CBAHI", owner: "Dr. Amr & Jamal Asiri" }
+    ];
+
+    const DEFAULT_REF_RANGES = [
+      { id: 1, test: "Glucose (Fasting)", normal: "70 - 105 mg/dL", panic: "< 45 or > 450 mg/dL", dept: "كيمياء حيوية" },
+      { id: 2, test: "Potassium (K+)", normal: "3.5 - 5.1 mmol/L", panic: "< 2.8 or > 6.2 mmol/L", dept: "كيمياء حيوية" },
+      { id: 3, test: "Hemoglobin (Hb)", normal: "13.0 - 17.0 g/dL", panic: "< 7.0 or > 20.0 g/dL", dept: "أمراض دم" },
+      { id: 4, test: "Troponin I (High Sensitive)", normal: "< 0.04 ng/mL", panic: "> 0.50 ng/mL", dept: "الهرمونات" }
+    ];
+
+    let state = JSON.parse(localStorage.getItem("technolab_v7_full")) || {
+      activeUser: { name: "Jamal Asiri", emp_id: "32726", role: "admin" },
+      staff: ALL_STAFF_DEFAULT,
+      inventory: [],
+      devices: [],
+      controls: DEFAULT_CONTROLS,
+      criticalResults: [],
+      fridges: DEFAULT_FRIDGES,
+      suppliers: DEFAULT_SUPPLIERS,
+      shifts: [],
+      policies: DEFAULT_POLICIES,
+      refRanges: DEFAULT_REF_RANGES,
+      comprehensiveReports: [
+        {
+          id: 1,
+          title: "التقرير الشامل لجودة المختبر وبنك الدم وصيانة السبت (CBAHI / CAP)",
+          period: "نوفمبر 2026",
+          summary: "تم استيفاء جميع معايير الجودة، جدولة صيانة السبت وتحضير كال conCC، ومطابقة مخزون الكارتلج.",
+          issuedBy: "Jamal Asiri (32726) - Admin 👑",
+          date: "2026-11-07"
         }
-      } catch (e) {}
-    }
-
-    // التشغيل الفوري
-    renderInventory();
-    renderLogs();
-    syncFromCloud();
-  </script>
-</body>
-</html>
+      ],
+      tasks: [],
+      handovers: [],
+      notifications: [
+        { id: 1, title: "تنبيه صيانة السبت الأسبوعية وتحضير كال conCC", text: "يرجى التأكد من تنفيذ صيانة يوم السبت وتحضير كال جديد (conCC) والكونترولات.", date: "السبت" },
+        { id: 2, title: "اكتمال قاعدة بيانات الموظفين (17 موظفاً)", text: "تم إدراج جميع موظفي Core Lab و Bl
