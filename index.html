@@ -2532,5 +2532,723 @@
     renderAll();
     syncWithCloud(true);
   </script>
+  <!-- ============================================================================
+     TECHNOLABS PWA ADD-ON MODULE:
+     1. LOT-TO-LOT VERIFICATION FORM (Hayat Hospital Abha Standard)
+     2. POLICIES & COMPREHENSIVE CAP/CLIA TEa REFERENCE (Done by Jamal Asiri)
+     Zero-Conflict Scoped CSS & JS | Offline PWA LocalStorage Supported
+============================================================================= -->
+<style>
+  #tl-addon-wrapper {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    direction: rtl;
+    background: #f4f7fb;
+    color: #1e293b;
+    padding: 16px;
+    border-radius: 12px;
+    margin: 15px auto;
+    max-width: 1200px;
+    box-sizing: border-box;
+  }
+  #tl-addon-wrapper * { box-sizing: border-box; }
+  .tl-addon-topbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    background: #0f172a;
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+  }
+  .tl-addon-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tl-tab-btn {
+    background: #1e293b;
+    color: #cbd5e1;
+    border: 1px solid #334155;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: 0.2s;
+  }
+  .tl-tab-btn.active, .tl-tab-btn:hover {
+    background: #0284c7;
+    color: #fff;
+    border-color: #38bdf8;
+  }
+  .tl-action-btn {
+    background: #10b981;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .tl-action-btn.secondary { background: #475569; }
+  .tl-action-btn.danger { background: #ef4444; }
+  .tl-panel { display: none; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+  .tl-panel.active { display: block; }
+
+  /* Form Styling matching Hayat Hospital Abha Form */
+  .tl-form-box { direction: ltr; text-align: left; border: 2px solid #1e293b; padding: 18px; background: #fff; }
+  .tl-hosp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #1e293b;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+  }
+  .tl-title-banner {
+    background: #cbd5e1;
+    text-align: center;
+    font-weight: 700;
+    padding: 6px;
+    border: 1px solid #1e293b;
+    margin-bottom: 12px;
+    font-size: 15px;
+  }
+  .tl-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .tl-field-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .tl-field-row label { font-weight: 600; width: 42%; }
+  .tl-field-row input, .tl-field-row select {
+    width: 56%;
+    padding: 5px 8px;
+    border: 1px solid #475569;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  .tl-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+  .tl-table th, .tl-table td {
+    border: 1px solid #1e293b;
+    padding: 6px 8px;
+    text-align: center;
+  }
+  .tl-table th { background: #e2e8f0; font-weight: 700; }
+  .tl-table input {
+    width: 100%;
+    border: none;
+    text-align: center;
+    font-size: 13px;
+    background: transparent;
+    padding: 3px;
+  }
+  .tl-table input:focus { outline: 1px solid #0284c7; background: #f0f9ff; }
+  .tl-badge-pass { background: #dcfce7; color: #166534; font-weight: 700; padding: 3px 8px; border-radius: 4px; }
+  .tl-badge-fail { background: #fee2e2; color: #991b1b; font-weight: 700; padding: 3px 8px; border-radius: 4px; }
+  .tl-sign-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #cbd5e1;
+    font-size: 13px;
+  }
+  .tl-footer-credit {
+    margin-top: 18px;
+    padding: 10px 14px;
+    background: #0f172a;
+    color: #f8fafc;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  @media print {
+    body * { visibility: hidden; }
+    #tl-addon-wrapper, #tl-addon-wrapper * { visibility: visible; }
+    #tl-addon-wrapper { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; background: #fff; }
+    .tl-no-print { display: none !important; }
+  }
+</style>
+
+<div id="tl-addon-wrapper">
+  <!-- Top Navigation Bar inside Module -->
+  <div class="tl-addon-topbar tl-no-print">
+    <div style="font-weight:700; font-size:16px;">🔬 TechnoLabs — نظام التحقق من المحاليل والسياسات (CAP TEa)</div>
+    <div class="tl-addon-tabs">
+      <button class="tl-tab-btn active" id="btn-tab-lot" onclick="TechnoLabsAddon.openTab('lot-form')">
+        📄 نموذج Lot-to-Lot Verification
+      </button>
+      <button class="tl-tab-btn" id="btn-tab-tea" onclick="TechnoLabsAddon.openTab('tea-policy')">
+        📚 السياسات ومرجع CAP TEa الشامل
+      </button>
+      <button class="tl-action-btn" onclick="TechnoLabsAddon.saveRecord()">💾 حفظ في السجل</button>
+      <button class="tl-action-btn secondary" onclick="window.print()">🖨️ طباعة / PDF</button>
+      <button class="tl-action-btn danger" onclick="TechnoLabsAddon.resetForm()">🔄 تفريغ</button>
+    </div>
+  </div>
+
+  <!-- TAB 1: HAYAT HOSPITAL ABHA LOT-TO-LOT VERIFICATION FORM -->
+  <div id="tl-panel-lot-form" class="tl-panel active">
+    <div class="tl-form-box">
+      <div class="tl-hosp-header">
+        <div>
+          <div style="font-size:20px; font-weight:800; letter-spacing:0.5px;">Hayat Hospital</div>
+          <div style="font-size:13px; font-weight:600; color:#475569;">Abha — مستشفى الحياة أبها</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:18px; font-weight:800;">مستشفى الحياة</div>
+          <div style="font-size:12px; color:#475569;">قسم المختبر وبنك الدم - TechnoLabs</div>
+        </div>
+      </div>
+
+      <div class="tl-title-banner">Laboratory Test Reagent LOT to LOT Verification Form</div>
+
+      <!-- Test Selection & Active TEa Rule Banner -->
+      <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; background:#f8fafc; padding:10px; border:1px solid #1e293b; margin-bottom:14px;">
+        <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:260px;">
+          <label style="font-weight:700;">TEST:</label>
+          <select id="tl-test-select" onchange="TechnoLabsAddon.onTestChange()" style="padding:6px 10px; font-weight:700; width:100%; max-width:340px;"></select>
+        </div>
+        <div id="tl-active-tea-display" style="font-size:13px; font-weight:700; color:#0369a1; background:#e0f2fe; padding:6px 12px; border-radius:6px; border:1px solid #7dd3fc;">
+          CAP TEa Limit: ±15%
+        </div>
+      </div>
+
+      <!-- Reagent & QC Lot Information -->
+      <div class="tl-grid-3">
+        <div>
+          <div class="tl-field-row"><label>Current Reagent:</label><input type="text" id="tl-curr-reag" placeholder="e.g. Trig 2"></div>
+          <div class="tl-field-row"><label>New Reagent:</label><input type="text" id="tl-new-reag" placeholder="e.g. Trig 2"></div>
+          <div class="tl-field-row"><label>Current QC L1:</label><input type="text" id="tl-qc-l1"></div>
+          <div class="tl-field-row"><label>Current QC L2:</label><input type="text" id="tl-qc-l2"></div>
+          <div class="tl-field-row"><label>Current QC L3:</label><input type="text" id="tl-qc-l3"></div>
+        </div>
+        <div>
+          <div class="tl-field-row"><label>Current Lot:</label><input type="text" id="tl-curr-lot" placeholder="78334UD00"></div>
+          <div class="tl-field-row"><label>New Lot:</label><input type="text" id="tl-new-lot" placeholder="81614UD00"></div>
+          <div class="tl-field-row"><label>Control Lot# (L1):</label><input type="text" id="tl-ctrl-lot1"></div>
+          <div class="tl-field-row"><label>Control Lot# (L2):</label><input type="text" id="tl-ctrl-lot2"></div>
+          <div class="tl-field-row"><label>Control Lot# (L3):</label><input type="text" id="tl-ctrl-lot3"></div>
+        </div>
+        <div>
+          <div class="tl-field-row"><label>Expiration Date (Curr):</label><input type="date" id="tl-exp-curr"></div>
+          <div class="tl-field-row"><label>Expiration Date (New):</label><input type="date" id="tl-exp-new"></div>
+          <div class="tl-field-row"><label>Exp. Date (L1):</label><input type="date" id="tl-exp-l1"></div>
+          <div class="tl-field-row"><label>Exp. Date (L2):</label><input type="date" id="tl-exp-l2"></div>
+          <div class="tl-field-row"><label>Exp. Date (L3):</label><input type="date" id="tl-exp-l3"></div>
+        </div>
+      </div>
+
+      <!-- Control Ranges Section -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:13px; font-weight:700;">
+        <span><u>Control Ranges</u></span>
+        <span>Unit of Measurement: <input type="text" id="tl-unit" value="mg/dL" style="width:90px; padding:2px 6px; border:1px solid #475569; text-align:center; font-weight:700;"></span>
+      </div>
+      <table class="tl-table">
+        <thead>
+          <tr>
+            <th>Control</th><th>Mean</th><th>Low</th><th>High</th>
+            <th>Control</th><th>Mean</th><th>Low</th><th>High</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:700; background:#f1f5f9;">Level 1</td>
+            <td><input type="text" id="tl-c1-mean"></td>
+            <td><input type="text" id="tl-c1-low"></td>
+            <td><input type="text" id="tl-c1-high"></td>
+            <td style="font-weight:700; background:#f1f5f9;">Level 2</td>
+            <td><input type="text" id="tl-c2-mean"></td>
+            <td><input type="text" id="tl-c2-low"></td>
+            <td><input type="text" id="tl-c2-high"></td>
+          </tr>
+          <tr>
+            <td style="font-weight:700; background:#f1f5f9;">Level 3</td>
+            <td><input type="text" id="tl-c3-mean"></td>
+            <td><input type="text" id="tl-c3-low"></td>
+            <td><input type="text" id="tl-c3-high"></td>
+            <td colspan="4" style="background:#f8fafc;"></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Parallel Testing Header -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:13px;">
+        <span style="background:#cbd5e1; padding:4px 12px; font-weight:700; border:1px solid #1e293b;">Parallel Testing Results</span>
+        <span><b>Technologist:</b> <input type="text" id="tl-tech-name" value="Saqer asiri" style="padding:3px 8px; border:1px solid #1e293b; font-weight:600;"></span>
+      </div>
+      <div id="tl-rule-note" style="font-size:12px; text-align:center; font-weight:600; margin-bottom:6px; color:#334155;">
+        Quantitative Test: Use Total Allowable Error (TEa) according to CAP Criteria. Qualitative Test: Accept identical to initial result (100% Concordance).
+      </div>
+
+      <!-- Parallel Testing Table (SN 1 to 6) -->
+      <table class="tl-table">
+        <thead>
+          <tr>
+            <th rowspan="2" style="width:40px;">SN</th>
+            <th rowspan="2" style="width:115px;">Date</th>
+            <th rowspan="2" style="width:110px;">Sample ID</th>
+            <th colspan="2">Results</th>
+            <th rowspan="2">Difference<br>(units)</th>
+            <th rowspan="2">Difference<br>(percent %)</th>
+            <th rowspan="2">Accepted<br>(Y/N)</th>
+            <th rowspan="2">Initials</th>
+            <th rowspan="2">Supervisor Review</th>
+          </tr>
+          <tr>
+            <th>Previous</th>
+            <th>New</th>
+          </tr>
+        </thead>
+        <tbody id="tl-samples-tbody"></tbody>
+        <tfoot>
+          <tr style="background:#f1f5f9; font-weight:700;">
+            <td colspan="4" style="text-align:right;">Average:</td>
+            <td>—</td>
+            <td id="tl-avg-unit">0.00</td>
+            <td id="tl-avg-pct">0.00%</td>
+            <td id="tl-overall-badge">—</td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- Overall Status & Date In Use -->
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin:12px 0; font-size:13px; font-weight:700;">
+        <div>
+          Final Evaluation:
+          <span id="tl-final-decision" style="padding:4px 12px; border:1px solid #1e293b; margin-left:6px;">Acceptable / Unacceptable</span>
+        </div>
+        <div>
+          Date In Use: <input type="date" id="tl-date-in-use" style="padding:3px 8px; border:1px solid #1e293b;">
+        </div>
+      </div>
+
+      <!-- Signatures Section -->
+      <div class="tl-sign-grid">
+        <div>
+          <div><b>Reviewed by:</b> <input type="text" id="tl-sup-name" value="Saqer Asiri" style="border:none; border-bottom:1px solid #1e293b; font-weight:700; width:150px;"></div>
+          <div style="color:#475569; font-size:12px; margin:2px 0 6px 75px;">Section Supervisor</div>
+          <div><b>Date:</b> <input type="date" id="tl-sup-date" style="border:none; border-bottom:1px solid #1e293b;"></div>
+        </div>
+        <div>
+          <div><b>Reviewed by:</b> <input type="text" id="tl-qo-name" value="FAISAL YAHIA" style="border:none; border-bottom:1px solid #1e293b; font-weight:700; width:150px;"></div>
+          <div style="color:#475569; font-size:12px; margin:2px 0 6px 75px;">Quality Officer</div>
+          <div><b>Date:</b> <input type="date" id="tl-qo-date" style="border:none; border-bottom:1px solid #1e293b;"></div>
+        </div>
+        <div>
+          <div><b>Verified by:</b> <input type="text" id="tl-dir-name" value="Dr. AMR" style="border:none; border-bottom:1px solid #1e293b; font-weight:700; width:150px;"></div>
+          <div style="color:#475569; font-size:12px; margin:2px 0 6px 75px;">Laboratory Director</div>
+          <div><b>Date:</b> <input type="date" id="tl-dir-date" style="border:none; border-bottom:1px solid #1e293b;"></div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; margin-top:16px; font-size:11px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:8px;">
+        <span>CAP Checklist Requirement: COM.30450</span>
+        <span>Done by Jamal Asiri</span>
+        <span>IMS/HNH-Aseer/LAB-0841;Rev.0;2021</span>
+      </div>
+    </div>
+
+    <!-- Saved Verification Logs History (PWA Offline Storage) -->
+    <div class="tl-no-print" style="margin-top:16px; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid #cbd5e1;">
+      <div style="font-weight:700; margin-bottom:8px;">📂 سجلات التحقق المحفوظة محلياً في التطبيق (Saved Logs):</div>
+      <div id="tl-saved-logs-list" style="font-size:13px; color:#475569;">لا توجد سجلات محفوظة بعد.</div>
+    </div>
+  </div>
+
+  <!-- TAB 2: COMPREHENSIVE CAP / CLIA TEa POLICY & REFERENCE -->
+  <div id="tl-panel-tea-policy" class="tl-panel">
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; border-bottom:2px solid #0284c7; padding-bottom:10px;">
+      <div>
+        <h3 style="margin:0; color:#0f172a;">السياسة المرجعية الشاملة للخطأ الكلي المسموح به (CAP / CLIA TEa Policy)</h3>
+        <div style="font-size:13px; color:#475569; margin-top:4px;">
+          المرجع المعتمد لعمليات Lot-to-Lot Verification وتقييم الكفاءة المهنية (CAP COM.30450 & 42 CFR Part 493 Subpart I)
+        </div>
+      </div>
+      <div class="tl-no-print" style="display:flex; gap:8px; flex-wrap:wrap;">
+        <input type="text" id="tl-tea-search" oninput="TechnoLabsAddon.renderTEaTable()" placeholder="🔍 ابحث عن اسم التحليل..." style="padding:7px 12px; border:1px solid #94a3b8; border-radius:6px; font-size:13px;">
+        <select id="tl-tea-cat" onchange="TechnoLabsAddon.renderTEaTable()" style="padding:7px 10px; border:1px solid #94a3b8; border-radius:6px; font-size:13px;">
+          <option value="ALL">جميع أقسام المختبر (All Sections)</option>
+          <option value="Routine Chemistry & Enzymes">الكيمياء السريرية والإنزيمات</option>
+          <option value="Coagulation & Hematology">تحاليل السيولة والتخثر وأمراض الدم</option>
+          <option value="Electrolytes & Blood Gases">الأملاح وغازات الدم</option>
+          <option value="Endocrinology & Tumor Markers">الهرمونات ودلالات الأورام</option>
+          <option value="Immunology & Specific Proteins">المناعة والأمصال والبروتينات</option>
+          <option value="TDM & Toxicology">الأدوية العلاجية والسموم</option>
+        </select>
+      </div>
+    </div>
+
+    <table class="tl-table" style="direction:ltr;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Section / Category</th>
+          <th>Analyte Name</th>
+          <th>Default Unit</th>
+          <th>Official CAP / CLIA TEa (100%)</th>
+          <th>50% TEa (Suggested Lot Bias)</th>
+          <th class="tl-no-print">Select</th>
+        </tr>
+      </thead>
+      <tbody id="tl-tea-tbody"></tbody>
+    </table>
+
+    <!-- Official CAP & eCFR Links -->
+    <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:12px; margin-top:14px; font-size:13px; direction:ltr; text-align:left;">
+      <b>Official CAP & Regulatory Reference Links:</b>
+      <ul style="margin:6px 0 0 18px; padding:0; line-height:1.7;">
+        <li><a href="https://www.captodayonline.com/qa-column-0522/" target="_blank" rel="noopener">CAP TODAY — COM.30450 New Reagent Lot Confirmation of Acceptability</a></li>
+        <li><a href="https://www.cap.org/laboratory-quality-solutions/proficiency-testing/proficiency-testing-external-quality-assessment-frequently-asked-questions" target="_blank" rel="noopener">CAP.org — Proficiency Testing (PT) / External Quality Assessment Evaluation Criteria</a></li>
+        <li><a href="https://www.ecfr.gov/current/title-42/chapter-IV/subchapter-G/part-493/subpart-I" target="_blank" rel="noopener">eCFR — 42 CFR Part 493 Subpart I (Official CLIA/CAP Acceptance Limits Tables)</a></li>
+      </ul>
+    </div>
+
+    <div class="tl-footer-credit">
+      <span>TechnoLabs Quality Management System — CAP COM.30450 Reference Policy</span>
+      <span style="color:#38bdf8; font-size:14px;">Done by Jamal Asiri</span>
+    </div>
+  </div>
+</div>
+
+<script>
+window.TechnoLabsAddon = (function() {
+  // Comprehensive Database of Laboratory Analytes & CAP/CLIA TEa Limits
+  const TEA_DB = [
+    // 1. Routine Chemistry & Enzymes
+    { id: "TRIG", cat: "Routine Chemistry & Enzymes", name: "Triglycerides (Trig 2)", unit: "mg/dL", pct: 15, abs: null, text: "±15%", half: "±7.5%" },
+    { id: "GLU", cat: "Routine Chemistry & Enzymes", name: "Glucose", unit: "mg/dL", pct: 8, abs: 6, text: "±8% or ±6 mg/dL (greater)", half: "±4% or ±3 mg/dL" },
+    { id: "CREAT", cat: "Routine Chemistry & Enzymes", name: "Creatinine", unit: "mg/dL", pct: 10, abs: 0.2, text: "±10% or ±0.2 mg/dL (greater)", half: "±5% or ±0.1 mg/dL" },
+    { id: "BUN", cat: "Routine Chemistry & Enzymes", name: "Urea Nitrogen (BUN)", unit: "mg/dL", pct: 9, abs: 2, text: "±9% or ±2 mg/dL (greater)", half: "±4.5% or ±1 mg/dL" },
+    { id: "UA", cat: "Routine Chemistry & Enzymes", name: "Uric Acid", unit: "mg/dL", pct: 10, abs: null, text: "±10%", half: "±5%" },
+    { id: "CHOL", cat: "Routine Chemistry & Enzymes", name: "Cholesterol, Total", unit: "mg/dL", pct: 10, abs: null, text: "±10%", half: "±5%" },
+    { id: "HDL", cat: "Routine Chemistry & Enzymes", name: "HDL Cholesterol", unit: "mg/dL", pct: 20, abs: 6, text: "±20% or ±6 mg/dL (greater)", half: "±10% or ±3 mg/dL" },
+    { id: "LDL", cat: "Routine Chemistry & Enzymes", name: "LDL Cholesterol (Direct)", unit: "mg/dL", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "TP", cat: "Routine Chemistry & Enzymes", name: "Total Protein", unit: "g/dL", pct: 8, abs: null, text: "±8%", half: "±4%" },
+    { id: "ALB", cat: "Routine Chemistry & Enzymes", name: "Albumin", unit: "g/dL", pct: 8, abs: null, text: "±8%", half: "±4%" },
+    { id: "TBIL", cat: "Routine Chemistry & Enzymes", name: "Bilirubin, Total", unit: "mg/dL", pct: 20, abs: 0.4, text: "±20% or ±0.4 mg/dL (greater)", half: "±10% or ±0.2 mg/dL" },
+    { id: "DBIL", cat: "Routine Chemistry & Enzymes", name: "Bilirubin, Direct", unit: "mg/dL", pct: 20, abs: 0.4, text: "±20% or ±0.4 mg/dL (greater)", half: "±10% or ±0.2 mg/dL" },
+    { id: "CA", cat: "Routine Chemistry & Enzymes", name: "Calcium, Total", unit: "mg/dL", pct: null, abs: 1.0, text: "±1.0 mg/dL", half: "±0.5 mg/dL" },
+    { id: "PHOS", cat: "Routine Chemistry & Enzymes", name: "Phosphorus", unit: "mg/dL", pct: 10, abs: 0.3, text: "±10% or ±0.3 mg/dL (greater)", half: "±5% or ±0.15 mg/dL" },
+    { id: "MG", cat: "Routine Chemistry & Enzymes", name: "Magnesium", unit: "mg/dL", pct: 15, abs: null, text: "±15%", half: "±7.5%" },
+    { id: "FE", cat: "Routine Chemistry & Enzymes", name: "Iron, Total", unit: "mcg/dL", pct: 15, abs: null, text: "±15%", half: "±7.5%" },
+    { id: "TIBC", cat: "Routine Chemistry & Enzymes", name: "TIBC", unit: "mcg/dL", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "FERR", cat: "Routine Chemistry & Enzymes", name: "Ferritin", unit: "ng/mL", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "ALT", cat: "Routine Chemistry & Enzymes", name: "ALT (SGPT)", unit: "U/L", pct: 15, abs: 6, text: "±15% or ±6 U/L (greater)", half: "±7.5% or ±3 U/L" },
+    { id: "AST", cat: "Routine Chemistry & Enzymes", name: "AST (SGOT)", unit: "U/L", pct: 15, abs: 6, text: "±15% or ±6 U/L (greater)", half: "±7.5% or ±3 U/L" },
+    { id: "ALP", cat: "Routine Chemistry & Enzymes", name: "Alkaline Phosphatase (ALP)", unit: "U/L", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "GGT", cat: "Routine Chemistry & Enzymes", name: "GGT", unit: "U/L", pct: 15, abs: 5, text: "±15% or ±5 U/L (greater)", half: "±7.5% or ±2.5 U/L" },
+    { id: "AMY", cat: "Routine Chemistry & Enzymes", name: "Amylase", unit: "U/L", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "LIP", cat: "Routine Chemistry & Enzymes", name: "Lipase", unit: "U/L", pct: 30, abs: null, text: "±30%", half: "±15%" },
+    { id: "CK", cat: "Routine Chemistry & Enzymes", name: "Creatine Kinase (CK Total)", unit: "U/L", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "CKMB", cat: "Routine Chemistry & Enzymes", name: "CK-MB (Mass)", unit: "ng/mL", pct: 25, abs: 3, text: "±25% or ±3 ng/mL (greater)", half: "±12.5% or ±1.5 ng/mL" },
+    { id: "LDH", cat: "Routine Chemistry & Enzymes", name: "LDH", unit: "U/L", pct: 15, abs: null, text: "±15%", half: "±7.5%" },
+    { id: "LAC", cat: "Routine Chemistry & Enzymes", name: "Lactic Acid (Lactate)", unit: "mmol/L", pct: 25, abs: 0.3, text: "±25% or ±0.3 mmol/L (greater)", half: "±12.5% or ±0.15 mmol/L" },
+    { id: "HBA1C", cat: "Routine Chemistry & Enzymes", name: "Hemoglobin A1c (HbA1c)", unit: "%", pct: 6, abs: null, text: "±6.0% (CAP) / ±8.0% (CLIA)", half: "±3.0%" },
+    { id: "CTNI", cat: "Routine Chemistry & Enzymes", name: "Troponin I (cTnI)", unit: "ng/mL", pct: 30, abs: 0.9, text: "±30% or ±0.9 ng/mL (greater)", half: "±15% or ±0.45 ng/mL" },
+    { id: "CTNT", cat: "Routine Chemistry & Enzymes", name: "Troponin T (cTnT)", unit: "ng/mL", pct: 30, abs: 0.2, text: "±30% or ±0.2 ng/mL (greater)", half: "±15% or ±0.1 ng/mL" },
+    { id: "BNP", cat: "Routine Chemistry & Enzymes", name: "BNP / NT-proBNP", unit: "pg/mL", pct: 30, abs: null, text: "±30%", half: "±15%" },
+
+    // 2. Coagulation & Hematology
+    { id: "PT", cat: "Coagulation & Hematology", name: "Prothrombin Time (PT)", unit: "sec", pct: 15, abs: null, text: "±15%", half: "±7.5%" },
+    { id: "INR", cat: "Coagulation & Hematology", name: "INR", unit: "Ratio", pct: 15, abs: 0.2, text: "±15% or ±0.2 (greater)", half: "±7.5% or ±0.1" },
+    { id: "APTT", cat: "Coagulation & Hematology", name: "Activated Partial Thromboplastin Time (aPTT)", unit: "sec", pct: 15, abs: null, text: "±15%", half: "±7.5%" },
+    { id: "FIB", cat: "Coagulation & Hematology", name: "Fibrinogen", unit: "mg/dL", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "DDIMER", cat: "Coagulation & Hematology", name: "D-Dimer (Quantitative)", unit: "mg/L FEU", pct: 30, abs: null, text: "±30%", half: "±15%" },
+    { id: "WBC", cat: "Coagulation & Hematology", name: "WBC (White Blood Cells)", unit: "10^3/uL", pct: 10, abs: null, text: "±10%", half: "±5%" },
+    { id: "RBC", cat: "Coagulation & Hematology", name: "RBC (Red Blood Cells)", unit: "10^6/uL", pct: 4, abs: null, text: "±4%", half: "±2%" },
+    { id: "HGB", cat: "Coagulation & Hematology", name: "Hemoglobin (Hgb)", unit: "g/dL", pct: 4, abs: null, text: "±4%", half: "±2%" },
+    { id: "HCT", cat: "Coagulation & Hematology", name: "Hematocrit (Hct)", unit: "%", pct: 4, abs: null, text: "±4%", half: "±2%" },
+    { id: "PLT", cat: "Coagulation & Hematology", name: "Platelets (PLT)", unit: "10^3/uL", pct: 25, abs: null, text: "±25%", half: "±12.5%" },
+    { id: "MCV", cat: "Coagulation & Hematology", name: "MCV", unit: "fL", pct: 6, abs: null, text: "±6% (or Peer ±3 SD)", half: "±3%" },
+
+    // 3. Electrolytes & Blood Gases
+    { id: "NA", cat: "Electrolytes & Blood Gases", name: "Sodium (Na+)", unit: "mmol/L", pct: null, abs: 4, text: "±4 mmol/L", half: "±2 mmol/L" },
+    { id: "K", cat: "Electrolytes & Blood Gases", name: "Potassium (K+)", unit: "mmol/L", pct: null, abs: 0.3, text: "±0.3 mmol/L", half: "±0.15 mmol/L" },
+    { id: "CL", cat: "Electrolytes & Blood Gases", name: "Chloride (Cl-)", unit: "mmol/L", pct: 5, abs: null, text: "±5%", half: "±2.5%" },
+    { id: "CO2", cat: "Electrolytes & Blood Gases", name: "CO2 / Bicarbonate (HCO3)", unit: "mmol/L", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "PH", cat: "Electrolytes & Blood Gases", name: "Blood Gas pH", unit: "units", pct: null, abs: 0.04, text: "±0.04 units", half: "±0.02 units" },
+    { id: "PCO2", cat: "Electrolytes & Blood Gases", name: "Blood Gas pCO2", unit: "mmHg", pct: 8, abs: 5, text: "±8% or ±5 mmHg (greater)", half: "±4% or ±2.5 mmHg" },
+    { id: "PO2", cat: "Electrolytes & Blood Gases", name: "Blood Gas pO2", unit: "mmHg", pct: 15, abs: 15, text: "±15% or ±15 mmHg (greater)", half: "±7.5% or ±7.5 mmHg" },
+
+    // 4. Endocrinology & Tumor Markers
+    { id: "TSH", cat: "Endocrinology & Tumor Markers", name: "TSH", unit: "mIU/L", pct: 20, abs: 0.2, text: "±20% or ±0.2 mIU/L (greater)", half: "±10% or ±0.1 mIU/L" },
+    { id: "FT4", cat: "Endocrinology & Tumor Markers", name: "Free T4 (FT4)", unit: "ng/dL", pct: 15, abs: 0.3, text: "±15% or ±0.3 ng/dL (greater)", half: "±7.5% or ±0.15 ng/dL" },
+    { id: "TT4", cat: "Endocrinology & Tumor Markers", name: "Total T4", unit: "mcg/dL", pct: 20, abs: 1.0, text: "±20% or ±1.0 mcg/dL (greater)", half: "±10% or ±0.5 mcg/dL" },
+    { id: "FT3", cat: "Endocrinology & Tumor Markers", name: "Free T3 (FT3)", unit: "pg/mL", pct: 25, abs: 0.3, text: "±25% or ±0.3 pg/mL (greater)", half: "±12.5%" },
+    { id: "TT3", cat: "Endocrinology & Tumor Markers", name: "Total T3", unit: "ng/dL", pct: 30, abs: null, text: "±30%", half: "±15%" },
+    { id: "PTH", cat: "Endocrinology & Tumor Markers", name: "Parathyroid Hormone (PTH)", unit: "pg/mL", pct: 30, abs: null, text: "±30%", half: "±15%" },
+    { id: "CORT", cat: "Endocrinology & Tumor Markers", name: "Cortisol", unit: "mcg/dL", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "FSH", cat: "Endocrinology & Tumor Markers", name: "FSH", unit: "IU/L", pct: 18, abs: 2, text: "±18% or ±2 IU/L (greater)", half: "±9% or ±1 IU/L" },
+    { id: "LH", cat: "Endocrinology & Tumor Markers", name: "LH", unit: "IU/L", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "PRL", cat: "Endocrinology & Tumor Markers", name: "Prolactin", unit: "ng/mL", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "E2", cat: "Endocrinology & Tumor Markers", name: "Estradiol (E2)", unit: "pg/mL", pct: 30, abs: null, text: "±30%", half: "±15%" },
+    { id: "PROG", cat: "Endocrinology & Tumor Markers", name: "Progesterone", unit: "ng/mL", pct: 25, abs: null, text: "±25%", half: "±12.5%" },
+    { id: "TESTO", cat: "Endocrinology & Tumor Markers", name: "Testosterone, Total", unit: "ng/dL", pct: 30, abs: 20, text: "±30% or ±20 ng/dL (greater)", half: "±15% or ±10 ng/dL" },
+    { id: "BHCG", cat: "Endocrinology & Tumor Markers", name: "Beta-hCG (Quantitative)", unit: "mIU/mL", pct: 18, abs: 3, text: "±18% or ±3 mIU/mL (greater)", half: "±9% or ±1.5 mIU/mL" },
+    { id: "B12", cat: "Endocrinology & Tumor Markers", name: "Vitamin B12", unit: "pg/mL", pct: 25, abs: 30, text: "±25% or ±30 pg/mL (greater)", half: "±12.5% or ±15 pg/mL" },
+    { id: "FOL", cat: "Endocrinology & Tumor Markers", name: "Folate, Serum", unit: "ng/mL", pct: 30, abs: 1.0, text: "±30% or ±1.0 ng/mL (greater)", half: "±15% or ±0.5 ng/mL" },
+    { id: "VITD", cat: "Endocrinology & Tumor Markers", name: "25-OH Vitamin D", unit: "ng/mL", pct: 25, abs: null, text: "±25%", half: "±12.5%" },
+    { id: "INS", cat: "Endocrinology & Tumor Markers", name: "Insulin", unit: "uIU/mL", pct: 25, abs: 1.5, text: "±25% or ±1.5 uIU/mL (greater)", half: "±12.5%" },
+    { id: "PSA", cat: "Endocrinology & Tumor Markers", name: "Total PSA", unit: "ng/mL", pct: 20, abs: 0.2, text: "±20% or ±0.2 ng/mL (greater)", half: "±10% or ±0.1 ng/mL" },
+    { id: "AFP", cat: "Endocrinology & Tumor Markers", name: "Alpha-Fetoprotein (AFP)", unit: "ng/mL", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "CEA", cat: "Endocrinology & Tumor Markers", name: "CEA", unit: "ng/mL", pct: 15, abs: 1.0, text: "±15% or ±1.0 ng/mL (greater)", half: "±7.5% or ±0.5 ng/mL" },
+    { id: "CA125", cat: "Endocrinology & Tumor Markers", name: "CA 125", unit: "U/mL", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "CA153", cat: "Endocrinology & Tumor Markers", name: "CA 15-3", unit: "U/mL", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "CA199", cat: "Endocrinology & Tumor Markers", name: "CA 19-9", unit: "U/mL", pct: 20, abs: null, text: "±20%", half: "±10%" },
+
+    // 5. Immunology & Specific Proteins
+    { id: "CRP", cat: "Immunology & Specific Proteins", name: "CRP / hs-CRP", unit: "mg/L", pct: 30, abs: 1.0, text: "±30% or ±1.0 mg/L (greater)", half: "±15% or ±0.5 mg/L" },
+    { id: "C3", cat: "Immunology & Specific Proteins", name: "Complement C3", unit: "mg/dL", pct: 15, abs: null, text: "±15%", half: "±7.5%" },
+    { id: "C4", cat: "Immunology & Specific Proteins", name: "Complement C4", unit: "mg/dL", pct: 20, abs: 5, text: "±20% or ±5 mg/dL (greater)", half: "±10% or ±2.5 mg/dL" },
+    { id: "IGG", cat: "Immunology & Specific Proteins", name: "IgG / IgA / IgM / IgE", unit: "mg/dL", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "AAT", cat: "Immunology & Specific Proteins", name: "Alpha-1 Antitrypsin", unit: "mg/dL", pct: 20, abs: null, text: "±20%", half: "±10%" },
+
+    // 6. TDM & Toxicology
+    { id: "VANC", cat: "TDM & Toxicology", name: "Vancomycin", unit: "mcg/mL", pct: 15, abs: 2, text: "±15% or ±2 mcg/mL (greater)", half: "±7.5% or ±1 mcg/mL" },
+    { id: "DIG", cat: "TDM & Toxicology", name: "Digoxin", unit: "ng/mL", pct: 15, abs: 0.2, text: "±15% or ±0.2 ng/mL (greater)", half: "±7.5% or ±0.1 ng/mL" },
+    { id: "LI", cat: "TDM & Toxicology", name: "Lithium", unit: "mmol/L", pct: 15, abs: 0.3, text: "±15% or ±0.3 mmol/L (greater)", half: "±7.5% or ±0.15 mmol/L" },
+    { id: "VALP", cat: "TDM & Toxicology", name: "Valproic Acid", unit: "mcg/mL", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "CARB", cat: "TDM & Toxicology", name: "Carbamazepine", unit: "mcg/mL", pct: 20, abs: 1.0, text: "±20% or ±1.0 mcg/mL (greater)", half: "±10% or ±0.5 mcg/mL" },
+    { id: "PHENY", cat: "TDM & Toxicology", name: "Phenytoin", unit: "mcg/mL", pct: 15, abs: 2, text: "±15% or ±2 mcg/mL (greater)", half: "±7.5% or ±1 mcg/mL" },
+    { id: "PHENB", cat: "TDM & Toxicology", name: "Phenobarbital", unit: "mcg/mL", pct: 15, abs: 2, text: "±15% or ±2 mcg/mL (greater)", half: "±7.5% or ±1 mcg/mL" },
+    { id: "GENT", cat: "TDM & Toxicology", name: "Gentamicin", unit: "mcg/mL", pct: 25, abs: null, text: "±25%", half: "±12.5%" },
+    { id: "TOBRA", cat: "TDM & Toxicology", name: "Tobramycin / Theophylline", unit: "mcg/mL", pct: 20, abs: null, text: "±20%", half: "±10%" },
+    { id: "ACETA", cat: "TDM & Toxicology", name: "Acetaminophen", unit: "mcg/mL", pct: 15, abs: 3, text: "±15% or ±3 mcg/mL (greater)", half: "±7.5% or ±1.5 mcg/mL" },
+    { id: "SALIC", cat: "TDM & Toxicology", name: "Salicylate", unit: "mcg/mL", pct: 15, abs: 2, text: "±15% or ±2 mcg/mL (greater)", half: "±7.5% or ±1 mcg/mL" }
+  ];
+
+  // Default sample rows matching Hayat Hospital Abha form example
+  const defaultRows = [
+    { date: "2026-11-09", id: "173676", prev: "78", newVal: "79", init: "SA", sup: "OK" },
+    { date: "2026-11-09", id: "173630", prev: "172", newVal: "171", init: "SA", sup: "OK" },
+    { date: "2026-11-09", id: "35789",  prev: "117", newVal: "117", init: "SA", sup: "OK" },
+    { date: "2026-11-09", id: "173422", prev: "108", newVal: "107", init: "SA", sup: "OK" },
+    { date: "2026-11-09", id: "173205", prev: "98",  newVal: "98",  init: "SA", sup: "OK" },
+    { date: "",           id: "",       prev: "",    newVal: "",    init: "",   sup: "" }
+  ];
+
+  function init() {
+    // Populate Test Dropdown
+    const select = document.getElementById("tl-test-select");
+    select.innerHTML = TEA_DB.map(t => `<option value="${t.id}">[${t.cat}] ${t.name} (${t.text})</option>`).join("");
+
+    // Build 6 Sample Rows
+    const tbody = document.getElementById("tl-samples-tbody");
+    tbody.innerHTML = defaultRows.map((r, i) => `
+      <tr>
+        <td><b>${i + 1}</b></td>
+        <td><input type="date" id="tl-s-date-${i}" value="${r.date}"></td>
+        <td><input type="text" id="tl-s-id-${i}" value="${r.id}" placeholder="Sample ID"></td>
+        <td><input type="number" step="any" id="tl-s-prev-${i}" value="${r.prev}" oninput="TechnoLabsAddon.recalculate()" placeholder="Prev"></td>
+        <td><input type="number" step="any" id="tl-s-new-${i}" value="${r.newVal}" oninput="TechnoLabsAddon.recalculate()" placeholder="New"></td>
+        <td id="tl-s-diffu-${i}">—</td>
+        <td id="tl-s-diffp-${i}">—</td>
+        <td id="tl-s-acc-${i}">—</td>
+        <td><input type="text" id="tl-s-init-${i}" value="${r.init}"></td>
+        <td><input type="text" id="tl-s-sup-${i}" value="${r.sup}"></td>
+      </tr>
+    `).join("");
+
+    // Default header fields from Hayat Hospital example
+    document.getElementById("tl-curr-reag").value = "Trig 2";
+    document.getElementById("tl-new-reag").value = "Trig 2";
+    document.getElementById("tl-curr-lot").value = "78334UD00";
+    document.getElementById("tl-new-lot").value = "81614UD00";
+    document.getElementById("tl-exp-curr").value = "2026-11-29";
+    document.getElementById("tl-exp-new").value = "2027-01-12";
+    const today = "2026-11-09";
+    document.getElementById("tl-sup-date").value = today;
+    document.getElementById("tl-qo-date").value = today;
+    document.getElementById("tl-dir-date").value = today;
+
+    onTestChange();
+    renderTEaTable();
+    renderSavedLogs();
+  }
+
+  function getSelectedTest() {
+    const id = document.getElementById("tl-test-select").value;
+    return TEA_DB.find(t => t.id === id) || TEA_DB[0];
+  }
+
+  function onTestChange() {
+    const test = getSelectedTest();
+    document.getElementById("tl-unit").value = test.unit;
+    document.getElementById("tl-curr-reag").value = test.name;
+    document.getElementById("tl-new-reag").value = test.name;
+    document.getElementById("tl-active-tea-display").textContent = `CAP TEa Limit: ${test.text}`;
+    recalculate();
+  }
+
+  function recalculate() {
+    const test = getSelectedTest();
+    let sumUnit = 0, sumPct = 0, count = 0, allAccepted = true;
+
+    for (let i = 0; i < 6; i++) {
+      const prevStr = document.getElementById(`tl-s-prev-${i}`).value;
+      const newStr = document.getElementById(`tl-s-new-${i}`).value;
+      const diffUCell = document.getElementById(`tl-s-diffu-${i}`);
+      const diffPCell = document.getElementById(`tl-s-diffp-${i}`);
+      const accCell = document.getElementById(`tl-s-acc-${i}`);
+
+      if (prevStr === "" || newStr === "" || isNaN(prevStr) || isNaN(newStr)) {
+        diffUCell.textContent = "—";
+        diffPCell.textContent = "—";
+        accCell.innerHTML = "—";
+        continue;
+      }
+
+      const prev = parseFloat(prevStr);
+      const newVal = parseFloat(newStr);
+      const diffUnit = newVal - prev;
+      const absDiff = Math.abs(diffUnit);
+      const diffPct = prev !== 0 ? ((newVal - prev) / prev) * 100 : 0;
+      const absPct = Math.abs(diffPct);
+
+      // Dual CAP Rule Evaluation: Pass if within % limit OR within absolute limit (whichever is greater)
+      let passPct = test.pct !== null ? (absPct <= test.pct) : false;
+      let passAbs = test.abs !== null ? (absDiff <= test.abs) : false;
+      const isPass = passPct || passAbs;
+
+      diffUCell.textContent = `${diffUnit.toFixed(2)} ${test.unit}`;
+      diffPCell.textContent = `${diffPct.toFixed(2)}%`;
+      accCell.innerHTML = isPass
+        ? `<span class="tl-badge-pass">Y</span>`
+        : `<span class="tl-badge-fail">N</span>`;
+
+      if (!isPass) allAccepted = false;
+      sumUnit += diffUnit;
+      sumPct += diffPct;
+      count++;
+    }
+
+    document.getElementById("tl-avg-unit").textContent = count > 0 ? (sumUnit / count).toFixed(2) : "0.00";
+    document.getElementById("tl-avg-pct").textContent = count > 0 ? (sumPct / count).toFixed(2) + "%" : "0.00%";
+
+    const overallBadge = document.getElementById("tl-overall-badge");
+    const finalDecision = document.getElementById("tl-final-decision");
+    if (count === 0) {
+      overallBadge.innerHTML = "—";
+      finalDecision.textContent = "Acceptable / Unacceptable";
+      finalDecision.className = "";
+    } else if (allAccepted) {
+      overallBadge.innerHTML = `<span class="tl-badge-pass">PASS (Y)</span>`;
+      finalDecision.textContent = "✔ ACCEPTABLE";
+      finalDecision.className = "tl-badge-pass";
+    } else {
+      overallBadge.innerHTML = `<span class="tl-badge-fail">FAIL (N)</span>`;
+      finalDecision.textContent = "✖ UNACCEPTABLE";
+      finalDecision.className = "tl-badge-fail";
+    }
+  }
+
+  function renderTEaTable() {
+    const q = (document.getElementById("tl-tea-search").value || "").toLowerCase();
+    const cat = document.getElementById("tl-tea-cat").value;
+    const tbody = document.getElementById("tl-tea-tbody");
+
+    const filtered = TEA_DB.filter(t => {
+      const matchCat = (cat === "ALL" || t.cat === cat);
+      const matchQ = t.name.toLowerCase().includes(q) || t.cat.toLowerCase().includes(q);
+      return matchCat && matchQ;
+    });
+
+    tbody.innerHTML = filtered.map((t, idx) => `
+      <tr>
+        <td>${idx + 1}</td>
+        <td>${t.cat}</td>
+        <td style="font-weight:700;">${t.name}</td>
+        <td>${t.unit}</td>
+        <td style="font-weight:700; color:#0369a1;">${t.text}</td>
+        <td style="color:#475569;">${t.half}</td>
+        <td class="tl-no-print">
+          <button class="tl-action-btn" style="padding:4px 10px; font-size:12px;" onclick="TechnoLabsAddon.selectTestFromPolicy('${t.id}')">
+            استخدام في النموذج
+          </button>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  function selectTestFromPolicy(testId) {
+    document.getElementById("tl-test-select").value = testId;
+    onTestChange();
+    openTab('lot-form');
+  }
+
+  function openTab(tabName) {
+    document.getElementById("tl-panel-lot-form").classList.toggle("active", tabName === "lot-form");
+    document.getElementById("tl-panel-tea-policy").classList.toggle("active", tabName === "tea-policy");
+    document.getElementById("btn-tab-lot").classList.toggle("active", tabName === "lot-form");
+    document.getElementById("btn-tab-tea").classList.toggle("active", tabName === "tea-policy");
+  }
+
+  function saveRecord() {
+    const test = getSelectedTest();
+    const logs = JSON.parse(localStorage.getItem("technolabs_lot_logs") || "[]");
+    logs.unshift({
+      date: new Date().toLocaleString("en-GB"),
+      testName: test.name,
+      oldLot: document.getElementById("tl-curr-lot").value,
+      newLot: document.getElementById("tl-new-lot").value,
+      avgPct: document.getElementById("tl-avg-pct").textContent,
+      status: document.getElementById("tl-final-decision").textContent
+    });
+    localStorage.setItem("technolabs_lot_logs", JSON.stringify(logs.slice(0, 30)));
+    renderSavedLogs();
+    alert("تم حفظ سجل التحقق بنجاح في ذاكرة التطبيق (PWA Offline Storage).");
+  }
+
+  function renderSavedLogs() {
+    const container = document.getElementById("tl-saved-logs-list");
+    const logs = JSON.parse(localStorage.getItem("technolabs_lot_logs") || "[]");
+    if (!logs.length) {
+      container.innerHTML = "لا توجد سجلات محفوظة بعد.";
+      return;
+    }
+    container.innerHTML = logs.map(l => `
+      <div style="padding:6px 10px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; direction:ltr;">
+        <span><b>${l.testName}</b> | Old Lot: ${l.oldLot} ➔ New Lot: ${l.newLot}</span>
+        <span>Avg Diff: <b>${l.avgPct}</b> | <b>${l.status}</b> (${l.date})</span>
+      </div>
+    `).join("");
+  }
+
+  function resetForm() {
+    for (let i = 0; i < 6; i++) {
+      document.getElementById(`tl-s-id-${i}`).value = "";
+      document.getElementById(`tl-s-prev-${i}`).value = "";
+      document.getElementById(`tl-s-new-${i}`).value = "";
+    }
+    recalculate();
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+  if (document.readyState === "complete" || document.readyState === "interactive") {
+    setTimeout(init, 50);
+  }
+
+  return { openTab, onTestChange, recalculate, renderTEaTable, selectTestFromPolicy, saveRecord, resetForm };
+})();
+</script>
 </body>
 </html>
